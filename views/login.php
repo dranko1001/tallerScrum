@@ -29,9 +29,6 @@
               <button type="submit" name="enviar" class="btn btn-primary">Acceder</button>
             </div>
             <div class="text-center mt-3">
-  <p>¿No tienes cuenta? 
-    <a href="registro.php" class="text-primary fw-bold text-decoration-none">Regístrate aquí</a>
-  </p>
 </div>
           </form>
         </div>
