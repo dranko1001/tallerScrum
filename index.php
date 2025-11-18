@@ -1,4 +1,26 @@
+<?php 
+header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+header("Cache-Control: post-check=0, pre-check=0", false);
+header("Pragma: no-cache");
+//conexion a la base de datos
+require_once 'models/MySQL.php';
+session_start();
 
+if (!isset($_SESSION['tipo_usuario'])) {
+    header("location: ./views/login.php");
+    exit();
+}
+$mysql = new MySQL();
+$mysql->conectar();
+
+$idUsuario=$_SESSION['id_usuario'];
+$rol= $_SESSION['tipo_usuario'];
+$nombre=$_SESSION['nombre_usuario'];
+
+//consulta para obtener los libros
+$resultadolibros=$mysql->efectuarConsulta("SELECT * FROM libro");
+$resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
+?>
 
 <!doctype html>
 <html lang="en">
