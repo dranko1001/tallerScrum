@@ -1,146 +1,194 @@
--- phpMyAdmin SQL Dump
--- version 5.2.1
--- https://www.phpmyadmin.net/
---
--- Host: 127.0.0.1
--- Generation Time: Nov 18, 2025 at 01:44 PM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.0.30
+-- MySQL Workbench Forward Engineering
 
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+-- -----------------------------------------------------
+-- Schema taller_scrum
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Schema taller_scrum
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `taller_scrum` DEFAULT CHARACTER SET utf8 ;
+USE `taller_scrum` ;
+
+-- -----------------------------------------------------
+-- Table `taller_scrum`.`instructor`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `taller_scrum`.`instructor` (
+  `id_instructor` INT NOT NULL AUTO_INCREMENT,
+  `rol_usuario` VARCHAR(45) NOT NULL,
+  `correo_instructor` VARCHAR(100) NOT NULL,
+  `password_instructor` VARCHAR(250) NOT NULL,
+  PRIMARY KEY (`id_instructor`),
+  UNIQUE INDEX `correo_usuario_UNIQUE` (`correo_instructor` ASC))
+ENGINE = InnoDB;
 
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
+-- -----------------------------------------------------
+-- Table `taller_scrum`.`cursos`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `taller_scrum`.`cursos` (
+  `id_curso` INT NOT NULL AUTO_INCREMENT,
+  `nombre_curso` VARCHAR(155) NOT NULL,
+  PRIMARY KEY (`id_curso`))
+ENGINE = InnoDB;
 
---
--- Database: `taller_scrum`
---
 
--- --------------------------------------------------------
+-- -----------------------------------------------------
+-- Table `taller_scrum`.`aprendices`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `taller_scrum`.`aprendices` (
+  `id_aprendiz` INT NOT NULL AUTO_INCREMENT,
+  `rol_usuario` VARCHAR(45) NOT NULL,
+  `correo_aprendiz` VARCHAR(100) NOT NULL,
+  `password_aprendiz` VARCHAR(250) NOT NULL,
+  PRIMARY KEY (`id_aprendiz`),
+  UNIQUE INDEX `correo_usuario_UNIQUE` (`correo_aprendiz` ASC))
+ENGINE = InnoDB;
 
---
--- Table structure for table `cursos`
---
 
-CREATE TABLE `cursos` (
-  `id_curso` int(11) NOT NULL,
-  `nombre_curso` varchar(155) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+-- -----------------------------------------------------
+-- Table `taller_scrum`.`trabajos`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `taller_scrum`.`trabajos` (
+  `id_trabajo` INT NOT NULL AUTO_INCREMENT,
+  `nombre_trabajo` VARCHAR(155) NOT NULL,
+  `fecha_trabajo` DATE NOT NULL,
+  `aprendices_id_aprendiz` INT NOT NULL,
+  PRIMARY KEY (`id_trabajo`),
+  INDEX `fk_trabajos_aprendices1_idx` (`aprendices_id_aprendiz` ASC),
+  CONSTRAINT `fk_trabajos_aprendices1`
+    FOREIGN KEY (`aprendices_id_aprendiz`)
+    REFERENCES `taller_scrum`.`aprendices` (`id_aprendiz`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
 
--- --------------------------------------------------------
 
---
--- Table structure for table `notas`
---
+-- -----------------------------------------------------
+-- Table `taller_scrum`.`notas`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `taller_scrum`.`notas` (
+  `id_nota` INT NOT NULL AUTO_INCREMENT,
+  `calificacion_nota` INT NOT NULL,
+  `comentario_nota` VARCHAR(155) NOT NULL,
+  `trabajos_id_trabajo` INT NOT NULL,
+  `instructor_id_instructor` INT NOT NULL,
+  PRIMARY KEY (`id_nota`),
+  INDEX `fk_notas_trabajos1_idx` (`trabajos_id_trabajo` ASC),
+  INDEX `fk_notas_instructor1_idx` (`instructor_id_instructor` ASC),
+  CONSTRAINT `fk_notas_trabajos1`
+    FOREIGN KEY (`trabajos_id_trabajo`)
+    REFERENCES `taller_scrum`.`trabajos` (`id_trabajo`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_notas_instructor1`
+    FOREIGN KEY (`instructor_id_instructor`)
+    REFERENCES `taller_scrum`.`instructor` (`id_instructor`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
 
-CREATE TABLE `notas` (
-  `id_nota` int(11) NOT NULL,
-  `calificacion_nota` int(11) NOT NULL,
-  `comentario_nota` varchar(155) NOT NULL,
-  `usuarios_id_usuario` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
--- --------------------------------------------------------
+-- -----------------------------------------------------
+-- Table `taller_scrum`.`instructor_has_cursos`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `taller_scrum`.`instructor_has_cursos` (
+  `instructor_id_usuario` INT NOT NULL,
+  `cursos_id_curso` INT NOT NULL,
+  PRIMARY KEY (`instructor_id_usuario`, `cursos_id_curso`),
+  INDEX `fk_instructor_has_cursos_cursos1_idx` (`cursos_id_curso` ASC),
+  INDEX `fk_instructor_has_cursos_instructor1_idx` (`instructor_id_usuario` ASC),
+  CONSTRAINT `fk_instructor_has_cursos_instructor1`
+    FOREIGN KEY (`instructor_id_usuario`)
+    REFERENCES `taller_scrum`.`instructor` (`id_instructor`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_instructor_has_cursos_cursos1`
+    FOREIGN KEY (`cursos_id_curso`)
+    REFERENCES `taller_scrum`.`cursos` (`id_curso`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
 
---
--- Table structure for table `usuarios`
---
 
-CREATE TABLE `usuarios` (
-  `id_usuario` int(11) NOT NULL,
-  `rol_usuario` varchar(45) NOT NULL,
-  `correo_usuario` varchar(100) NOT NULL,
-  `password_usuario` varchar(200) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+-- -----------------------------------------------------
+-- Table `taller_scrum`.`administrador`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `taller_scrum`.`administrador` (
+  `id_admin` INT NOT NULL AUTO_INCREMENT,
+  `rol_usuario` VARCHAR(45) NOT NULL,
+  `correo_admin` VARCHAR(100) NOT NULL,
+  `password_admin` VARCHAR(250) NOT NULL,
+  PRIMARY KEY (`id_admin`),
+  UNIQUE INDEX `correo_usuario_UNIQUE` (`correo_admin` ASC))
+ENGINE = InnoDB;
 
--- --------------------------------------------------------
 
---
--- Table structure for table `usuarios_has_cursos`
---
+-- -----------------------------------------------------
+-- Table `taller_scrum`.`fichas`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `taller_scrum`.`fichas` (
+  `id_ficha` INT NOT NULL AUTO_INCREMENT,
+  `nombre_ficha` VARCHAR(45) NOT NULL,
+  `aprendices_id_aprendiz` INT NOT NULL,
+  PRIMARY KEY (`id_ficha`),
+  INDEX `fk_fichas_aprendices1_idx` (`aprendices_id_aprendiz` ASC),
+  CONSTRAINT `fk_fichas_aprendices1`
+    FOREIGN KEY (`aprendices_id_aprendiz`)
+    REFERENCES `taller_scrum`.`aprendices` (`id_aprendiz`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
 
-CREATE TABLE `usuarios_has_cursos` (
-  `usuarios_id_usuario` int(11) NOT NULL,
-  `cursos_id_curso` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
---
--- Indexes for dumped tables
---
+-- -----------------------------------------------------
+-- Table `taller_scrum`.`cursos_has_aprendices`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `taller_scrum`.`cursos_has_aprendices` (
+  `cursos_id_curso` INT NOT NULL,
+  `aprendices_id_aprendiz` INT NOT NULL,
+  PRIMARY KEY (`cursos_id_curso`, `aprendices_id_aprendiz`),
+  INDEX `fk_cursos_has_aprendices_aprendices1_idx` (`aprendices_id_aprendiz` ASC),
+  INDEX `fk_cursos_has_aprendices_cursos1_idx` (`cursos_id_curso` ASC),
+  CONSTRAINT `fk_cursos_has_aprendices_cursos1`
+    FOREIGN KEY (`cursos_id_curso`)
+    REFERENCES `taller_scrum`.`cursos` (`id_curso`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_cursos_has_aprendices_aprendices1`
+    FOREIGN KEY (`aprendices_id_aprendiz`)
+    REFERENCES `taller_scrum`.`aprendices` (`id_aprendiz`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
 
---
--- Indexes for table `cursos`
---
-ALTER TABLE `cursos`
-  ADD PRIMARY KEY (`id_curso`);
 
---
--- Indexes for table `notas`
---
-ALTER TABLE `notas`
-  ADD PRIMARY KEY (`id_nota`),
-  ADD KEY `fk_notas_usuarios_idx` (`usuarios_id_usuario`);
+-- -----------------------------------------------------
+-- Table `taller_scrum`.`instructor_has_fichas`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `taller_scrum`.`instructor_has_fichas` (
+  `instructor_id_instructor` INT NOT NULL,
+  `fichas_id_ficha` INT NOT NULL,
+  PRIMARY KEY (`instructor_id_instructor`, `fichas_id_ficha`),
+  INDEX `fk_instructor_has_fichas_fichas1_idx` (`fichas_id_ficha` ASC),
+  INDEX `fk_instructor_has_fichas_instructor1_idx` (`instructor_id_instructor` ASC),
+  CONSTRAINT `fk_instructor_has_fichas_instructor1`
+    FOREIGN KEY (`instructor_id_instructor`)
+    REFERENCES `taller_scrum`.`instructor` (`id_instructor`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_instructor_has_fichas_fichas1`
+    FOREIGN KEY (`fichas_id_ficha`)
+    REFERENCES `taller_scrum`.`fichas` (`id_ficha`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
 
---
--- Indexes for table `usuarios`
---
-ALTER TABLE `usuarios`
-  ADD PRIMARY KEY (`id_usuario`),
-  ADD UNIQUE KEY `correo_usuario_UNIQUE` (`correo_usuario`);
 
---
--- Indexes for table `usuarios_has_cursos`
---
-ALTER TABLE `usuarios_has_cursos`
-  ADD PRIMARY KEY (`usuarios_id_usuario`,`cursos_id_curso`),
-  ADD KEY `fk_usuarios_has_cursos_cursos1_idx` (`cursos_id_curso`),
-  ADD KEY `fk_usuarios_has_cursos_usuarios1_idx` (`usuarios_id_usuario`);
-
---
--- AUTO_INCREMENT for dumped tables
---
-
---
--- AUTO_INCREMENT for table `cursos`
---
-ALTER TABLE `cursos`
-  MODIFY `id_curso` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `notas`
---
-ALTER TABLE `notas`
-  MODIFY `id_nota` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `usuarios`
---
-ALTER TABLE `usuarios`
-  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- Constraints for dumped tables
---
-
---
--- Constraints for table `notas`
---
-ALTER TABLE `notas`
-  ADD CONSTRAINT `fk_notas_usuarios` FOREIGN KEY (`usuarios_id_usuario`) REFERENCES `usuarios` (`id_usuario`) ON DELETE NO ACTION ON UPDATE NO ACTION;
-
---
--- Constraints for table `usuarios_has_cursos`
---
-ALTER TABLE `usuarios_has_cursos`
-  ADD CONSTRAINT `fk_usuarios_has_cursos_cursos1` FOREIGN KEY (`cursos_id_curso`) REFERENCES `cursos` (`id_curso`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  ADD CONSTRAINT `fk_usuarios_has_cursos_usuarios1` FOREIGN KEY (`usuarios_id_usuario`) REFERENCES `usuarios` (`id_usuario`) ON DELETE NO ACTION ON UPDATE NO ACTION;
-COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
