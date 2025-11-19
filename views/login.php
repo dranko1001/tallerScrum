@@ -11,7 +11,7 @@
       crossorigin="anonymous"
     />
   </head>
-  <body class="bg-light"style="background: url('../media/fondo senalibrary.jpg') no-repeat center center fixed; background-size: cover;">
+  <body class="bg-light">
     <div class="container-fluid vh-100">
       <div class="row h-100 d-flex justify-content-center align-items-center">
         <div class="col-10 col-sm-6 col-md-4 col-lg-3 bg-white p-4 rounded shadow">
@@ -24,6 +24,15 @@
             <div class="mb-3">
               <label for="password" class="form-label">Contraseña:</label>
               <input type="password" class="form-control" name="password" placeholder="Digite la contraseña" required />
+            </div>
+            <div class="mb-3">
+              <label for="rol" class="form-label">Rol:</label>
+              <select class="form-select" name="rol" required>
+                <option value="" disabled selected>Seleccione su rol</option>
+                <option value="admin">Administrador</option>
+                <option value="aprendiz">Aprendiz</option>
+                <option value="instructor">Instructor</option>
+              </select>
             </div>
             <div class="d-grid">
               <button type="submit" name="enviar" class="btn btn-primary">Acceder</button>
