@@ -824,6 +824,67 @@ $(document).ready(function() {
 </script>
 
 
+<!-- funcion para agregar un curso, esta conectada al controlador agregarcurso.php -->
+<script>
+  function agregarCurso() {
+  Swal.fire({
+    title: 'Agregar Nuevo Curso',
+    html: `
+      <form id="formAgregarCurso" class="text-start" action="../controllers/agregarCurso.php" method="POST">
+        <div class="mb-3">
+          <label for="nombre_curso" class="form-label">Nombre del curso</label>
+          <input type="text" class="form-control" id="nombre_curso" name="nombre_curso" required>
+        </div>
+      </form>
+    `,
+    confirmButtonText: 'Agregar',
+    showCancelButton: true,
+    cancelButtonText: 'Cancelar',
+    focusConfirm: false,
+    preConfirm: () => {
+      const nombre = document.getElementById('nombre_curso').value.trim();
+
+      if (!nombre) {
+        Swal.showValidationMessage('Por favor, complete el nombre.');
+        return false;
+      }
+
+      const formData = new FormData();
+      formData.append('nombre_curso', nombre);
+
+      return formData;
+    }
+  }).then((result) => {
+    if (result.isConfirmed) {
+      const formData = result.value;
+
+      $.ajax({
+        url: '../controllers/agregarCurso.php',
+        type: 'POST',
+        data: formData,
+        contentType: false,
+        processData: false,
+        dataType: 'json',
+        success: function(response) {
+          if (response.success) {
+            Swal.fire(' Éxito', response.message, 'success').then(() => {
+              location.reload();
+            });
+          } else {
+            Swal.fire(' Atención', response.message, 'warning');
+          }
+        },
+        error: function(xhr, status, error) {
+          console.error("Error AJAX:", error, xhr.responseText);
+          Swal.fire(' Error', 'El servidor no respondió correctamente.', 'error');
+        }
+      });
+    }
+  });
+}
+</script>
+
+
 
 
 
