@@ -6,15 +6,16 @@ document.addEventListener("DOMContentLoaded", () => {
         .then((datos) => {
             cuerpoTabla.innerHTML = ""; // limpiar tabla
 
-            datos.forEach((trabajo) => {
+            datos.forEach((notas) => {
                 let fila = document.createElement("tr");
 
                 fila.innerHTML = `
-          <td>${trabajo.id_trabajo}</td>
-          <td>${trabajo.nombre_trabajo}</td>
-          <td>${trabajo.fecha_trabajo}</td>
+          <td>${notas.id_nota}</td>
+          <td>${notas.calificacion_nota}</td>
+          <td>${notas.comentario_nota}</td>
+ 
           <td>
-            <button class="btn btn-primary btn-sm btnSubirArchivo" data-id="${trabajo.id_trabajo}">ver nota</button>
+            <button class="btn btn-primary btn-sm btnSubirArchivo" data-id="${notas.id_notas}">ver nota</button>
           </td>
         `;
 

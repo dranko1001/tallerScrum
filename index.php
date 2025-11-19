@@ -370,12 +370,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM trabajos");
                 <li><hr class="dropdown-divider m-0"></li>
 
                 <!-- Opciones del menu -->
-                <li>
-                  <a href="./views/perfilUsuario.php" class="dropdown-item d-flex align-items-center py-2">
-                    <i class="bi bi-person me-2 text-secondary"></i> Perfil
-                  </a>
-                </li>
-
+      
                 <!-- Separador -->
                 <li><hr class="dropdown-divider m-0"></li>
 
@@ -430,6 +425,14 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM trabajos");
                   </span>
                   </a>
               </li>
+               <li class="nav-item">
+                <a href="./views/verNotasAprendiz.php" class="nav-link active">
+                  <i class="nav-icon bi bi-speedometer me-2"></i>
+                  <span>
+                    ver nota
+                  </span>
+                  </a>
+              </li>
                <?php if ($rol == 'admin'): ?>
               <li class="nav-item">
                 <a href="./views/usuarios.php" class="nav-link">
@@ -450,11 +453,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM trabajos");
                 </a>
               </li>
               <li class="nav-item">
-                <a href="./views/verNotasAprendiz.php" class="nav-link">
-                 <i class="bi bi-journal-arrow-down me-2"></i>
-                  <span> ver notaaaaass </span>
-                </a>
-              </li>
+   
               <?php endif; ?>
                <?php if ($rol == 'aprendiz'): ?>
               <li class="nav-item">
@@ -494,7 +493,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM trabajos");
                   
 
                   <a href="./views/verNotasAprendiz.php">
-                    <button>ver notas</button>
+                    <button>ver notas </button>
                   </a>
                   <table id="tablaLibros" class="table table-striped table-bordered" width="100%">
                       <thead class="table-success">

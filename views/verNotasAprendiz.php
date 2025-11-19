@@ -52,7 +52,7 @@
       <div class="sidebar-brand">
         <a href="#" class="brand-link">
           <span class="title">
-            <img src="../public/media/senalibrary icon.png" width="30" height="40"> SenaLibrary
+             SenaLibrary
           </span>
         </a>
       </div>
@@ -60,10 +60,26 @@
       <div class="sidebar-wrapper">
         <nav class="mt-2">
           <ul class="nav sidebar-menu flex-column">
-            <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-speedometer"></i> Dashboard</a></li>
-            <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-book"></i> Libros</a></li>
-            <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-people"></i> Usuarios</a></li>
-            <li class="nav-item"><a class="nav-link active" href="#"><i class="bi bi-journal-text"></i> Notas</a></li>
+
+
+              <li class="nav-item">
+                <a href="./tallerScrum/index.php" class="nav-link active">
+                  <i class="nav-icon bi bi-speedometer me-2"></i>
+                  <span>
+                    Dashboard
+                  </span>
+                  </a>
+              </li>
+               <li class="nav-item">
+                <a href="./views/verNotasAprendiz.php" class="nav-link active">
+                  <i class="nav-icon bi bi-speedometer me-2"></i>
+                  <span>
+                    ver nota
+                  </span>
+                  </a>
+              </li>
+
+
           </ul>
         </nav>
       </div>
@@ -82,9 +98,8 @@
                 <thead>
                   <tr>
                     <th>ID</th>
-                    <th>Nombre Trabajo</th>
-                    <th>Fecha Trabajo</th>
-                    <th>Opción</th>
+                    <th>Calificacion </th>
+                    <th>Comentario</th>
                   </tr>
                 </thead>
                 <tbody id="datosReservas"></tbody>

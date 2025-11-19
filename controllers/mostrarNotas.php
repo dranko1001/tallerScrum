@@ -6,19 +6,19 @@ $mysql = new MySQL();
 $mysql->conectar();
 
 // Consulta
-$sql = "SELECT id_trabajo, nombre_trabajo, fecha_trabajo FROM trabajos";
+$sql = "SELECT id_nota, calificacion_nota, comentario_nota FROM notas";
 $resultado = $mysql->efectuarConsulta($sql);
 
-// Inicializamos array
-$trabajos = array();
+// Inicializamos arrayx 
+$notas = array();
 
 if ($resultado) {
     while ($fila = $resultado->fetch_assoc()) {
-        $trabajos[] = $fila;
+        $notas[] = $fila;
     }
 }
 
 // Retornamos JSON
-echo json_encode($trabajos, JSON_UNESCAPED_UNICODE);
+echo json_encode($notas, JSON_UNESCAPED_UNICODE);
 
 $mysql->desconectar();
