@@ -6,11 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>Notas | Sistema</title>
 
-  <!-- CSS LOCALES -->
   <link rel="stylesheet" href="../css/adminlte.css">
   <link rel="stylesheet" href="../css/style.css">
 
-  <!-- LIBRERÍAS ONLINE -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css" media="print" onload="this.media='all'">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/styles/overlayscrollbars.min.css">
@@ -110,7 +108,6 @@
 
   </div>
 
-  <!-- JS LOCALES -->
   <script src="../public/js/adminlte.js"></script>
   <script src="../public/js/adminlte.min.js"></script>
   <script src="../public/js/verNotas.js"></script>
