@@ -24,7 +24,7 @@ if (isset($_POST['email']) && !empty($_POST['email']) &&
     $administrador = mysqli_fetch_assoc($resultado);
     $aprendiz = mysqli_fetch_assoc($resultadoAprendiz);
     $instructor = mysqli_fetch_assoc($resultadoInstructor);
-    
+
     $mysql->desconectar();
     $usuario_encontrado = null;
     $hash_password = '';
@@ -34,7 +34,7 @@ if (isset($_POST['email']) && !empty($_POST['email']) &&
     if ($administrador) {
         $usuario_encontrado = $administrador;
         $hash_password = $administrador['password_admin'];
-        $rol = 'admin';
+        $rol = '';
     } elseif ($instructor) {
         $usuario_encontrado = $instructor;
         $hash_password = $instructor['password_instructor']; 
@@ -53,7 +53,7 @@ if (isset($_POST['email']) && !empty($_POST['email']) &&
             $id_key = 'id_'.$rol; 
             
             $_SESSION['id_usuario'] = $usuario_encontrado[$id_key]; 
-            $_SESSION['correo_usuario'] = $correo; 
+            $_SESSION['correo_'.$rol] = $correo; 
             $_SESSION['rol_usuario'] = $rol; 
       
             echo "
