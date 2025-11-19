@@ -16,14 +16,8 @@ $mysql->conectar();
 $rol= $_SESSION['rol_usuario'];
 $nombre=$_SESSION['correo_'.$rol];
 
-<<<<<<< HEAD
-//consulta para obtener los libros
-
-$resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
-=======
 //consulta para obtener los trabajos
 $resultado=$mysql->efectuarConsulta("SELECT * FROM trabajos");
->>>>>>> a127e8f2315dfedaf01b09e2f3e6ef8abd0b87f4
 ?>
 
 <!doctype html>
@@ -87,10 +81,10 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM trabajos");
     <!--end::Third Party Plugin(Bootstrap Icons)-->
 
     <!--begin::Required Plugin(AdminLTE)-->
-    <link rel="stylesheet" href="./css/adminlte.css" />
+    <link rel="stylesheet" href="../css/adminlte.css" />
     <!--end::Required Plugin(AdminLTE)-->
     <!-- Estilo propio -->
-     <link rel="stylesheet" href="./css/style.css">
+     <link rel="stylesheet" href="../css/style.css">
 
     <!-- apexcharts -->
     <link
@@ -429,7 +423,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM trabajos");
               id="navigation"
             >
               <li class="nav-item">
-                <a href="./index.php" class="nav-link active">
+                <a href="../index.php" class="nav-link">
                   <i class="nav-icon bi bi-speedometer me-2"></i>
                   <span>
                     Dashboard
@@ -464,8 +458,8 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM trabajos");
               <?php endif; ?>
                <?php if ($rol == 'aprendiz'): ?>
               <li class="nav-item">
-                <a href="./views/gestionTrabajos.php" class="nav-link">
-                 <i class="bi bi-calendar-check me-2 me-2"> </i>
+                <a href="./views/gestionTrabajos.php" class="nav-link active">
+                 <i class="nav-icon bi bi-calendar-check me-2 me-2"> </i>
                   <span> Trabajos </span>
                 </a>
               </li>
@@ -611,89 +605,6 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM trabajos");
       integrity="sha256-XPpPaZlU8S/HWf7FZLAncLg2SAkP8ScUTII89x9D3lY="
       crossorigin="anonymous"
     ></script>
-<<<<<<< HEAD
-<script>
-$(document).ready(function() {
-   $('#tablaLibros').DataTable({
-    language: {
-        url: "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
-    },
-    pageLength: 5,
-    lengthMenu: [5, 10, 20, 50],
-    responsive: true,
-    autoWidth: true
-});
-
-});
-</script>
-
-
-<!-- funcion para agregar un curso, esta conectada al controlador agregarcurso.php -->
-<script>
-  function agregarCurso() {
-  Swal.fire({
-    title: 'Agregar Nuevo Curso',
-    html: `
-      <form id="formAgregarCurso" class="text-start" action="../controllers/agregarCurso.php" method="POST">
-        <div class="mb-3">
-          <label for="nombre_curso" class="form-label">Nombre del curso</label>
-          <input type="text" class="form-control" id="nombre_curso" name="nombre_curso" required>
-        </div>
-      </form>
-    `,
-    confirmButtonText: 'Agregar',
-    showCancelButton: true,
-    cancelButtonText: 'Cancelar',
-    focusConfirm: false,
-    preConfirm: () => {
-      const nombre = document.getElementById('nombre_curso').value.trim();
-
-      if (!nombre) {
-        Swal.showValidationMessage('Por favor, complete el nombre.');
-        return false;
-      }
-
-      const formData = new FormData();
-      formData.append('nombre_curso', nombre);
-
-      return formData;
-    }
-  }).then((result) => {
-    if (result.isConfirmed) {
-      const formData = result.value;
-
-      $.ajax({
-        url: '../controllers/agregarCurso.php',
-        type: 'POST',
-        data: formData,
-        contentType: false,
-        processData: false,
-        dataType: 'json',
-        success: function(response) {
-          if (response.success) {
-            Swal.fire(' Éxito', response.message, 'success').then(() => {
-              location.reload();
-            });
-          } else {
-            Swal.fire(' Atención', response.message, 'warning');
-          }
-        },
-        error: function(xhr, status, error) {
-          console.error("Error AJAX:", error, xhr.responseText);
-          Swal.fire(' Error', 'El servidor no respondió correctamente.', 'error');
-        }
-      });
-    }
-  });
-}
-</script>
-
-
-
-
-
-=======
->>>>>>> a127e8f2315dfedaf01b09e2f3e6ef8abd0b87f4
   </body>
   <!--end::Body-->
 </html>
