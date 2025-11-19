@@ -1,12 +1,10 @@
 
-
 <!doctype html>
 <html lang="en">
   <!--begin::Head-->
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title> SenaLibrary </title>
-
+    <title> Notas </title>
     <!--begin::Accessibility Meta Tags-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
     <meta name="color-scheme" content="light dark" />
@@ -472,22 +470,17 @@
             <div class="row">
             <?php if($rol != "Administrador"): ?>
               <div class="table-responsive">
-                  <div class="col"> 
-                      <button class="btn btn-sm btn-primary btnReservar mb-4 w-100" onclick="abrirCrearReserva()">
-                          <i class="bi bi-bookmark-plus"></i> Realizar Reserva
-                      </button> 
-                  </div>
+
+              <h1>Notas</h1>
+                  
                   
                   <table id="tablaLibros" class="table table-striped table-bordered" width="100%">
                       <thead class="table-success">
                           <tr>
-                              <th>ID</th>
-                              <th>Título</th>
-                              <th>Autor</th>
-                              <th>ISBN</th>
-                              <th>Categoría</th>
-                              <th>Cantidad</th>
-                              <th>Estado</th>
+                              <th>Curso</th>
+                              <th>Nota</th>
+                              <th>Comentario</th>
+                              
                           </tr>
                       </thead>
                       <tbody>
