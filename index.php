@@ -6,10 +6,6 @@ header("Pragma: no-cache");
 require_once 'models/MySQL.php';
 session_start();
 
-if (!isset($_SESSION['tipo_usuario'])) {
-    header("location: ./views/login.php");
-    exit();
-}
 $mysql = new MySQL();
 $mysql->conectar();
 
@@ -453,9 +449,9 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
                 </a>
               </li>
               <li class="nav-item">
-                <a href="./views/historialPrestamosAdmin.php" class="nav-link">
+                <a href="./views/verNotasAprendiz.php" class="nav-link">
                  <i class="bi bi-journal-arrow-down me-2"></i>
-                  <span> Prestamos </span>
+                  <span> ver notaaaaass </span>
                 </a>
               </li>
               <?php endif; ?>
