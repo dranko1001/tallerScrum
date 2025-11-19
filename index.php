@@ -6,7 +6,7 @@ header("Pragma: no-cache");
 require_once 'models/MySQL.php';
 session_start();
 
-if (!isset($_SESSION['tipo_usuario'])) {
+if (!isset($_SESSION['rol_usuario'])) {
     header("location: ./views/login.php");
     exit();
 }
