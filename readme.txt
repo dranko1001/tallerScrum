@@ -1,0 +1,1 @@
+terminar tabla cursos, crear en el detalles el mostrar los instructores y estudiantes con el con klas mismas consultas

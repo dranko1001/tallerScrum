@@ -6,8 +6,8 @@ header("Pragma: no-cache");
 require_once '../models/MySQL.php';
 session_start();
 
-if (!isset($_SESSION['tipo_usuario'])) {
-    header("location: ./login.php");
+if (!isset($_SESSION['rol_usuario'])) {
+    header("location: ../views/login.php");
     exit();
 }
 $mysql = new MySQL();
@@ -20,11 +20,11 @@ $nombre=$_SESSION['nombre_usuario'];
 $resultado = $mysql->efectuarConsulta(" SELECT 
         c.id_curso,
         c.nombre_curso,
-        i.correo_instructor AS instructor
+        i.correo_instructor AS instructores
     FROM cursos c
-    LEFT JOIN instructor_has_cursos ihc 
+    INNER JOIN instructor_has_cursos ihc 
         ON c.id_curso = ihc.cursos_id_curso
-    LEFT JOIN instructor i
+    INNER JOIN instructor i
         ON ihc.instructor_id_usuario = i.id_instructor");
 ?>
 
@@ -279,7 +279,7 @@ $resultado = $mysql->efectuarConsulta(" SELECT
         <tr>
             <th>ID</th>
             <th>Curso</th>
-            <th>Instructor</th>
+            <th>Instructores</th>
             <th>Acciones</th>
         </tr>
     </thead>
@@ -292,7 +292,7 @@ $resultado = $mysql->efectuarConsulta(" SELECT
         <tr>
             <td><?= $c['id_curso'] ?></td>
             <td><?= $c['nombre_curso'] ?></td>
-            <td><?= $c['instructor'] ?></td>
+            <td><?= $c['instructores'] ?></td>
             <td>
                 <button class="btn btn-info btn-sm"><i class="bi bi-eye"></i> detalles</button>
                 
@@ -407,6 +407,188 @@ $('#tablaCursos').DataTable({
 
 });
 </script>
+<!--consulta de cesar, borrar apenas termine el boton de agregar curso:
+function agregarLibro() {
+  Swal.fire({
+    title: 'Agregar Nuevo Libro',
+    html: `
+      <form id="formAgregarLibro" class="text-start" action="controllers/agregarLibro.php" method="POST">
+        <div class="mb-3">
+          <label for="titulo_libro" class="form-label">Titulo</label>
+          <input type="text" class="form-control" id="titulo_libro" name="titulo_libro" required>
+        </div>
+        <div class="mb-3">
+          <label for="autor_libro" class="form-label">Autor</label>
+          <input type="text" class="form-control" id="autor_libro" name="autor_libro" required>
+        </div>
+        <div class="mb-3">
+          <label for="ISBN" class="form-label">ISBN</label>
+          <input type="text" class="form-control" id="ISBN" name="ISBN" required>
+        </div>
+        <div class="mb-3">
+          <label for="categoria" class="form-label">Categoria</label>
+          <input type="text" id="busquedaCategoria" class="form-control" placeholder="Buscar Categoria..." onkeyup="buscarCategoria(this.value)">
+          <input type="hidden" id="categoria_libro" name="categoria_libro">
+          <div id="sugerencias" style="text-align:left; max-height:200px; margin-top: 5px;"></div>
+          <div id="categoriasSeleccionadas">  </div>
+        </div>
+        <div class="mb-3">
+            <label for="cantidad" class="form-label">Cantidad</label>
+            <input type="number" class="form-control" id="cantidad" name="cantidad" required>
+        </div>
+      </form>
+    `,
+    confirmButtonText: 'Agregar',
+    showCancelButton: true,
+    cancelButtonText: 'Cancelar',
+    focusConfirm: false,
+    preConfirm: () => {
+      const titulo = document.getElementById('titulo_libro').value.trim();
+      const autor = document.getElementById('autor_libro').value.trim();
+      const ISBN = document.getElementById('ISBN').value.trim();
+      const categorias = document.getElementById('categoria_libro').value.trim();
+      const cantidad = document.getElementById('cantidad').value.trim();
+
+      if (!titulo || !autor || !ISBN || !categorias ||autor || !cantidad) {
+        Swal.showValidationMessage('Por favor, complete todos los campos.');
+        return false;
+      }
+
+      const formData = new FormData();
+      formData.append('titulo_libro', titulo);
+      formData.append('autor_libro', autor);
+      formData.append('ISBN_libro', ISBN);
+      formData.append('categoria_libro', categorias);
+      formData.append('cantidad_libro', cantidad);
+      return formData;
+    }
+  }).then((result) => {
+    if (result.isConfirmed) {
+      const formData = result.value;
+
+      $.ajax({
+        url: '../controllers/agregarLibro.php',
+        type: 'POST',
+        data: formData,
+        contentType: false,
+        processData: false,
+        dataType: 'json',
+        success: function(response) {
+          if (response.success) {
+            Swal.fire(' Éxito', response.message, 'success').then(() => {
+              location.reload();
+            });
+          } else {
+            Swal.fire(' Atención', response.message, 'warning');
+          }
+        },
+        error: function(xhr, status, error) {
+          console.error("Error AJAX:", error, xhr.responseText);
+          Swal.fire(' Error', 'El servidor no respondió correctamente.', 'error');
+        }
+      });
+    }
+  });
+}
+
+function buscarCategoria(texto) {
+    // Si el texto es muy corto, limpia las sugerencias
+    if (texto.length < 2) {
+        document.getElementById('sugerencias').innerHTML = '';
+        return;
+    }
+
+    $.ajax({
+        url: '../controllers/buscarCategoria.php', 
+        type: 'POST',
+        dataType: 'json', 
+        data: { query: texto },
+        success: function (categorias) {
+            let html = '<ul class="list-group">';
+            // se utiliza .replace para que no rompa el codigo con comillas
+            if (categorias.length > 0) {
+                categorias.forEach(categoria => {
+                    html += `
+                        <li class="list-group-item list-group-item-action" 
+                            style="cursor: pointer;" 
+                            onclick="seleccionarCategoria(${categoria.id}, '${categoria.nombre_categoria.replace(/'/g, "\\'")}')">
+                            ${categoria.nombre_categoria}
+                        </li>
+                    `;
+                });
+                html += '</ul>';
+            } else {
+                html += `
+                    <div class="alert alert-info mb-0">
+                        <small>No se encontró la categoría "${texto}"</small>
+                    </div>
+                    <button type="button" class="btn btn-success btn-sm mt-2" onclick="agregarNuevaCategoria('${texto.replace(/'/g, "\\'")}')">
+                        <i class="bi bi-plus-circle"></i> Agregar nueva categoría
+                    </button>
+                `;
+            }
+
+            document.getElementById('sugerencias').innerHTML = html;
+        },
+        error: function (xhr, status, error) {
+            console.error("❌ Error en la búsqueda:", error);
+            document.getElementById('sugerencias').innerHTML = '<div class="text-danger ps-2">Error al buscar categorias.</div>';
+        }
+    });
+}
+
+let categoriasSeleccionadas = []; // lista de id
+
+function seleccionarCategoria(id, nombre) {    
+    // Convertir a numero
+    id = parseInt(id);
+    console.log('ID convertido:', id, 'Tipo:', typeof id);
+    
+    // Evitar repetidos
+    if (categoriasSeleccionadas.includes(id)) {
+        // Limpiar busqueda
+        document.getElementById('sugerencias').innerHTML = '';
+        document.getElementById('busquedaCategoria').value = '';
+        return;
+    }
+
+    categoriasSeleccionadas.push(id);
+
+    // Actualizar input oculto (lo enviamos como JSON)
+    document.getElementById('categoria_libro').value = JSON.stringify(categoriasSeleccionadas);
+
+    // Agregar chip visual
+    const contenedor = document.querySelector('categoriasSeleccionadas');
+    const chip = document.querySelector('span');
+
+    chip.style.cssText = `
+        display: inline-flex;
+        align-items: center;
+        background-color: #e8f5e9;
+        color: #2e7d32;
+        padding: 6px 12px;
+        border-radius: 30px;
+        font-size: 14px;
+        border: 1px solid #c8e6c9;
+    `;
+    chip.innerHTML = `
+        ${nombre}
+        <span 
+            onclick="eliminarCategoria(${id}, this)" 
+            style="
+                margin-left: 8px;
+                font-size: 16px;
+                cursor: pointer;
+            "
+        >&times;</span>
+    `;
+
+    contenedor.appendChild(chip);
+
+    // Limpiar sugerencias
+    document.getElementById('sugerencias').innerHTML = '';
+    document.getElementById('busquedaCategoria').value = '';
+}  -->
 
 
 <!-- funcion para agregar curso, en progreso porque toca que crear un curso con los correos de los insrtuctores y los alumnos -->
@@ -435,7 +617,7 @@ function agregarCurso() {
                         </div>
 
                         <div class="mb-3 text-start">
-                            <label class="form-label">Instructor</label>
+                            <label class="form-label">Instructores</label>
                             <select class="form-control" id="id_instructor" required>
                                 ${opciones}
                             </select>
