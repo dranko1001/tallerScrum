@@ -1,11 +1,33 @@
+<?php
+header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+header("Cache-Control: post-check=0, pre-check=0", false);
+header("Pragma: no-cache");
+//conexion a la base de datos
+require_once 'models/MySQL.php';
+session_start();
 
+if (!isset($_SESSION['tipo_usuario'])) {
+    header("location: ./views/login.php");
+    exit();
+}
+$mysql = new MySQL();
+$mysql->conectar();
+
+$idUsuario = $_SESSION['id_usuario'];
+$rol = $_SESSION['tipo_usuario'];
+$nombre = $_SESSION['nombre_usuario'];
+
+//consulta para obtener los libros
+
+$resultado = $mysql->efectuarConsulta("SELECT * FROM usuario");
+?>
 
 <!doctype html>
 <html lang="en">
   <!--begin::Head-->
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title> EduSena </title>
+    <title> SenaLibrary </title>
 
     <!--begin::Accessibility Meta Tags-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
@@ -147,7 +169,7 @@
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  flex-wrap: wrap;           
+  flex-wrap: wrap;           /* ✅ para que sea responsive */
   gap: 30px;                 /* espacio entre columnas */
   margin: 40px auto;
   max-width: 1400px;
@@ -155,7 +177,7 @@
 }
 
 .card-documento {
-  flex: 1 1 30%;             
+  flex: 1 1 30%;             /* ✅ tres columnas iguales */
   min-width: 350px;          /* ancho mínimo para pantallas pequeñas */
   background-color: #ffffff;
   padding: 30px 35px;
@@ -188,7 +210,7 @@
 
 .row-form {
   display: flex;
-  flex-direction: column; 
+  flex-direction: column; /* ✅ Fuerza disposición vertical */
   gap: 16px;
   width: 100%;
 }
@@ -284,6 +306,7 @@
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.2s ease;
     
+    /* CLAVE: Hace que el botón ocupe el espacio disponible de forma equitativa */
     flex-grow: 1; 
 }
 
@@ -342,7 +365,7 @@
               <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3 mt-2" style="min-width: 230px;">
                 <!-- Cabecera del usuario -->
                 <li class="bg-primary text-white text-center rounded-top py-3">
-                  <p class="mb-0 fw-bold fs-5"><?php echo  $nombre; ?></p>
+                  <p class="mb-0 fw-bold fs-5"><?php echo $nombre; ?></p>
                   <small><?php echo $rol; ?></small>
                 </li>
 
@@ -384,7 +407,7 @@
            
             <!--end::Brand Image-->
             <!--begin::Brand Text-->
-            <span class="title"> senaEdu </span>
+            <span class="title"><img src="media/senalibrary icon.png"  style="width:30px; height:40px; vertical-align:middle; margin-right:5px; margin-top: 5px; margin-bottom: 5px;"> SenaLibrary</span>
             <!--end::Brand Text-->
           </a>
           <!--end::Brand Link-->
@@ -410,39 +433,45 @@
                   </span>
                   </a>
               </li>
-               <?php if ($rol == 'admin'): ?>
-              <li class="nav-item">
-                <a href="./views/usuarios.php" class="nav-link">
-                  <i class="bi bi-file-earmark-person me-2"></i>
-                  <span>Usuarios</span>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="./views/inventario.php" class="nav-link">
-                 <i class="bi bi-book me-2"> </i>
-                  <span> Libros </span>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="./views/reservas.php" class="nav-link">
-                 <i class="bi bi-journal-richtext me-2"> </i>
-                  <span> Reservas </span>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="./views/historialPrestamosAdmin.php" class="nav-link">
-                 <i class="bi bi-journal-arrow-down me-2"></i>
-                  <span> Prestamos </span>
-                </a>
-              </li>
+               <?php if ($rol == 'Administrador'): ?>
+                  <li class="nav-item">
+                    <a href="./views/usuarios.php" class="nav-link">
+                      <i class="bi bi-file-earmark-person me-2"></i>
+                      <span>Usuarios</span>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="./views/inventario.php" class="nav-link">
+                     <i class="bi bi-book me-2"> </i>
+                      <span> Libros </span>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="./views/reservas.php" class="nav-link">
+                     <i class="bi bi-journal-richtext me-2"> </i>
+                      <span> Reservas </span>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="./views/historialPrestamosAdmin.php" class="nav-link">
+                     <i class="bi bi-journal-arrow-down me-2"></i>
+                      <span> Prestamos </span>
+                    </a>
+                  </li>
               <?php endif; ?>
-               <?php if ($rol == 'aprendiz'): ?>
-              <li class="nav-item">
-                <a href="./views/gestionTrabajos.php" class="nav-link">
-                 <i class="bi bi-calendar-check me-2 me-2"> </i>
-                  <span> Trabajos </span>
-                </a>
-              </li>
+               <?php if ($rol == 'Cliente'): ?>
+                  <li class="nav-item">
+                    <a href="./views/gestionarReserva.php" class="nav-link">
+                     <i class="bi bi-calendar-check me-2 me-2"> </i>
+                      <span> Gestionar Reserva </span>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="./views/historialPrestamos.php" class="nav-link">
+                      <i class="bi bi-clock-history me-2"></i>
+                      <span> Historial </span>
+                    </a>
+                  </li>
               <?php endif; ?>
             </ul>
             <!--end::Sidebar Menu-->
@@ -463,51 +492,240 @@
         <div class="app-content">
           <div class="container-fluid">
             <div class="row">
-            <?php if($rol != "admin"): ?>
-              <div class="table-responsive">
-                  <div class="col"> 
-                      <button class="btn btn-sm btn-primary btnReservar mb-4 w-100" onclick="abrirCrearReserva()">
-                          <i class="bi bi-bookmark-plus"></i> Realizar Reserva
-                      </button> 
-                  </div>
+            <?php if ($rol != "Administrador"): ?>
+                  <div class="table-responsive">
+                      <div class="col"> 
+                          <button class="btn btn-sm btn-primary btnReservar mb-4 w-100" onclick="abrirCrearReserva()">
+                              <i class="bi bi-bookmark-plus"></i> Realizar Reserva
+                          </button> 
+                      </div>
                   
-                  <table id="tablaLibros" class="table table-striped table-bordered" width="100%">
-                      <thead class="table-success">
-                          <tr>
-                              <th>ID</th>
-                              <th>Título</th>
-                              <th>Autor</th>
-                              <th>ISBN</th>
-                              <th>Categoría</th>
-                              <th>Cantidad</th>
-                              <th>Estado</th>
-                          </tr>
-                      </thead>
-                      <tbody>
-                          <?php while($fila = $resultadolibros->fetch_assoc()): ?>
+                      <table id="tablaLibros" class="table table-striped table-bordered" width="100%">
+                          <thead class="table-success">
                               <tr>
-                                  <td><?= $fila['id_libro'] ?></td>
-                                  <td><?= $fila['titulo_libro'] ?></td>
-                                  <td><?= $fila['autor_libro'] ?></td>
-                                  <td><?= $fila['ISBN_libro'] ?></td>
-                                  <td><?= $fila['categoria_libro'] ?></td>
-                                  <td><?= $fila['cantidad_libro'] ?></td>
-                                  <td>
-                                      <?php if($fila['cantidad_libro'] == 0): ?>
-                                          <span class="badge bg-danger">No disponible</span>
-                                      <?php else: ?>
-                                          <span class="badge bg-success"><?= $fila['disponibilidad_libro'] ?></span>
-                                      <?php endif; ?>
-                                  </td>
+                                  <th>ID</th>
+                                  <th>Título</th>
+                                  <th>Autor</th>
+                                  <th>ISBN</th>
+                                  <th>Categoría</th>
+                                  <th>Cantidad</th>
+                                  <th>Estado</th>
                               </tr>
-                          <?php endwhile; ?>
-                      </tbody>
-                  </table>
-              </div>
+                          </thead>
+                          <tbody>
+                              <?php while ($fila = $resultadolibros->fetch_assoc()): ?>
+                                      <tr>
+                                          <td><?= $fila['id_libro'] ?></td>
+                                          <td><?= $fila['titulo_libro'] ?></td>
+                                          <td><?= $fila['autor_libro'] ?></td>
+                                          <td><?= $fila['ISBN_libro'] ?></td>
+                                          <td><?= $fila['categoria_libro'] ?></td>
+                                          <td><?= $fila['cantidad_libro'] ?></td>
+                                          <td>
+                                              <?php if ($fila['cantidad_libro'] == 0): ?>
+                                                      <span class="badge bg-danger">No disponible</span>
+                                              <?php else: ?>
+                                                      <span class="badge bg-success"><?= $fila['disponibilidad_libro'] ?></span>
+                                              <?php endif; ?>
+                                          </td>
+                                      </tr>
+                              <?php endwhile; ?>
+                          </tbody>
+                      </table>
+                  </div>
             <?php endif; ?>
             </div>
           </div>
         </div>
+        <!-- graficos de la pagina principal -->
+        <?php if ($rol == "Administrador"): ?>
+              <div class="row">
+                <div class="col-12 text-center mb-4">
+                  <h3 class="d-flex justify-content-center align-items-center"><img src="media/graficos icon.png" alt="PDF" style="width:40px; height:40px; vertical-align:middle; margin-right:10px;">Graficos:</h3>
+                </div>
+              </div>
+            <div class="container mt-4">
+              <div class="row">
+                <!-- Gráfica grande a la izquierda -->
+                <div class="col-lg-8">
+                  <div class="card" style="min-height: 660px; padding:1rem; border-radius:12px;">
+                    <div class="card-body">
+                      <h4 class="titulo-seccion">
+                        <i class="fa-solid fa-book"></i> Total de libros registrados
+                      </h4>
+                      <canvas id="graficoTotalLibros" width="400" height="410"></canvas>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Contenedor de las dos pequeñas a la derecha -->
+                <div class="col-lg-4 d-flex flex-column justify-content-between">
+                  <div class="card mb-3" style="min-height: 320px; padding:1rem; border-radius:12px;">
+                    <div class="card-body">
+                      <h4 class="titulo-seccion">
+                        <i class="fa-solid fa-calendar-check"></i> Total de reservas realizadas
+                      </h4>
+                      <canvas id="graficoTotalReservas" width="300" height="100"></canvas>
+                    </div>
+                  </div>
+
+                  <div class="card" style="min-height: 320px; padding:1rem; border-radius:12px;">
+                    <div class="card-body">
+                      <h4 class="titulo-seccion">
+                        <i class="fa-solid fa-book-open-reader"></i> Total de préstamos realizados
+                      </h4>
+                      <canvas id="graficoTotalPrestamos" width="300" height="100"></canvas>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+    <!-- botones de los modulos cesar!!! -->
+            <div class="container text-center mt-4">
+              <div class="row g-3">
+                <div class="col">
+                  <a href="./views/usuarios.php"> <button class="btn btn-info w-100">
+                    <i class="fa-solid fa-user"></i><img src="media/usuarios modulo icon.png" alt="PDF" style="width:30px; height:30px; vertical-align:middle; margin-right:6px;"> Usuarios
+                  </button> 
+                  </a>
+                </div>
+                <div class="col">
+                  <a href="./views/inventario.php"> <button class="btn btn-info w-100">
+                    <i class="fa-solid fa-book"></i><img src="media/libro icon.png" alt="PDF" style="width:30px; height:30px; vertical-align:middle; margin-right:6px;"> Libros
+                  </button>
+                  </a>
+                </div>
+                <div class="col">
+                  <a href="./views/reservas.php"> <button class="btn btn-info w-100">
+                    <i class="fa-solid fa-calendar-check"></i><img src="media/reservas icon.png" alt="PDF" style="width:30px; height:30px; vertical-align:middle; margin-right:6px;"> Reservas
+                  </button>
+                  </a>
+                </div>
+                <div class="col">
+                  <a href="./views/historialPrestamosAdmin.php"> <button class="btn btn-info w-100 ">
+                    <i class="fa-solid fa-book-open-reader"></i><img src="media/prestamos icon.png" alt="PDF" style="width:30px; height:30px; vertical-align:middle; margin-right:6px;"> Préstamos
+                  </button>
+                  </a>
+                </div>
+              </div>
+            </div>
+        <?php endif; ?>
+        <?php
+        $hoy = date('Y-m-d');
+        $inicioMes = date('Y-m-01');
+        ?>
+        <?php if ($rol == 'Administrador'): ?>
+              <div class="row">
+              <div class="col-12 text-center mt-4">
+                <h3 class="mb-0"><img src="media/documentos icon.png" alt="PDF" style="width:40px; height:40px; vertical-align:middle; margin-right:6px;">Generar Documentos:</h3>
+              </div>
+            </div>
+            <!-- === FORMULARIOS DE DOCUMENTOS === -->
+            <div class="container-documentos">
+
+              <!-- === PDF DE RESERVAS === -->
+              <div class="card-documento">
+            <h4 class="titulo-seccion">
+              <i class="fa-solid fa-calendar-check"></i> Generar reporte de las reservas
+            </h4>
+                <form action="views/generar_pdf_reservas.php" target="_blank" method="get" id="formReservas" onsubmit="return validarRangoFechas(this);" class="form-documentos">
+                  <div class="row-form">
+                    <div class="form-group">
+                      <label for="fechaInicio">Fecha inicio:</label>
+                      <input type="date" id="fechaInicio" name="fechaInicio" required value="<?php echo htmlspecialchars($inicioMes); ?>">
+                    </div>
+
+                    <div class="form-group">
+                      <label for="fechaFin">Fecha fin:</label>
+                      <input type="date" id="fechaFin" name="fechaFin" required value="<?php echo htmlspecialchars($hoy); ?>">
+                    </div>
+
+                    <div class="form-group">
+                      <label for="salida">Ver:</label>
+                      <select id="salida" name="salida">
+                        <option value="I">Ver en el navegador</option>
+                        <option value="D">Descargar</option>
+                      </select>
+                    </div>
+
+                    <div class="form-group">
+            <div style="text-align: center;">
+              <button type="submit" class="btn-generar">
+                <i class="fa-solid fa-file-pdf"> <img src="media/pdf icon.png" alt="PDF" style="width:20px; height:20px; vertical-align:middle; margin-right:6px;"></i> GENERAR PDF
+              </button>
+            </div>
+                    </div>
+                
+                  </div>
+                </form>
+              </div>
+
+              <!-- === PDF DE INVENTARIO === -->
+            <div class="card-documento">
+            <h4 class="titulo-seccion">
+              <i class="fa-solid fa-boxes-stacked"></i> Generar reporte del inventario
+            </h4>
+                <form action="views/generar_pdf_inventario.php" target="_blank" method="get" class="form-documentos">
+                    <div class="row-form">
+                        <div class="form-group">
+                            <label for="salida_inventario">Ver:</label>
+                            <select id="salida_inventario" name="salida"> <option value="I">Ver en el navegador</option>
+                                <option value="D">Descargar</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group btn-group">
+
+
+                      <button type="submit" class="btn-generar">
+                        <i class="fa-solid fa-file-pdf"><img src="media/pdf icon.png" alt="PDF" style="width:20px; height:20px; vertical-align:middle; margin-right:6px;"></i> GENERAR PDF  
+                      </button>
+                            <a href="views/generar_excel_inventario.php" class="btn-excel">
+                                <i class="fa-solid fa-file-excel"><img src="media/excel icon.png" alt="PDF" style="width:20px; height:20px; vertical-align:middle; margin-right:6px;"></i>  EXCEL
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+              <!-- === PDF DE PRÉSTAMOS === -->
+              <div class="card-documento">
+            <h4 class="titulo-seccion">
+              <i class="fa-solid fa-handshake"></i> Generar reporte de préstamos
+            </h4>
+                <form action="views/generar_pdf_prestamos.php" target="_blank" method="get" class="form-documentos" id="formPrestamos" onsubmit="return validarRangoFechas(this);">
+                  <div class="row-form">
+                    <div class="form-group">
+                      <label for="fechaInicio">Fecha inicio:</label>
+                      <input type="date" id="fechaInicio" name="fechaInicio" required value="<?php echo htmlspecialchars($inicioMes); ?>">
+                    </div>
+
+                    <div class="form-group">
+                      <label for="fechaFin">Fecha fin:</label>
+                      <input type="date" id="fechaFin" name="fechaFin" required value="<?php echo htmlspecialchars($hoy); ?>">
+                    </div>
+
+                    <div class="form-group">
+                      <label for="salida">Ver:</label>
+                      <select id="salida" name="salida">
+                        <option value="I">Ver en el navegador</option>
+                        <option value="D">Descargar</option>
+                      </select>
+                    </div>
+
+                    <div class="form-group btn-group">
+                      <button type="submit"  class="btn-generar">
+                        <i class="fa-solid fa-file-pdf"><img src="media/pdf icon.png" alt="PDF" style="width:20px; height:20px; vertical-align:middle; margin-right:6px;"></i> GENERAR PDF  
+                      </button>
+            <button type="submit" formaction="views/generar_excel_prestamos.php" class="btn-excel">
+              <i class="fa-solid fa-file-excel"><img src="media/excel icon.png" alt="PDF" style="width:20px; height:20px; vertical-align:middle; margin-right:6px;"></i> EXCEL
+            </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+        <?php endif; ?>
        <!--end::App Content-->
       </main>
       <!--end::App Main-->
@@ -517,7 +735,7 @@
         <!--begin::Copyright-->
         <strong>
           Copyright &copy; 2014-2025&nbsp;
-          <a href="https://adminlte.io" class="text-decoration-none">senaEdu</a>.
+          <a href="https://adminlte.io" class="text-decoration-none">SenaLibrary</a>.
         </strong>
         All rights reserved.
         <!--end::Copyright-->
@@ -544,6 +762,11 @@
     <!--end::Required Plugin(Bootstrap 5)--><!--begin::Required Plugin(AdminLTE)-->
     <script src="public/js/adminlte.js"></script>
     <!--end::Required Plugin(AdminLTE)--><!--begin::OverlayScrollbars Configure-->
+    <?php if ($rol == "Administrador"): ?>
+            <script src="js/graficos_libro.js"></script>
+            <script src="js/grafico_reservas.js"></script> 
+            <script src="js/grafico_prestamos.js"></script>
+    <?php endif; ?>
     <script>
       const SELECTOR_SIDEBAR_WRAPPER = '.sidebar-wrapper';
       const Default = {
@@ -585,6 +808,20 @@
       integrity="sha256-XPpPaZlU8S/HWf7FZLAncLg2SAkP8ScUTII89x9D3lY="
       crossorigin="anonymous"
     ></script>
+<script>
+$(document).ready(function() {
+   $('#tablaLibros').DataTable({
+    language: {
+        url: "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
+    },
+    pageLength: 5,
+    lengthMenu: [5, 10, 20, 50],
+    responsive: true,
+    autoWidth: true
+});
+
+});
+</script>
   </body>
   <!--end::Body-->
 </html>

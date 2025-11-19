@@ -1,5 +1,5 @@
 <?php
-require_once(__DIR__ . "/models/MySQL.php");
+require_once(__DIR__ . "/../models/MySQL.php");
 
 $mysql = new MySQL();
 $conn = $mysql->conectar();

@@ -1,34 +1,10 @@
-<?php 
-header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
-header("Cache-Control: post-check=0, pre-check=0", false);
-header("Pragma: no-cache");
-//conexion a la base de datos
-require_once 'models/MySQL.php';
-session_start();
-
-if (!isset($_SESSION['tipo_usuario'])) {
-    header("location: ./views/login.php");
-    exit();
-}
-$mysql = new MySQL();
-$mysql->conectar();
-
-$idUsuario=$_SESSION['id_usuario'];
-$rol= $_SESSION['tipo_usuario'];
-$nombre=$_SESSION['nombre_usuario'];
-
-//consulta para obtener los libros
-
-$resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
-?>
 
 <!doctype html>
 <html lang="en">
   <!--begin::Head-->
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title> SenaLibrary </title>
-
+    <title> Notas </title>
     <!--begin::Accessibility Meta Tags-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
     <meta name="color-scheme" content="light dark" />
@@ -494,22 +470,17 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
             <div class="row">
             <?php if($rol != "Administrador"): ?>
               <div class="table-responsive">
-                  <div class="col"> 
-                      <button class="btn btn-sm btn-primary btnReservar mb-4 w-100" onclick="abrirCrearReserva()">
-                          <i class="bi bi-bookmark-plus"></i> Realizar Reserva
-                      </button> 
-                  </div>
+
+              <h1>Notas</h1>
+                  
                   
                   <table id="tablaLibros" class="table table-striped table-bordered" width="100%">
                       <thead class="table-success">
                           <tr>
-                              <th>ID</th>
-                              <th>Título</th>
-                              <th>Autor</th>
-                              <th>ISBN</th>
-                              <th>Categoría</th>
-                              <th>Cantidad</th>
-                              <th>Estado</th>
+                              <th>Curso</th>
+                              <th>Nota</th>
+                              <th>Comentario</th>
+                              
                           </tr>
                       </thead>
                       <tbody>
@@ -823,9 +794,268 @@ $(document).ready(function() {
 });
 </script>
 
+<script>
+function abrirCrearReserva() {
+  Swal.fire({
+    title: 'Reserva',
+    html: `
+      <input type="text" id="busquedaProducto" class="swal2-input" placeholder="Buscar Libro..." onkeyup="buscarLibro(this.value)">
+      <div id="sugerencias" style="text-align:left; max-height:150px; overflow-y:auto;"></div>
+
+      <table class="table table-bordered" id="tablaLibros" style="margin-top:10px; font-size:14px;">
+        <thead class="table-dark">
+          <tr>
+            <th>Título</th>
+            <th>Autor</th>
+            <th>Estado</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <div id="fechaRecogidaContainer" style="display:none; margin-top:10px;">
+        <label class="form-label">Fecha de Recogida</label>
+        <input type="date" id="fechaRecogida" class="swal2-input" style="width:50%;">
+      </div>
+    `,
+    width: 800,
+    showCancelButton: true,
+    confirmButtonText: 'Confirmar Reserva',
+    cancelButtonText: 'Cancelar',
+
+    didOpen: () => {
+      window.tbodyModal = Swal.getPopup().querySelector("#tablaLibros tbody");
+
+      const observer = new MutationObserver(() => {
+        const filas = tbodyModal.querySelectorAll('tr').length;
+        const contenedorFecha = Swal.getPopup().querySelector("#fechaRecogidaContainer");
+        contenedorFecha.style.display = filas > 0 ? 'block' : 'none';
+      });
+
+      observer.observe(tbodyModal, { childList: true });
+    },
+
+    preConfirm: () => {
+      return new Promise((resolve, reject) => {
+        const libros = [];
+        const popup = Swal.getPopup();
+
+        popup.querySelectorAll('#tablaLibros tbody tr').forEach(row => {
+          const id = parseInt(row.getAttribute('data-id'));
+          const cantidad = parseInt(row.querySelector('.cantidad').value);
+          if (id && cantidad > 0) {
+            libros.push({ id, cantidad });
+          }
+        });
+
+        if (libros.length === 0) {
+          reject('Agrega al menos un libro.');
+          return;
+        }
+
+        const fechaRecogida = popup.querySelector('#fechaRecogida').value;
+        if (!fechaRecogida) {
+          reject('Selecciona la fecha de recogida.');
+          return;
+        }
+
+        $.ajax({
+          url: './controllers/agregarReserva.php',
+          type: 'POST',
+          dataType: 'json',
+          data: { 
+            libros: JSON.stringify(libros),
+            fechaRecogida: fechaRecogida
+          },
+          success: function (res) {
+            if (res.success) resolve(res.message);
+            else reject(res.message);
+          },
+          error: function (xhr) {
+            console.error("Error AJAX:", xhr.responseText);
+            reject('No se pudo agregar la reserva.');
+          }
+        });
+      }).catch(error => Swal.showValidationMessage(error));
+    }
+  }).then((result) => {
+    if (result.isConfirmed && result.value) {
+      Swal.fire('¡Éxito!', result.value, 'success').then(() => location.reload());
+    }
+  });
+}
 
 
+// Buscar libros mientras se escribe
+function buscarLibro(texto) {
+    // Si el texto es muy corto, limpia las sugerencias
+    if (texto.length < 2) {
+        document.getElementById('sugerencias').innerHTML = '';
+        return;
+    }
 
+    $.ajax({
+        url: './controllers/buscarLibro.php', 
+        type: 'POST',
+        dataType: 'json', 
+        data: { query: texto },
+        success: function (libros) {
+            let html = '<ul class="list-group">';
+
+            if (libros.length > 0) {
+                libros.forEach(libro => {
+                    let disponible;
+            if (libro.cantidad_libro > 0) {
+                disponible = true;
+            } else {
+                disponible = false;
+            }
+
+            // Si esta disponible
+            if (disponible) {
+                html += `
+                    <li class="list-group-item list-group-item-action"
+                        onclick="agregarLibro('${libro.id_libro}', '${libro.titulo_libro}', '${libro.autor_libro}', '${libro.cantidad_libro}')">
+                        <strong>${libro.titulo_libro}</strong> <br>
+                        <small>Autor: ${libro.autor_libro}</small><br>
+                        <span class="text-success fw-semibold">Disponible: ${libro.cantidad_libro}</span>
+                    </li>
+                `;
+            } 
+            // Si NO esta disponible
+            else {
+                html += `
+                    <li class="list-group-item disabled bg-light text-muted" style="cursor: not-allowed;">
+                        <strong>${libro.titulo_libro}</strong> <br>
+                        <small>Autor: ${libro.autor_libro}</small><br>
+                        <span class="text-danger fw-semibold">No disponible</span>
+                    </li>
+                `;
+            }
+        });
+            } else {
+                html += `<li class="list-group-item text-muted">No se encontraron libros.</li>`;
+            }
+
+            html += '</ul>';
+            document.getElementById('sugerencias').innerHTML = html;
+        },
+        error: function (xhr, status, error) {
+            console.error("❌ Error en la búsqueda:", error);
+            document.getElementById('sugerencias').innerHTML = '<div class="text-danger ps-2">Error al buscar libros.</div>';
+        }
+    });
+}
+
+// Agregar libro a la tabla
+function agregarLibro(id, titulo, autor, stock) {
+  const tbody = Swal.getPopup().querySelector("#tablaLibros tbody"); 
+
+  // Evitar duplicados
+if ([...tbody.querySelectorAll("tr")].some(row => row.dataset.id === id)) {
+  const alerta = document.createElement("div");
+  alerta.className = "alert alert-warning alert-dismissible fade show mt-2";
+  alerta.role = "alert";
+  alerta.innerHTML = `
+    <strong>Atención:</strong> Este libro ya fue agregado.
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  `;
+  const contenedor = document.querySelector("#sugerencias") || document.querySelector("#tablaLibrosModal");
+  contenedor.prepend(alerta); //inserta la alerta al incio 
+
+  setTimeout(() => alerta.remove(), 3000);
+  return;
+}
+// Verificar disponibilidad
+  let disponibilidad;
+  if (stock > 0) {
+    disponibilidad = "Disponible";
+  } else {
+    disponibilidad = "No disponible";
+  }
+
+  const fila = document.createElement('tr');
+  fila.dataset.id = id;
+
+  fila.innerHTML = `
+    <td>${titulo}</td>
+    <td>${autor}</td>
+    <td>
+      <input type="text" value="1" 
+      class="form-control form-control-sm cantidad">
+      <small class="text-muted">Stock: ${stock}</small>
+    </td>
+    <td>${disponibilidad}</td>
+    <td><button class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()">Quitar</button></td>
+  `;
+
+  tbody.appendChild(fila);
+
+  document.getElementById('sugerencias').innerHTML = '';
+  document.getElementById('busquedaProducto').value = '';
+}
+
+</script>
+
+<!-- script que hace que el formulario de documentos abra en nueva pestaña o descargue segun la seleccion -->
+<script>
+document.querySelectorAll('.form-documentos').forEach(form => {
+  form.addEventListener('submit', e => {
+    const salida = form.querySelector('select[name="salida"]');
+    if (salida && salida.value === 'I') {
+      form.setAttribute('target', '_blank'); // abre en nueva pestaña
+    } else {
+      form.removeAttribute('target'); // descarga en la misma
+    }
+  });
+});
+</script>
+<script>
+/**
+ * Valida que la fecha de inicio no sea posterior a la fecha de fin 
+ * dentro de un formulario específico.
+ * @param {HTMLFormElement} formElement - El elemento del formulario que se está enviando.
+ * @returns {boolean} - true si la validación es exitosa, false si falla.
+ */
+function validarRangoFechas(formElement) {
+    // 1. Encontrar los campos de fecha DENTRO de este formulario
+    // Usamos querySelector('[name="nombreDelCampo"]') dentro del formulario
+    const fechaInicioInput = formElement.querySelector('input[name="fechaInicio"]');
+    const fechaFinInput = formElement.querySelector('input[name="fechaFin"]');
+
+    // Comprobar que los campos existen (seguridad)
+    if (!fechaInicioInput || !fechaFinInput) {
+        console.error("No se encontraron los campos 'fechaInicio' o 'fechaFin' en el formulario.");
+        return true; // Permitir el envío por defecto si algo falla en el script
+    }
+
+    // 2. Obtener los valores de las fechas
+    const fechaInicio = new Date(fechaInicioInput.value);
+    const fechaFin = new Date(fechaFinInput.value);
+
+    // 3. Comparar las fechas
+    // Si la Fecha de Inicio es mayor (más avanzada/futura) que la Fecha de Fin.
+    if (fechaInicio > fechaFin) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Rango de fechas inválido',
+            text: 'La Fecha de Inicio no puede ser posterior a la Fecha de Fin. Por favor, corrígelo.',
+            confirmButtonText: 'Entendido',
+            confirmButtonColor: '#ff0000ff'
+        });
+        
+        // Enfoca el campo de inicio para guiar al usuario
+        fechaInicioInput.focus(); 
+        
+        // Detiene el envío del formulario
+        return false; 
+    }
+
+    // 4. Si la validación es exitosa, permite el envío del formulario
+    return true;
+}
+</script>
 
   </body>
   <!--end::Body-->
