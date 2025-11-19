@@ -50,7 +50,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM trabajos");
     <!--begin::Accessibility Features-->
     <!-- Skip links will be dynamically added by accessibility.js -->
     <meta name="supported-color-schemes" content="light dark" />
-    <link rel="preload" href="./css/adminlte.css" as="style" />
+    <link rel="preload" href="../css/adminlte.css" as="style" />
     <!--end::Accessibility Features-->
 
     <!--begin::Fonts-->
@@ -370,11 +370,6 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM trabajos");
                 <li><hr class="dropdown-divider m-0"></li>
 
                 <!-- Opciones del menu -->
-                <li>
-                  <a href="./views/perfilUsuario.php" class="dropdown-item d-flex align-items-center py-2">
-                    <i class="bi bi-person me-2 text-secondary"></i> Perfil
-                  </a>
-                </li>
 
                 <!-- Separador -->
                 <li><hr class="dropdown-divider m-0"></li>
@@ -457,12 +452,11 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM trabajos");
         <div class="app-content">
           <div class="container-fluid">
             <div class="row">
-            <?php if($rol != "admin"): ?>
               <div class="table-responsive">
                   <div class="col"> 
-                      <button class="btn btn-sm btn-primary btnReservar mb-4 w-100" onclick="abrirCrearReserva()">
-                          <i class="bi bi-bookmark-plus"></i> Realizar Reserva
-                      </button> 
+                        <button class="btn btn-sm btn-primary btnReservar mb-4 w-100" onclick="subirTrabajo()">
+                            <i class="bi bi-upload"></i> Subir Trabajo
+                        </button>
                   </div>
                   
                   <table id="tablaTrabajos" class="table table-striped table-bordered" width="100%">
@@ -470,7 +464,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM trabajos");
                           <tr>
                               <th>ID</th>
                               <th>Nombre del Trabajo</th>
-                              <th>Fecha del Trabajo</th>
+                              <th>Fecha Limite del Trabajo</th>
                               <th>Acciones</th>
                           </tr>
                       </thead>
@@ -480,19 +474,23 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM trabajos");
                                   <td><?= $fila['id_trabajo'] ?></td>
                                   <td><?= $fila['nombre_trabajo'] ?></td>
                                   <td><?= $fila['fecha_trabajo'] ?></td>
-                                  <td>
-                                      <?php if($fila['cantidad_libro'] == 0): ?>
-                                          <span class="badge bg-danger">No disponible</span>
-                                      <?php else: ?>
-                                          <span class="badge bg-success"><?= $fila['disponibilidad_libro'] ?></span>
-                                      <?php endif; ?>
-                                  </td>
+                                  <td class="justify-content-center d-flex gap-1">
+                              <a class="btn btn-warning btn-sm"  title="editar" onclick="editarTrabajo(<?php echo $fila['id_trabajo']; ?>)">
+          <i class="bi bi-pencil-square"></i>
+          </a>
+          | 
+          <a class="btn btn-danger btn-sm"  
+          href="javascript:void(0);" 
+          onclick="eliminarTrabajo(<?php echo $fila['id_trabajo']; ?>)" 
+          title="Eliminar"> 
+              <i class="bi bi-trash"></i>
+          </a>
+                            </td>
                               </tr>
                           <?php endwhile; ?>
                       </tbody>
                   </table>
               </div>
-            <?php endif; ?>
             </div>
           </div>
         </div>
@@ -530,7 +528,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM trabajos");
       crossorigin="anonymous"
     ></script>
     <!--end::Required Plugin(Bootstrap 5)--><!--begin::Required Plugin(AdminLTE)-->
-    <script src="public/js/adminlte.js"></script>
+    <script src="../public/js/adminlte.js"></script>
     <!--end::Required Plugin(AdminLTE)--><!--begin::OverlayScrollbars Configure-->
     <script>
       const SELECTOR_SIDEBAR_WRAPPER = '.sidebar-wrapper';
@@ -573,6 +571,94 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM trabajos");
       integrity="sha256-XPpPaZlU8S/HWf7FZLAncLg2SAkP8ScUTII89x9D3lY="
       crossorigin="anonymous"
     ></script>
+    <script>
+$(document).ready(function() {
+   $('#tablaTrabajos').DataTable({
+    language: {
+        url: "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
+    },
+    pageLength: 5,
+    lengthMenu: [5, 10, 20, 50],
+    responsive: true,
+    autoWidth: true
+});
+
+});
+</script>
+
+<script>
+function subirTrabajo() {
+  Swal.fire({
+    title: 'Subir Evidencia',
+    html: `
+      <form id="formAgregarTrabajo" class="text-start" enctype="multipart/form-data">
+        <div class="mb-3">
+          <label class="form-label">Nombre del trabajo</label>
+          <input type="text" class="form-control" id="nombre_trabajo" required>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Subir Evidencia</label>
+          <input type="file" accept=".pdf, .docx" class="form-control" id="ruta_trabajo" required>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Curso</label>
+          <select class="form-select" id="curso" required>
+            <option value="" disabled selected>Seleccione un curso</option>
+            <?php 
+              $consultaCursos = $mysql->efectuarConsulta("SELECT id_curso, nombre_curso FROM cursos");
+              while($fila=$consultaCursos->fetch_assoc()):
+            ?>
+              <option value="<?= $fila['id_curso'] ?>">
+                <?= $fila['nombre_curso'] ?>
+              </option>
+            <?php endwhile; ?>
+          </select>
+        </div>
+      </form>
+    `,
+    confirmButtonText: 'Agregar',
+    showCancelButton: true,
+    cancelButtonText: 'Cancelar',
+    preConfirm: () => {
+      const nombre = document.getElementById('nombre_trabajo').value.trim();
+      const archivo = document.getElementById('ruta_trabajo').files[0];
+      const curso = document.getElementById('curso').value;
+
+      if (!nombre || !archivo || !curso) {
+        Swal.showValidationMessage('Complete todos los campos.');
+        return false;
+      }
+
+      const formData = new FormData();
+      formData.append('nombre_trabajo', nombre);
+      formData.append('ruta_trabajo', archivo);
+      formData.append('cursos_id_curso', curso); 
+
+      return formData;
+    }
+  }).then(result => {
+    if (result.isConfirmed) {
+      $.ajax({
+        url: '../controllers/agregarTrabajo.php',
+        type: 'POST',
+        data: result.value,
+        contentType: false,
+        processData: false,
+        dataType: 'json',
+        success: function(response) {
+          Swal.fire('Éxito', response.message, 'success').then(() => location.reload());
+        },
+        error: function() {
+          Swal.fire('Error', 'El servidor no respondió', 'error');
+        }
+      });
+    }
+  });
+}
+</script>
+
   </body>
   <!--end::Body-->
 </html>
