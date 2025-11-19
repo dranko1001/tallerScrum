@@ -16,15 +16,9 @@ $mysql->conectar();
 $rol= $_SESSION['rol_usuario'];
 $nombre=$_SESSION['correo_'.$rol];
 
-<<<<<<< HEAD
-//consulta para obtener los libros
-
-$resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
-=======
 //consulta para obtener los trabajos
-$resultado=$mysql->efectuarConsulta("SELECT * FROM trabajos");
->>>>>>> a127e8f2315dfedaf01b09e2f3e6ef8abd0b87f4
-?>
+// $resultado=$mysql->efectuarConsulta("SELECT * FROM trabajos");
+// ?>
 
 <!doctype html>
 <html lang="en">
@@ -486,6 +480,78 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM trabajos");
         </div>
         <!--end::App Content Header-->
         <!--begin::App Content-->
+
+
+
+        <!-- boton para llamar el formulario de agregar curso -->
+<button class="btn btn-info" onclick="agregarCurso()">
+  <i class="bi bi-plus-lg"></i> Agregar Curso
+</button>
+
+
+<!-- funcion para agregar un curso, esta conectada al controlador agregarcurso.php -->
+<script>
+  function agregarCurso() {
+  Swal.fire({
+    title: 'Agregar Nuevo Curso',
+    html: `
+      <form id="formAgregarCurso" class="text-start" action="controllers/agregarCurso.php" method="POST">
+        <div class="mb-3">
+          <label for="nombre_curso" class="form-label">Nombre del curso</label>
+          <input type="text" class="form-control" id="nombre_curso" name="nombre_curso" required>
+        </div>
+      </form>
+    `,
+    confirmButtonText: 'Agregar',
+    showCancelButton: true,
+    cancelButtonText: 'Cancelar',
+    focusConfirm: false,
+    preConfirm: () => {
+      const nombre = document.getElementById('nombre_curso').value.trim();
+
+      if (!nombre) {
+        Swal.showValidationMessage('Por favor, complete el nombre.');
+        return false;
+      }
+
+      const formData = new FormData();
+      formData.append('nombre_curso', nombre);
+
+      return formData;
+    }
+  }).then((result) => {
+    if (result.isConfirmed) {
+      const formData = result.value;
+
+      $.ajax({
+        url: 'controllers/agregarCurso.php',
+        type: 'POST',
+        data: formData,
+        contentType: false,
+        processData: false,
+        dataType: 'json',
+        success: function(response) {
+          if (response.success) {
+            Swal.fire(' Éxito', response.message, 'success').then(() => {
+              location.reload();
+            });
+          } else {
+            Swal.fire(' Atención', response.message, 'warning');
+          }
+        },
+        error: function(xhr, status, error) {
+          console.error("Error AJAX:", error, xhr.responseText);
+          Swal.fire(' Error', 'El servidor no respondió correctamente.', 'error');
+        }
+      });
+    }
+  });
+}
+</script>
+
+
+
+ 
         <div class="app-content">
           <div class="container-fluid">
             <div class="row">
@@ -611,7 +677,6 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM trabajos");
       integrity="sha256-XPpPaZlU8S/HWf7FZLAncLg2SAkP8ScUTII89x9D3lY="
       crossorigin="anonymous"
     ></script>
-<<<<<<< HEAD
 <script>
 $(document).ready(function() {
    $('#tablaLibros').DataTable({
@@ -628,72 +693,14 @@ $(document).ready(function() {
 </script>
 
 
-<!-- funcion para agregar un curso, esta conectada al controlador agregarcurso.php -->
-<script>
-  function agregarCurso() {
-  Swal.fire({
-    title: 'Agregar Nuevo Curso',
-    html: `
-      <form id="formAgregarCurso" class="text-start" action="../controllers/agregarCurso.php" method="POST">
-        <div class="mb-3">
-          <label for="nombre_curso" class="form-label">Nombre del curso</label>
-          <input type="text" class="form-control" id="nombre_curso" name="nombre_curso" required>
-        </div>
-      </form>
-    `,
-    confirmButtonText: 'Agregar',
-    showCancelButton: true,
-    cancelButtonText: 'Cancelar',
-    focusConfirm: false,
-    preConfirm: () => {
-      const nombre = document.getElementById('nombre_curso').value.trim();
-
-      if (!nombre) {
-        Swal.showValidationMessage('Por favor, complete el nombre.');
-        return false;
-      }
-
-      const formData = new FormData();
-      formData.append('nombre_curso', nombre);
-
-      return formData;
-    }
-  }).then((result) => {
-    if (result.isConfirmed) {
-      const formData = result.value;
-
-      $.ajax({
-        url: '../controllers/agregarCurso.php',
-        type: 'POST',
-        data: formData,
-        contentType: false,
-        processData: false,
-        dataType: 'json',
-        success: function(response) {
-          if (response.success) {
-            Swal.fire(' Éxito', response.message, 'success').then(() => {
-              location.reload();
-            });
-          } else {
-            Swal.fire(' Atención', response.message, 'warning');
-          }
-        },
-        error: function(xhr, status, error) {
-          console.error("Error AJAX:", error, xhr.responseText);
-          Swal.fire(' Error', 'El servidor no respondió correctamente.', 'error');
-        }
-      });
-    }
-  });
-}
-</script>
 
 
 
 
 
-=======
->>>>>>> a127e8f2315dfedaf01b09e2f3e6ef8abd0b87f4
+
+
+
   </body>
   <!--end::Body-->
 </html>
