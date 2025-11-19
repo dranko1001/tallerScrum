@@ -3,7 +3,7 @@ header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
 header("Cache-Control: post-check=0, pre-check=0", false);
 header("Pragma: no-cache");
 //conexion a la base de datos
-require_once 'models/MySQL.php';
+require_once '../models/MySQL.php';
 session_start();
 
 if (!isset($_SESSION['tipo_usuario'])) {
@@ -433,33 +433,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
                   </span>
                   </a>
               </li>
-               <?php if ($rol == 'Administrador'): ?>
-              <li class="nav-item">
-                <a href="./views/usuarios.php" class="nav-link">
-                  <i class="bi bi-file-earmark-person me-2"></i>
-                  <span>Usuarios</span>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="./views/inventario.php" class="nav-link">
-                 <i class="bi bi-book me-2"> </i>
-                  <span> Libros </span>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="./views/reservas.php" class="nav-link">
-                 <i class="bi bi-journal-richtext me-2"> </i>
-                  <span> Reservas </span>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="./views/historialPrestamosAdmin.php" class="nav-link">
-                 <i class="bi bi-journal-arrow-down me-2"></i>
-                  <span> Prestamos </span>
-                </a>
-              </li>
-              <?php endif; ?>
-               <?php if ($rol == 'Cliente'): ?>
+               <?php if ($rol == 'aprendiz'): ?>
               <li class="nav-item">
                 <a href="./views/gestionarReserva.php" class="nav-link">
                  <i class="bi bi-calendar-check me-2 me-2"> </i>
@@ -500,27 +474,21 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
                       </button> 
                   </div>
                   
-                  <table id="tablaLibros" class="table table-striped table-bordered" width="100%">
+                  <table id="tablaTrabajos" class="table table-striped table-bordered" width="100%">
                       <thead class="table-success">
                           <tr>
                               <th>ID</th>
-                              <th>Título</th>
-                              <th>Autor</th>
-                              <th>ISBN</th>
-                              <th>Categoría</th>
-                              <th>Cantidad</th>
-                              <th>Estado</th>
+                              <th>Nombre del Trabajo</th>
+                              <th>Fecha del Trabajo</th>
+                              <th>Acciones</th>
                           </tr>
                       </thead>
                       <tbody>
-                          <?php while($fila = $resultadolibros->fetch_assoc()): ?>
+                          <?php while($fila = $resultado->fetch_assoc()): ?>
                               <tr>
-                                  <td><?= $fila['id_libro'] ?></td>
-                                  <td><?= $fila['titulo_libro'] ?></td>
-                                  <td><?= $fila['autor_libro'] ?></td>
-                                  <td><?= $fila['ISBN_libro'] ?></td>
-                                  <td><?= $fila['categoria_libro'] ?></td>
-                                  <td><?= $fila['cantidad_libro'] ?></td>
+                                  <td><?= $fila['id_trabajo'] ?></td>
+                                  <td><?= $fila['nombre_trabajo'] ?></td>
+                                  <td><?= $fila['fecha_trabajo'] ?></td>
                                   <td>
                                       <?php if($fila['cantidad_libro'] == 0): ?>
                                           <span class="badge bg-danger">No disponible</span>

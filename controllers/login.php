@@ -6,7 +6,8 @@ require_once '../models/MySQL.php';
 session_start();
 
 if (isset($_POST['email']) && !empty($_POST['email']) && 
-    isset($_POST['password']) && !empty($_POST['password'])) {
+    isset($_POST['password']) && !empty($_POST['password'])&& 
+    isset($_POST['rol']) && !empty($_POST['rol'])) {
 
     $mysql = new MySQL();
     $mysql->conectar();
@@ -14,48 +15,68 @@ if (isset($_POST['email']) && !empty($_POST['email']) &&
     // Sanitizacion de datos 
     $correo = htmlspecialchars(trim($_POST['email']), ENT_QUOTES, 'UTF-8');
     $password = $_POST['password'];
+    $rolSeleccionado = $_POST['rol'];
 
     // Consultas del usuario 
-    $resultado = $mysql->efectuarConsulta("SELECT * FROM administrador WHERE correo_admin='".$correo."'");
-    $resultadoInstructor= $mysql->efectuarConsulta("SELECT * FROM instructor WHERE correo_instructor='".$correo."'");
-    $resultadoAprendiz = $mysql->efectuarConsulta("SELECT * FROM aprendices WHERE correo_aprendiz='".$correo."'");
+    if ($rolSeleccionado === 'admin') {
+        $resultado = $mysql->efectuarConsulta("SELECT * FROM administrador WHERE correo_admin='".$correo."'");
+    } elseif ($rolSeleccionado === 'instructor') {
+        $resultado = $mysql->efectuarConsulta("SELECT * FROM instructor WHERE correo_instructor='".$correo."'");
+    } elseif ($rolSeleccionado === 'aprendiz') {
+        $resultado = $mysql->efectuarConsulta("SELECT * FROM aprendices WHERE correo_aprendiz='".$correo."'");
+    } else {
 
-
-    $administrador = mysqli_fetch_assoc($resultado);
-    $aprendiz = mysqli_fetch_assoc($resultadoAprendiz);
-    $instructor = mysqli_fetch_assoc($resultadoInstructor);
-
-    $mysql->desconectar();
-    $usuario_encontrado = null;
-    $hash_password = '';
-    $rol = '';
-
-    // Logica para determinar el usuario encontrado y su rol
-    if ($administrador) {
-        $usuario_encontrado = $administrador;
-        $hash_password = $administrador['password_admin'];
-        $rol = '';
-    } elseif ($instructor) {
-        $usuario_encontrado = $instructor;
-        $hash_password = $instructor['password_instructor']; 
-        $rol = 'instructor';
-    } elseif ($aprendiz) {
-        $usuario_encontrado = $aprendiz;
-        $hash_password = $aprendiz['password_aprendiz']; 
-        $rol = 'aprendiz';
+        // Rol no valido
+        echo "
+        <!DOCTYPE html>
+        <html lang='es'>
+        <head>
+            <meta charset='UTF-8'>
+            <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+        </head>
+        <body>
+            <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Rol no válido',
+                text: 'Por favor, seleccione un rol válido.'
+            }).then(() => {
+                window.location = '../views/login.php';
+            });
+            </script>
+        </body>
+        </html>";
+        exit();
     }
 
-    // Comprobar si se encontro un usuario
-    if ($usuario_encontrado) {
-        
-        if (password_verify($password, $hash_password)) {
-            
-            $id_key = 'id_'.$rol; 
-            
-            $_SESSION['id_usuario'] = $usuario_encontrado[$id_key]; 
-            $_SESSION['correo_'.$rol] = $correo; 
-            $_SESSION['rol_usuario'] = $rol; 
-      
+    $usuario_encontrado = mysqli_fetch_assoc($resultado);
+
+    $mysql->desconectar();
+
+    $hash_password = '';
+    $rol = $rolSeleccionado; 
+
+    // Logica para determinar el usuario encontrado y su rol
+   if ($rol === 'admin') {
+    $hash_password = $usuario_encontrado['password_admin'];
+    $id_key = 'id_admin';
+} elseif ($rol === 'instructor') {
+    $hash_password = $usuario_encontrado['password_instructor'];
+    $id_key = 'id_instructor';
+} elseif ($rol === 'aprendiz') {
+    $hash_password = $usuario_encontrado['password_aprendiz'];
+    $id_key = 'id_aprendiz';
+}
+
+// Comprobar si se encontro un usuario
+if ($usuario_encontrado) {
+
+    if (password_verify($password, $hash_password)) {
+
+        $_SESSION['id_'.$rol] = $usuario_encontrado[$id_key];
+        $_SESSION['correo_'.$rol] = $correo;
+        $_SESSION['rol_usuario'] = $rol;
+
             echo "
             <!DOCTYPE html>
             <html lang='es'>
