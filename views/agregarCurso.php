@@ -17,7 +17,15 @@ $rol= $_SESSION['tipo_usuario'];
 $nombre=$_SESSION['nombre_usuario'];
 
 //consulta para obtener los libros
-$resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
+$resultado = $mysql->efectuarConsulta(" SELECT 
+        c.id_curso,
+        c.nombre_curso,
+        i.correo_instructor AS instructor
+    FROM cursos c
+    LEFT JOIN instructor_has_cursos ihc 
+        ON c.id_curso = ihc.cursos_id_curso
+    LEFT JOIN instructor i
+        ON ihc.instructor_id_usuario = i.id_instructor");
 ?>
 
 <!doctype html>
@@ -25,7 +33,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
   <!--begin::Head-->
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title> SenaLibrary </title>
+    <title> Taller Scrum </title>
 
     <!--begin::Accessibility Meta Tags-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
@@ -105,8 +113,6 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <!-- DataTables + Bootstrap -->
-<!-- jQuery -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <!-- DataTables núcleo -->
 <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
@@ -199,7 +205,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
            
             <!--end::Brand Image-->
             <!--begin::Brand Text-->
-            <span class="title"><img src="../media/senalibrary icon.png"  style="width:30px; height:40px; vertical-align:middle; margin-right:5px; margin-top: 5px; margin-bottom: 5px;"> SenaLibrary</span>
+            <span class="title">Taller Scrum</span>
             <!--end::Brand Text-->
           </a>
           <!--end::Brand Link-->
@@ -221,33 +227,9 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
                 <a href="../index.php" class="nav-link">
                   <i class="bi bi-speedometer me-2"></i>
                   <span>
-                    Dashboard        
+                    Inicio     
                   </span>
                   </a>
-              </li>
-              <li class="nav-item">
-                <a href="./usuarios.php" class="nav-link">
-                  <i class="bi bi-file-earmark-person me-2"></i>
-                  <span>Usuarios</span>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="inventario.php" class="nav-link active">
-                 <i class="nav-icon bi bi-book me-2"></i>
-                  <span>Libros</span>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="reservas.php" class="nav-link">
-                 <i class="bi bi-journal-richtext me-2"></i>
-                  <span>Reservas</span>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="historialPrestamosAdmin.php" class="nav-link">
-                 <i class="bi bi-journal-arrow-down me-2"></i>
-                  <span>Prestamos</span>
-                </a>
               </li>
             </ul>
             <!--end::Sidebar Menu-->
@@ -265,11 +247,11 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
             <!--begin::Row-->
  <div class="position-relative">
   <h3 class="text-center">
-    <i class="bi bi-bookshelf"></i> Libros
+    <i class="bi bi-mortarboard-fill"></i> Cursos
   </h3>
   <ol class="breadcrumb position-absolute end-0 top-50 translate-middle-y">
-    <li class="breadcrumb-item"><a href="./inventario.php">Libros</a></li>
-    <li class="breadcrumb-item active" aria-current="page">Lista de libros</li>
+    <li class="breadcrumb-item"><a href="./agregarCurso.php">Cursos</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Lista de cursos</li>
   </ol>
 </div>
             <!--end::Row-->
@@ -285,63 +267,46 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
             <div class="row mb-3 align-items-center">
                 <div class="col-md-6 d-flex gap-2">
                 <?php if ($rol == 'Administrador'): ?>
-                     <button type="button" class="btn btn-success" onclick="agregarLibro()">➕ Libro </button>
+                     <button type="button" class="btn btn-success" onclick="agregarCurso()">➕ Curso</button>
                 <?php endif; ?>
                 </div>
             </div>
             <div class="row">
               <!--begin::Col-->
                 <div class="table-responsive">
-                        <table id="tablaLibros" class="table table-striped table-bordered" width="100%">
-                    <thead class="table-success">
-                        <tr>
-                            <th>ID</th>
-                            <th>Titulo</th>
-                            <th>Autor</th>
-                            <th>ISBN</th>
-                            <th>Categoria</th>
-                            <th>Cantidad</th>
-                            <th>Estado</th>
-                            <?php if($rol == "Administrador"): ?>
-                                <th>Acciones</th>
-                            <?php endif; ?>
-                            
-                        </tr>
-                    </thead>
-                    <tbody>
-                    <?php while($fila = $resultado->fetch_assoc()): ?>
-                        <tr>
-                            <td><?php echo $fila['id_libro']; ?></td>
-                            <td><?php echo $fila['titulo_libro']; ?></td>
-                            <td><?php echo $fila['autor_libro']; ?></td>
-                            <td><?php echo $fila['ISBN_libro']; ?></td>
-                            <td><?php echo $fila['categoria_libro']; ?></td>
-                            <td><?php echo $fila['cantidad_libro']; ?></td>
-                            <td>
-                              <?php if($fila['cantidad_libro'] == 0): ?>
-                                <span class="badge bg-danger">No disponible</span>
-                              <?php else: ?>
-                                <span class="badge bg-success"><?= $fila['disponibilidad_libro'] ?></span>
-                              <?php endif; ?>
-                            </td>
-                            <?php if($rol == "Administrador"): ?>
-                            <td class="justify-content-center d-flex gap-1">
-                              <a class="btn btn-warning btn-sm"  title="editar" onclick="editarLibro(<?php echo $fila['id_libro']; ?>)">
-          <i class="bi bi-pencil-square"></i>
-          </a>
-          | 
-          <a class="btn btn-danger btn-sm"  
-          href="javascript:void(0);" 
-          onclick="eliminarLibro(<?php echo $fila['id_libro']; ?>)" 
-          title="Eliminar"> 
-              <i class="bi bi-trash"></i>
-          </a>
-                            </td>
-                            <?php endif; ?>
-                        </tr>
-                    <?php endwhile; ?>
-                    </tbody>
-                        </table>
+<table id="tablaCursos" class="table table-striped table-bordered">
+    <thead class="table-info">
+        <tr>
+            <th>ID</th>
+            <th>Curso</th>
+            <th>Instructor</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+
+    
+        
+        <?php while  ($c = $resultado->fetch_assoc()): ?>
+            
+        <tr>
+            <td><?= $c['id_curso'] ?></td>
+            <td><?= $c['nombre_curso'] ?></td>
+            <td><?= $c['instructor'] ?></td>
+            <td>
+                <button class="btn btn-info btn-sm"><i class="bi bi-eye"></i> detalles</button>
+                
+            </td>
+        </tr>
+        <?php endwhile; ?>
+    </tbody>
+</table>
+
+
+
+
+
+
                 </div>
                 
               <!-- /.Start col -->
@@ -359,7 +324,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
         <!--begin::Copyright-->
         <strong>
           Copyright &copy; 2014-2025&nbsp;
-          <a href="https://adminlte.io" class="text-decoration-none">SenaLibrary</a>.
+          <a href="https://adminlte.io" class="text-decoration-none">Taller Scrum</a>.
         </strong>
         All rights reserved.
         <!--end::Copyright-->
@@ -429,7 +394,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
     ></script>
 <script>
 $(document).ready(function() {
-   $('#tablaLibros').DataTable({
+$('#tablaCursos').DataTable({
     language: {
         url: "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
     },
@@ -439,481 +404,99 @@ $(document).ready(function() {
     autoWidth: true
 });
 
+
 });
 </script>
 
-<script>
-function agregarLibro() {
-  Swal.fire({
-    title: 'Agregar Nuevo Libro',
-    html: `
-      <form id="formAgregarLibro" class="text-start" action="controllers/agregarLibro.php" method="POST">
-        <div class="mb-3">
-          <label for="titulo_libro" class="form-label">Titulo</label>
-          <input type="text" class="form-control" id="titulo_libro" name="titulo_libro" required>
-        </div>
-        <div class="mb-3">
-          <label for="autor_libro" class="form-label">Autor</label>
-          <input type="text" class="form-control" id="autor_libro" name="autor_libro" required>
-        </div>
-        <div class="mb-3">
-          <label for="ISBN" class="form-label">ISBN</label>
-          <input type="text" class="form-control" id="ISBN" name="ISBN" required>
-        </div>
-        <div class="mb-3">
-          <label for="categoria" class="form-label">Categoria</label>
-          <input type="text" id="busquedaCategoria" class="form-control" placeholder="Buscar Categoria..." onkeyup="buscarCategoria(this.value)">
-          <input type="hidden" id="categoria_libro" name="categoria_libro">
-          <div id="sugerencias" style="text-align:left; max-height:200px; margin-top: 5px;"></div>
-          <div id="categoriasSeleccionadas">  </div>
-        </div>
-        <div class="mb-3">
-            <label for="cantidad" class="form-label">Cantidad</label>
-            <input type="number" class="form-control" id="cantidad" name="cantidad" required>
-        </div>
-      </form>
-    `,
-    confirmButtonText: 'Agregar',
-    showCancelButton: true,
-    cancelButtonText: 'Cancelar',
-    focusConfirm: false,
-    preConfirm: () => {
-      const titulo = document.getElementById('titulo_libro').value.trim();
-      const autor = document.getElementById('autor_libro').value.trim();
-      const ISBN = document.getElementById('ISBN').value.trim();
-      const categorias = document.getElementById('categoria_libro').value.trim();
-      const cantidad = document.getElementById('cantidad').value.trim();
 
-      if (!titulo || !autor || !ISBN || !categorias ||autor || !cantidad) {
-        Swal.showValidationMessage('Por favor, complete todos los campos.');
-        return false;
-      }
-
-      const formData = new FormData();
-      formData.append('titulo_libro', titulo);
-      formData.append('autor_libro', autor);
-      formData.append('ISBN_libro', ISBN);
-      formData.append('categoria_libro', categorias);
-      formData.append('cantidad_libro', cantidad);
-      return formData;
-    }
-  }).then((result) => {
-    if (result.isConfirmed) {
-      const formData = result.value;
-
-      $.ajax({
-        url: '../controllers/agregarLibro.php',
-        type: 'POST',
-        data: formData,
-        contentType: false,
-        processData: false,
-        dataType: 'json',
-        success: function(response) {
-          if (response.success) {
-            Swal.fire(' Éxito', response.message, 'success').then(() => {
-              location.reload();
-            });
-          } else {
-            Swal.fire(' Atención', response.message, 'warning');
-          }
-        },
-        error: function(xhr, status, error) {
-          console.error("Error AJAX:", error, xhr.responseText);
-          Swal.fire(' Error', 'El servidor no respondió correctamente.', 'error');
-        }
-      });
-    }
-  });
-}
-
-function buscarCategoria(texto) {
-    // Si el texto es muy corto, limpia las sugerencias
-    if (texto.length < 2) {
-        document.getElementById('sugerencias').innerHTML = '';
-        return;
-    }
-
-    $.ajax({
-        url: '../controllers/buscarCategoria.php', 
-        type: 'POST',
-        dataType: 'json', 
-        data: { query: texto },
-        success: function (categorias) {
-            let html = '<ul class="list-group">';
-            // se utiliza .replace para que no rompa el codigo con comillas
-            if (categorias.length > 0) {
-                categorias.forEach(categoria => {
-                    html += `
-                        <li class="list-group-item list-group-item-action" 
-                            style="cursor: pointer;" 
-                            onclick="seleccionarCategoria(${categoria.id}, '${categoria.nombre_categoria.replace(/'/g, "\\'")}')">
-                            ${categoria.nombre_categoria}
-                        </li>
-                    `;
-                });
-                html += '</ul>';
-            } else {
-                html += `
-                    <div class="alert alert-info mb-0">
-                        <small>No se encontró la categoría "${texto}"</small>
-                    </div>
-                    <button type="button" class="btn btn-success btn-sm mt-2" onclick="agregarNuevaCategoria('${texto.replace(/'/g, "\\'")}')">
-                        <i class="bi bi-plus-circle"></i> Agregar nueva categoría
-                    </button>
-                `;
-            }
-
-            document.getElementById('sugerencias').innerHTML = html;
-        },
-        error: function (xhr, status, error) {
-            console.error("❌ Error en la búsqueda:", error);
-            document.getElementById('sugerencias').innerHTML = '<div class="text-danger ps-2">Error al buscar categorias.</div>';
-        }
-    });
-}
-
-let categoriasSeleccionadas = []; // lista de id
-
-function seleccionarCategoria(id, nombre) {    
-    // Convertir a numero
-    id = parseInt(id);
-    console.log('ID convertido:', id, 'Tipo:', typeof id);
-    
-    // Evitar repetidos
-    if (categoriasSeleccionadas.includes(id)) {
-        // Limpiar busqueda
-        document.getElementById('sugerencias').innerHTML = '';
-        document.getElementById('busquedaCategoria').value = '';
-        return;
-    }
-
-    categoriasSeleccionadas.push(id);
-
-    // Actualizar input oculto (lo enviamos como JSON)
-    document.getElementById('categoria_libro').value = JSON.stringify(categoriasSeleccionadas);
-
-    // Agregar chip visual
-    const contenedor = document.querySelector('categoriasSeleccionadas');
-    const chip = document.querySelector('span');
-
-    chip.style.cssText = `
-        display: inline-flex;
-        align-items: center;
-        background-color: #e8f5e9;
-        color: #2e7d32;
-        padding: 6px 12px;
-        border-radius: 30px;
-        font-size: 14px;
-        border: 1px solid #c8e6c9;
-    `;
-    chip.innerHTML = `
-        ${nombre}
-        <span 
-            onclick="eliminarCategoria(${id}, this)" 
-            style="
-                margin-left: 8px;
-                font-size: 16px;
-                cursor: pointer;
-            "
-        >&times;</span>
-    `;
-
-    contenedor.appendChild(chip);
-
-    // Limpiar sugerencias
-    document.getElementById('sugerencias').innerHTML = '';
-    document.getElementById('busquedaCategoria').value = '';
-}
-
-function eliminarCategoria(id, elemento) {
-    // Convertir a numero
-    id = parseInt(id);
-    
-    // Remover del arreglo
-    categoriasSeleccionadas = categoriasSeleccionadas.filter(catId => catId !== id);
-
-    // Actualizamos el input oculto
-    document.getElementById('categoria_libro').value = JSON.stringify(categoriasSeleccionadas);
-
-    // Eliminar visualmente la viñeta
-    elemento.parentNode.remove();
-}
-
-function agregarNuevaCategoria(nombreCategoria) {
-    Swal.fire({
-        title: 'Agregar Nueva Categoría',
-        html: `
-            <input type="text" id="nuevaCategoria" class="form-control" value="${nombreCategoria}" placeholder="Nombre de la categoría">
-        `,
-        confirmButtonText: 'Guardar',
-        showCancelButton: true,
-        cancelButtonText: 'Cancelar',
-        preConfirm: () => {
-            const nombre = document.getElementById('nuevaCategoria').value.trim();
-            if (!nombre) {
-                Swal.showValidationMessage('Por favor, ingrese el nombre de la categoría.');
-                return false;
-            }
-            return { nombre: nombre };
-        }
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.ajax({
-                url: '../controllers/agregarCategoria.php',
-                type: 'POST',
-                dataType: 'json',
-                data: { nombre_categoria: result.value.nombre },
-                success: function(response) {
-                    if (response.success) {
-
-                        //agregar automaticamente
-                        seleccionarCategoria(response.id, result.value.nombre);
-
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Categoría agregada correctamente',
-                            timer: 1000,
-                            showConfirmButton: false
-                        });
-
-                        document.getElementById('busquedaCategoria').value = '';
-                        document.getElementById('sugerencias').innerHTML = '';
-
-                    } else {
-                        Swal.fire('Error', response.message || 'No se pudo agregar la categoría', 'error');
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error("Error al agregar categoría:", error);
-                    Swal.fire('Error', 'No se pudo conectar con el servidor', 'error');
-                }
-            });
-        }
-    });
-}
-
-</script>
-
-
+<!-- funcion para agregar curso, en progreso porque toca que crear un curso con los correos de los insrtuctores y los alumnos -->
 
 <script>
+function agregarCurso() {
 
-function editarLibro(id) {
-    // Primero obtenemos los datos del usuario
     $.ajax({
-        url: '../controllers/info_libro.php',
-        type: 'POST',
-        data: { id: id },
+        url: '../controllers/consultar_instructor.php',
+        type: 'GET',
         dataType: 'json',
-        success: function(response) {
-            if (!response.success) {
-                Swal.fire('⚠️ Atención', response.message, 'warning');
-                return;
-            }
+        success: function(instructores) {
 
-            const libro = response.data;
-
-            //se crea variable para cargar el select con el que tiene el usuario
-            let categoriaLibro = '';
-
-            if (libro.categoria_libro === 'Ficcion') {
-                categoriaLibro = `
-            <option value="Ficcion">Ficcion</option>
-            <option value="No Ficcion">No Ficcion</option>
-            <option value="De Referencia"> De R eferencia</option>
-            <option value="Libros de Texto"> Libros de Texto</option>
-            <option value="Tecnicos o Especializados"> Tecnicos o Especializados</option>
-            <option value="Practicos"> Practicos</option>
-            <option value="Poeticos"> Poeticos</option>
-            <option value="Religiosos"> Religiosos</option>
-                `;
-            } else if (libro.categoria_libro === 'No ficcion') {
-                categoriaLibro = `
-            <option value="Ficcion">Ficcion</option>
-            <option value="No Ficcion">No Ficcion</option>
-            <option value="De Referencia"> De Referencia</option>
-            <option value="Libros de Texto"> Libros de Texto</option>
-            <option value="Tecnicos o Especializados"> Tecnicos o Especializados</option>
-            <option value="Practicos"> Practicos</option>
-            <option value="Poeticos"> Poeticos</option>
-            <option value="Religiosos"> Religiosos</option>
-                `;
-            } else if (libro.categoria_libro  === 'De Referencia') {
-                categoriaLibro = `
-            <option value="Ficcion">Ficcion</option>
-            <option value="No Ficcion">No Ficcion</option>
-            <option value="De Referencia"> De Referencia</option>
-            <option value="Libros de Texto"> Libros de Texto</option>
-            <option value="Tecnicos o Especializados"> Tecnicos o Especializados</option>
-            <option value="Practicos"> Practicos</option>
-            <option value="Poeticos"> Poeticos</option>
-            <option value="Religiosos"> Religiosos</option>
-                `;
-            } else if (libro.categoria_libro  === 'Libros de Texto') {
-                categoriaLibro = `
-            <option value="Ficcion">Ficcion</option>
-            <option value="No Ficcion">No Ficcion</option>
-            <option value="De Referencia"> De Referencia</option>
-            <option value="Libros de Texto"> Libros de Texto</option>
-            <option value="Tecnicos o Especializados"> Tecnicos o Especializados</option>
-            <option value="Practicos"> Practicos</option>
-            <option value="Poeticos"> Poeticos</option>
-            <option value="Religiosos"> Religiosos</option>
-                `;
-            } else if (libro.categoria_libro  === 'Tecnicos o Especializados') {
-                categoriaLibro = `
-            <option value="Ficcion">Ficcion</option>
-            <option value="No Ficcion">No Ficcion</option>
-            <option value="De Referencia"> De Referencia</option>
-            <option value="Libros de Texto"> Libros de Texto</option>
-            <option value="Tecnicos o Especializados"> Tecnicos o Especializados</option>
-            <option value="Practicos"> Practicos</option>
-            <option value="Poeticos"> Poeticos</option>
-            <option value="Religiosos"> Religiosos</option>
-                `;
-            } else if (libro.categoria_libro  === 'Practicos') {
-                categoriaLibro = `
-            <option value="Ficcion">Ficcion</option>
-            <option value="No Ficcion">No Ficcion</option>
-            <option value="De Referencia"> De Referencia</option>
-            <option value="Libros de Texto"> Libros de Texto</option>
-            <option value="Tecnicos o Especializados"> Tecnicos o Especializados</option>
-            <option value="Practicos"> Practicos</option>
-            <option value="Poeticos"> Poeticos</option>
-            <option value="Religiosos"> Religiosos</option>
-                `;
-            } else if (libro.categoria_libro  === 'Poeticos') {
-                categoriaLibro = `
-            <option value="Ficcion">Ficcion</option>
-            <option value="No Ficcion">No Ficcion</option>
-            <option value="De Referencia"> De Referencia</option>
-            <option value="Libros de Texto"> Libros de Texto</option>
-            <option value="Tecnicos o Especializados"> Tecnicos o Especializados</option>
-            <option value="Practicos"> Practicos</option>
-            <option value="Poeticos"> Poeticos</option>
-            <option value="Religiosos"> Religiosos</option>
-                `;
-            } else if (libro.categoria_libro  === 'Religiosos') {
-                categoriaLibro = `
-            <option value="Ficcion">Ficcion</option>
-            <option value="No Ficcion">No Ficcion</option>
-            <option value="De Referencia"> De Referencia</option>
-            <option value="Libros de Texto"> Libros de Texto</option>
-            <option value="Tecnicos o Especializados"> Tecnicos o Especializados</option>
-            <option value="Practicos"> Practicos</option>
-            <option value="Poeticos"> Poeticos</option>
-            <option value="Religiosos"> Religiosos</option>
-                `;
-            }
+            let opciones = "";
+            instructores.forEach(i => {
+                opciones += `<option value="${i.id_instructor}">${i.nombre}</option>`;
+            });
 
             Swal.fire({
-                title: 'Editar Libro',
+                title: 'Agregar Nuevo Curso',
                 html: `
-                    <form id="formEditarLibro" class="form-control" method="POST" enctype="multipart/form-data">
-
-                        <div class="mb-3">
-                            <label class="form-label">Titulo</label>
-                            <input type="text" class="form-control" id="titulo" value="${libro.titulo_libro}" required>
+                    <form id="formAgregarCurso">
+                        <div class="mb-3 text-start">
+                            <label class="form-label">Nombre del Curso</label>
+                            <input type="text" class="form-control" id="nombre_curso" required>
                         </div>
 
-                        <div class="mb-3">
-                            <label class="form-label">Autor</label>
-                            <input type="text" class="form-control" id="autor" value="${libro.autor_libro}" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">ISBN</label>
-                            <input type="text" class="form-control" id="ISBN" value="${libro.ISBN_libro}" disabled>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label"> Categoria</label>
-                            <select class="form-control" id="categoria" required>
-                            ${categoriaLibro} //se llama la variable
+                        <div class="mb-3 text-start">
+                            <label class="form-label">Instructor</label>
+                            <select class="form-control" id="id_instructor" required>
+                                ${opciones}
                             </select>
                         </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Cantidad</label>
-                            <input type="number" class="form-control" id="cantidad" min="0" value="${libro.cantidad_libro}" required>
-                        </div>
-
                     </form>
                 `,
+                confirmButtonText: 'Agregar',
                 showCancelButton: true,
-                confirmButtonText: 'Guardar',
                 cancelButtonText: 'Cancelar',
                 focusConfirm: false,
-
                 preConfirm: () => {
-                    const formData = new FormData();
-                    formData.append('id', id);
-                    formData.append('titulo', $('#titulo').val().trim());
-                    formData.append('autor', $('#autor').val().trim());
-                    formData.append('ISBN', $('#ISBN').val().trim());
-                    formData.append('categoria', $('#categoria').val().trim());
-                    formData.append('cantidad', $('#cantidad').val());
-                    return formData;
+                    const nombre = $("#nombre_curso").val().trim();
+                    const instructor = $("#id_instructor").val();
+
+                    if (!nombre || !instructor) {
+                        Swal.showValidationMessage('Completa todos los campos');
+                        return false;
+                    }
+
+                    return {
+                        nombre_curso: nombre,
+                        id_instructor: instructor
+                    };
                 }
-            }).then(result => {
+
+            }).then((result) => {
                 if (result.isConfirmed) {
+                    
                     $.ajax({
-                        url: '../controllers/editar_Libro.php',
+                        url: '../controllers/agregarCurso.php',
                         type: 'POST',
                         data: result.value,
-                        contentType: false,
-                        processData: false,
                         dataType: 'json',
-                        success: function(res) {
-                            if (res.success) {
-                                Swal.fire('✅ Éxito', res.message, 'success').then(() => location.reload());
+                        success: function(response) {
+                            if (response.success) {
+                                Swal.fire('Éxito', response.message, 'success')
+                                .then(() => location.reload());
                             } else {
-                                Swal.fire('⚠️ Atención', res.message, 'warning');
+                                Swal.fire('Error', response.message, 'error');
                             }
                         },
-                        error: function(xhr, status, error) {
-                            Swal.fire('❌ Error', 'Error en el servidor', 'error');
-                            console.error(error, xhr.responseText);
+                        error: function(e){
+                            Swal.fire('Error', 'No se pudo conectar con el servidor', 'error');
                         }
                     });
+
                 }
             });
+
         },
-        error: function() {
-            Swal.fire('❌ Error', 'No se pudo cargar la información del usuario', 'error');
+        error: function(e){
+            Swal.fire('Error', 'No se pudieron cargar los instructores', 'error');
         }
     });
-}
 
-</script>
-
-<script>
-function eliminarLibro(id) {
-  Swal.fire({
-    title: "¿Deseas eliminar el libro?",
-    text: "No podrás revertir esto",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonColor: "#3085d6",
-    cancelButtonColor: "#d33",
-    confirmButtonText: "Sí, eliminar",
-    cancelButtonText: "Cancelar"
-  }).then((result) => {
-    if (result.isConfirmed) {
-      Swal.fire({
-        title: "Eliminado!",
-        text: "El libro ha sido eliminado exitosamente.",
-        icon: "success",
-        timer: 2000,      // el tiempo que se demora en cerrar el alert 
-        showConfirmButton: false
-      }).then(() => {
-        // Redirige al controlador de eliminar  cuando cierra el alert 
-        window.location.href = "../controllers/eliminarLibro.php?id=" + id;
-      });
-    }
-  });
 }
 </script>
+
+
+
+
 
   </body>
   <!--end::Body-->
