@@ -81,10 +81,10 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM trabajos");
     <!--end::Third Party Plugin(Bootstrap Icons)-->
 
     <!--begin::Required Plugin(AdminLTE)-->
-    <link rel="stylesheet" href="./css/adminlte.css" />
+    <link rel="stylesheet" href="../css/adminlte.css" />
     <!--end::Required Plugin(AdminLTE)-->
     <!-- Estilo propio -->
-     <link rel="stylesheet" href="./css/style.css">
+     <link rel="stylesheet" href="../css/style.css">
 
     <!-- apexcharts -->
     <link
@@ -423,7 +423,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM trabajos");
               id="navigation"
             >
               <li class="nav-item">
-                <a href="./index.php" class="nav-link active">
+                <a href="../index.php" class="nav-link">
                   <i class="nav-icon bi bi-speedometer me-2"></i>
                   <span>
                     Dashboard
@@ -450,16 +450,16 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM trabajos");
                 </a>
               </li>
               <li class="nav-item">
-                <a href="./views/verNotasAprendiz.php" class="nav-link">
+                <a href="./views/historialPrestamosAdmin.php" class="nav-link">
                  <i class="bi bi-journal-arrow-down me-2"></i>
-                  <span> ver notaaaaass </span>
+                  <span> Prestamos </span>
                 </a>
               </li>
               <?php endif; ?>
                <?php if ($rol == 'aprendiz'): ?>
               <li class="nav-item">
-                <a href="./views/gestionTrabajos.php" class="nav-link">
-                 <i class="bi bi-calendar-check me-2 me-2"> </i>
+                <a href="./views/gestionTrabajos.php" class="nav-link active">
+                 <i class="nav-icon bi bi-calendar-check me-2 me-2"> </i>
                   <span> Trabajos </span>
                 </a>
               </li>
@@ -490,12 +490,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM trabajos");
                           <i class="bi bi-bookmark-plus"></i> Realizar Reserva
                       </button> 
                   </div>
-
                   
-
-                  <a href="./views/verNotasAprendiz.php">
-                    <button>ver notas</button>
-                  </a>
                   <table id="tablaLibros" class="table table-striped table-bordered" width="100%">
                       <thead class="table-success">
                           <tr>
