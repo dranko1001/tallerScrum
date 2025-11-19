@@ -17,15 +17,15 @@ if (isset($_POST['email']) && !empty($_POST['email']) &&
 
     // Consultas del usuario 
     $resultado = $mysql->efectuarConsulta("SELECT * FROM administrador WHERE correo_admin='".$correo."'");
-    $resultadoInstructor= $mysql->efectuarConsulta("SELECT * FROM intructor WHERE correo_instructor='".$correo."'");
+    $resultadoInstructor= $mysql->efectuarConsulta("SELECT * FROM instructor WHERE correo_instructor='".$correo."'");
     $resultadoAprendiz = $mysql->efectuarConsulta("SELECT * FROM aprendices WHERE correo_aprendiz='".$correo."'");
 
-    $mysql->desconectar();
 
     $administrador = mysqli_fetch_assoc($resultado);
     $aprendiz = mysqli_fetch_assoc($resultadoAprendiz);
     $instructor = mysqli_fetch_assoc($resultadoInstructor);
-
+    
+    $mysql->desconectar();
     $usuario_encontrado = null;
     $hash_password = '';
     $rol = '';
@@ -48,7 +48,6 @@ if (isset($_POST['email']) && !empty($_POST['email']) &&
     // Comprobar si se encontro un usuario
     if ($usuario_encontrado) {
         
-
         if (password_verify($password, $hash_password)) {
             
             $id_key = 'id_'.$rol; 
@@ -56,7 +55,6 @@ if (isset($_POST['email']) && !empty($_POST['email']) &&
             $_SESSION['id_usuario'] = $usuario_encontrado[$id_key]; 
             $_SESSION['correo_usuario'] = $correo; 
             $_SESSION['rol_usuario'] = $rol; 
-
       
             echo "
             <!DOCTYPE html>
