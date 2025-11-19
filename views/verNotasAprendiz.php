@@ -83,14 +83,15 @@
               <table class="table table-hover table-striped table-bordered text-center align-middle shadow-sm">
                 <thead>
                   <tr>
+                    <th>ID</th>
                     <th>Nombre Trabajo</th>
                     <th>Fecha Trabajo</th>
-                    <th>Estado</th>
                     <th>Opción</th>
                   </tr>
                 </thead>
                 <tbody id="datosReservas"></tbody>
               </table>
+
 
             </div>
           </div>
@@ -112,11 +113,8 @@
   <!-- JS LOCALES -->
   <script src="../public/js/adminlte.js"></script>
   <script src="../public/js/adminlte.min.js"></script>
-
-  <script src="../public/js/mostrarBotonesRol.js"></script>
-  <script src="../public/js/mostrarReservas.js"></script>
-  <script src="../public/js/app.js"></script>
-  <script src="../public/js/cerrarSesion.js"></script>
+  <script src="../public/js/verNotas.js"></script>
 
 </body>
+
 </html>
