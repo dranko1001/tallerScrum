@@ -376,7 +376,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM trabajos");
 
                 <!-- Opción de cerrar sesión -->
                 <li>
-                  <a href="./controllers/logout.php" class="dropdown-item d-flex align-items-center text-danger py-2">
+                  <a href="../controllers/logout.php" class="dropdown-item d-flex align-items-center text-danger py-2">
                     <i class="bi bi-box-arrow-right me-2"></i> Cerrar sesión
                   </a>
                 </li>
@@ -475,6 +475,8 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM trabajos");
                                   <td><?= $fila['nombre_trabajo'] ?></td>
                                   <td><?= $fila['fecha_trabajo'] ?></td>
                                   <td class="justify-content-center d-flex gap-1">
+                                    <a class="btn btn-info btn-sm"  title="editar" onclick="verTrabajo(<?php echo $fila['id_trabajo']; ?>)">
+          <i class="bi bi-eye"> </i> </a> |
                               <a class="btn btn-warning btn-sm"  title="editar" onclick="editarTrabajo(<?php echo $fila['id_trabajo']; ?>)">
           <i class="bi bi-pencil-square"></i>
           </a>
@@ -485,6 +487,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM trabajos");
           title="Eliminar"> 
               <i class="bi bi-trash"></i>
           </a>
+
                             </td>
                               </tr>
                           <?php endwhile; ?>
@@ -584,6 +587,43 @@ $(document).ready(function() {
 });
 
 });
+</script>
+
+<script>
+function verTrabajo(id) {
+  Swal.fire({
+    title: 'Ver Trabajo',
+    text: 'Funcionalidad para ver el trabajo con ID: ' + id,
+    icon: 'info',
+    confirmButtonText: 'Cerrar'
+  });
+}
+</script>
+
+<script>
+function eliminarTrabajo(id) {
+  Swal.fire({
+    title: 'Eliminar Trabajo',
+    text: '¿Está seguro de que desea eliminar el trabajo con ID: ' + id + '?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Sí, eliminar"
+  }).then((result) => {
+    if (result.isConfirmed) {
+      Swal.fire({
+        title: "Eliminado!",
+        text: "El trabajo ha sido eliminado exitosamente.",
+        icon: "success",
+        timer: 2000,      // el tiempo que se demora en cerrar el alert 
+        showConfirmButton: false
+      }).then(() => {
+        window.location.href = '../controllers/eliminarTrabajo.php?id_trabajo=' + id;
+      });
+    }
+  });
+}
 </script>
 
 <script>
