@@ -19,13 +19,9 @@ $nombre=$_SESSION['nombre_usuario'];
 //consulta para obtener los libros
 $resultado = $mysql->efectuarConsulta(" SELECT 
         c.id_curso,
-        c.nombre_curso,
-        i.correo_instructor AS instructores
+        c.nombre_curso
     FROM cursos c
-    INNER JOIN instructor_has_cursos ihc 
-        ON c.id_curso = ihc.cursos_id_curso
-    INNER JOIN instructor i
-        ON ihc.instructor_id_usuario = i.id_instructor");
+    ");
 ?>
 
 <!doctype html>
@@ -279,7 +275,6 @@ $resultado = $mysql->efectuarConsulta(" SELECT
         <tr>
             <th>ID</th>
             <th>Curso</th>
-            <th>Instructores</th>
             <th>Acciones</th>
         </tr>
     </thead>
@@ -292,9 +287,8 @@ $resultado = $mysql->efectuarConsulta(" SELECT
         <tr>
             <td><?= $c['id_curso'] ?></td>
             <td><?= $c['nombre_curso'] ?></td>
-            <td><?= $c['instructores'] ?></td>
             <td>
-                <button class="btn btn-info btn-sm"><i class="bi bi-eye"></i> detalles</button>
+                <button class="btn btn-info btn-sm"><i class="bi bi-eye"></i></button>
                 
             </td>
         </tr>

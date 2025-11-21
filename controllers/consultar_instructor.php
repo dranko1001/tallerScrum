@@ -3,7 +3,8 @@ require_once '../models/MySQL.php';
 $mysql = new MySQL();
 $mysql->conectar();
 
-$query = $mysql->efectuarConsulta("SELECT id_instructor, nombre FROM instructores");
+$query = $mysql->efectuarConsulta("  SELECT id_instructor, correo_instructor AS correo 
+    FROM instructor");
 $data = [];
 
 while ($fila = $query->fetch_assoc()) {
