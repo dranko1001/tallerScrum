@@ -475,9 +475,12 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM trabajos");
                                   <td><?= $fila['nombre_trabajo'] ?></td>
                                   <td><?= $fila['fecha_trabajo'] ?></td>
                                   <td class="justify-content-center d-flex gap-1">
-                                    <a class="btn btn-info btn-sm"  title="editar" onclick="verTrabajo(<?php echo $fila['id_trabajo']; ?>)">
-          <i class="bi bi-eye"> </i> </a> |
-                              <a class="btn btn-warning btn-sm"  title="editar" onclick="editarTrabajo(<?php echo $fila['id_trabajo']; ?>)">
+                                  <!-- se agrega ../para que sirva la ruta y pueda visualizar el archivo -->
+                                  <a class="btn btn-info btn-sm" title="Ver trabajo" href="<?php echo '../'.$fila['ruta_trabajo']; ?>" 
+   target="_blank">
+    <i class="bi bi-eye"></i>
+</a> |
+                                  <a class="btn btn-warning btn-sm"  title="editar" onclick="editarTrabajo(<?php echo $fila['id_trabajo']; ?>)">
           <i class="bi bi-pencil-square"></i>
           </a>
           | 
