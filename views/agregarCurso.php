@@ -403,10 +403,12 @@ $('#tablaCursos').DataTable({
 });
 </script>
 
+<!-- inicio de la funcion que agrega los cursos  -->
 <script>
 function agregarCurso() {
-  // Resetear el array al abrir el modal
+  // Resetea los arreglos al abrir el modal
   instructoresSeleccionados = [];
+  aprendicesSeleccionados = [];
   
   Swal.fire({
     title: 'Agregar Nuevo Curso',
@@ -416,27 +418,42 @@ function agregarCurso() {
           <label for="nombre_curso" class="form-label">Nombre del Curso</label>
           <input type="text" class="form-control" id="nombre_curso" name="nombre_curso" required>
         </div>
+        
+      
+        <!-- Instructores -->
         <div class="mb-3">
-          <label for="instructor" class="form-label">Instructores</label>
+          <label for="instructor" class="form-label">Instructores *</label>
           <input type="text" id="busquedaInstructor" class="form-control" placeholder="Buscar Instructor..." onkeyup="buscarInstructor(this.value)">
           <input type="hidden" id="instructores_curso" name="instructores_curso">
-          <div id="sugerencias" style="text-align:left; max-height:200px; overflow-y:auto; margin-top: 5px;"></div>
+          <div id="sugerenciasInstructor" style="text-align:left; max-height:200px; overflow-y:auto; margin-top: 5px;"></div>
           <div id="instructoresSeleccionados" style="margin-top: 10px;"></div>
+        </div>
+
+        <!-- APrendices -->
+        <div class="mb-3">
+          <label for="aprendiz" class="form-label">Aprendices (Opcional)</label>
+          <input type="text" id="busquedaAprendiz" class="form-control" placeholder="Buscar Aprendiz..." onkeyup="buscarAprendiz(this.value)">
+          <input type="hidden" id="aprendices_curso" name="aprendices_curso">
+          <div id="sugerenciasAprendiz" style="text-align:left; max-height:200px; overflow-y:auto; margin-top: 5px;"></div>
+          <div id="aprendicesSeleccionados" style="margin-top: 10px;"></div>
         </div>
       </form>
     `,
+    width: '600px',
     confirmButtonText: 'Agregar',
     showCancelButton: true,
     cancelButtonText: 'Cancelar',
     focusConfirm: false,
     didOpen: () => {
-      // Asegurarse de limpiar al abrir
       document.getElementById('instructoresSeleccionados').innerHTML = '';
       document.getElementById('instructores_curso').value = '';
+      document.getElementById('aprendicesSeleccionados').innerHTML = '';
+      document.getElementById('aprendices_curso').value = '';
     },
     preConfirm: () => {
       const nombre = document.getElementById('nombre_curso').value.trim();
       const instructores = document.getElementById('instructores_curso').value.trim();
+      const aprendices = document.getElementById('aprendices_curso').value.trim();
 
       if (!nombre) {
         Swal.showValidationMessage('Por favor, ingrese el nombre del curso.');
@@ -444,13 +461,14 @@ function agregarCurso() {
       }
 
       if (!instructores || instructores === '[]') {
-        Swal.showValidationMessage('Por favor, seleccione al menos un instructor.');
+        Swal.showValidationMessage('Por favor, seleccione al menos un instru.');
         return false;
       }
 
       const formData = new FormData();
       formData.append('nombre_curso', nombre);
       formData.append('instructores_curso', instructores);
+      formData.append('aprendices_curso', aprendices || '[]');
       
       return formData;
     }
@@ -477,16 +495,17 @@ function agregarCurso() {
         error: function(xhr, status, error) {
           console.error("Error AJAX:", error);
           console.error("Respuesta del servidor:", xhr.responseText);
-          Swal.fire('Error', 'El servidor no respondió correctamente. Revisa la consola.', 'error');
+          Swal.fire('Error', 'El servidor no respondió correctamente.', 'error');
         }
       });
     }
   });
 }
 
+// funcion que busca y agrega a los instrus por su correo
 function buscarInstructor(texto) {
     if (texto.length < 2) {
-        document.getElementById('sugerencias').innerHTML = '';
+        document.getElementById('sugerenciasInstructor').innerHTML = '';
         return;
     }
 
@@ -517,12 +536,11 @@ function buscarInstructor(texto) {
                 `;
             }
 
-            document.getElementById('sugerencias').innerHTML = html;
+            document.getElementById('sugerenciasInstructor').innerHTML = html;
         },
         error: function (xhr, status, error) {
             console.error("❌ Error en la búsqueda:", error);
-            console.error("Respuesta:", xhr.responseText);
-            document.getElementById('sugerencias').innerHTML = '<div class="text-danger ps-2">Error al buscar instructores.</div>';
+            document.getElementById('sugerenciasInstructor').innerHTML = '<div class="text-danger ps-2">Error al buscar instructores.</div>';
         }
     });
 }
@@ -533,7 +551,7 @@ function seleccionarInstructor(id, correo) {
     id = parseInt(id);
     
     if (instructoresSeleccionados.includes(id)) {
-        document.getElementById('sugerencias').innerHTML = '';
+        document.getElementById('sugerenciasInstructor').innerHTML = '';
         document.getElementById('busquedaInstructor').value = '';
         return;
     }
@@ -543,7 +561,7 @@ function seleccionarInstructor(id, correo) {
 
     const contenedor = document.getElementById('instructoresSeleccionados');
     const chip = document.createElement('span');
-
+//el css que muestra el correo de los instructores al seleccionarlos, por cuestiones de diseño no pongan un color tan parecido al de los aprendices salvo que quieran hacer un color monocromatico
     chip.style.cssText = `
         display: inline-flex;
         align-items: center;
@@ -571,7 +589,7 @@ function seleccionarInstructor(id, correo) {
 
     contenedor.appendChild(chip);
 
-    document.getElementById('sugerencias').innerHTML = '';
+    document.getElementById('sugerenciasInstructor').innerHTML = '';
     document.getElementById('busquedaInstructor').value = '';
 }
 
@@ -584,9 +602,112 @@ function eliminarInstructor(id, elemento) {
     document.getElementById('instructores_curso').value = JSON.stringify(instructoresSeleccionados);
     elemento.parentElement.remove();
 }
+//fin de la funcion que agrega instructores
+
+// inicio de la funcion que agrega los aprendices, toma los  datos de la db  por correo
+function buscarAprendiz(texto) {
+    if (texto.length < 2) {
+        document.getElementById('sugerenciasAprendiz').innerHTML = '';
+        return;
+    }
+
+    $.ajax({
+        url: '../controllers/buscarAprendiz.php', 
+        type: 'POST',
+        dataType: 'json', 
+        data: { query: texto },
+        success: function (aprendices) {
+            let html = '<ul class="list-group">';
+            
+            if (aprendices.length > 0) {
+                aprendices.forEach(aprendiz => {
+                    html += `
+                        <li class="list-group-item list-group-item-action" 
+                            style="cursor: pointer;" 
+                            onclick="seleccionarAprendiz(${aprendiz.id_aprendiz}, '${aprendiz.correo_aprendiz.replace(/'/g, "\\'")}')">
+                            ${aprendiz.correo_aprendiz}
+                        </li>
+                    `;
+                });
+                html += '</ul>';
+            } else {
+                html += `
+                    <div class="alert alert-info mb-0">
+                        <small>No se encontró el aprendiz "${texto}"</small>
+                    </div>
+                `;
+            }
+
+            document.getElementById('sugerenciasAprendiz').innerHTML = html;
+        },
+        error: function (xhr, status, error) {
+            console.error("❌ Error en la búsqueda:", error);
+            document.getElementById('sugerenciasAprendiz').innerHTML = '<div class="text-danger ps-2">Error al buscar aprendices.</div>';
+        }
+    });
+}
+//fin de la funcion que agrega aprendices 
 
 
+//el arreglo de los aprendices, basado en el codigo de cesar, aqui se utiliza para alamacenar cada dato seleccionado de la db
+let aprendicesSeleccionados = [];
 
+function seleccionarAprendiz(id, correo) {    
+    id = parseInt(id);
+    
+    if (aprendicesSeleccionados.includes(id)) {
+        document.getElementById('sugerenciasAprendiz').innerHTML = '';
+        document.getElementById('busquedaAprendiz').value = '';
+        return;
+    }
+
+    aprendicesSeleccionados.push(id);
+    document.getElementById('aprendices_curso').value = JSON.stringify(aprendicesSeleccionados);
+
+    const contenedor = document.getElementById('aprendicesSeleccionados');
+    const chip = document.createElement('span');
+
+    //compañeritos, este es el color con el que saldran los estudiantes, pueden cambiarlo segun el css que mas le guste
+    chip.style.cssText = `
+        display: inline-flex;
+        align-items: center;
+        background-color: #fff3e0;
+        color: #e65100;
+        padding: 6px 12px;
+        border-radius: 30px;
+        font-size: 14px;
+        border: 1px solid #ffcc80;
+        margin-right: 5px;
+        margin-bottom: 5px;
+    `;
+    chip.innerHTML = `
+        ${correo}
+        <span 
+            onclick="eliminarAprendiz(${id}, this)" 
+            style="
+                margin-left: 8px;
+                font-size: 16px;
+                cursor: pointer;
+                font-weight: bold;
+            "
+        >&times;</span>
+    `;
+
+    contenedor.appendChild(chip);
+
+    document.getElementById('sugerenciasAprendiz').innerHTML = '';
+    document.getElementById('busquedaAprendiz').value = '';
+}
+
+function eliminarAprendiz(id, elemento) {
+    const index = aprendicesSeleccionados.indexOf(id);
+    if (index > -1) {
+        aprendicesSeleccionados.splice(index, 1);
+    }
+    
+    document.getElementById('aprendices_curso').value = JSON.stringify(aprendicesSeleccionados);
+    elemento.parentElement.remove();
+}
 </script>
 
 
