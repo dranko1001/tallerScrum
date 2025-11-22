@@ -311,7 +311,7 @@ $resultadolibros = $mysql->efectuarConsulta("SELECT * FROM libros");
 
                 <li><hr class="dropdown-divider m-0"></li>
 
-                <!-- 👉 Aquí el botón que abre el MODAL, NO una página -->
+                <!-- es el modal  -->
                 <li>
                   <a href="#" 
                      class="dropdown-item d-flex align-items-center py-2"
@@ -471,7 +471,7 @@ $resultadolibros = $mysql->efectuarConsulta("SELECT * FROM libros");
     <!--end::App Wrapper-->
 
 
-                        <!--sirve para tomar con cual usario se ingresa-->
+                        <!--sirve para tomar con cual usario se ingresa en el editar perfil-->
     <?php
 $rol = $_SESSION['rol_usuario'];
 $id_user = $_SESSION['id_'.$rol];
@@ -516,7 +516,7 @@ $correo_user = $_SESSION['correo_'.$rol];
             <?php endif; ?>
 
             <div class="col-md-6">
-            <label class="form-label fw-semibold">Nueva Contraseña (opcional)</label>
+            <label class="form-label fw-semibold">Nueva Contraseña </label>
             <input type="password" class="form-control" name="password_usuario">
             </div>
 
