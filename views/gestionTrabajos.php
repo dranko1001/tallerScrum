@@ -7,7 +7,7 @@ require_once '../models/MySQL.php';
 session_start();
 
 if (!isset($_SESSION['rol_usuario'])) {
-    header("location: ./views/login.php");
+    header("location: ./login.php");
     exit();
 }
 $mysql = new MySQL();
@@ -591,14 +591,60 @@ $(document).ready(function() {
 
 });
 </script>
-
-<script>
-function verTrabajo(id) {
+<script> 
+function editarTrabajo(id) {
   Swal.fire({
-    title: 'Ver Trabajo',
-    text: 'Funcionalidad para ver el trabajo con ID: ' + id,
-    icon: 'info',
-    confirmButtonText: 'Cerrar'
+    title: 'Editar Trabajo',
+    html: `
+      <form id="formEditarTrabajo" class="text-start" enctype="multipart/form-data">
+        <div class="mb-3">
+          <label class="form-label">Nombre del trabajo</label>
+          <input type="text" class="form-control" id="nombre_trabajo" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Subir Nueva Evidencia (opcional)</label>
+          <input type="file" accept=".pdf, .docx" class="form-control" id="ruta_trabajo">
+        </div>
+      </form>
+    `,
+    confirmButtonText: 'Guardar Cambios',
+    showCancelButton: true,
+    cancelButtonText: 'Cancelar',
+    preConfirm: () => {
+      const nombre = document.getElementById('nombre_trabajo').value.trim();
+      const archivo = document.getElementById('ruta_trabajo').files[0];
+
+      if (!nombre) {
+        Swal.showValidationMessage('El nombre del trabajo es obligatorio.');
+        return false;
+      }
+
+      const formData = new FormData();
+      formData.append('id_trabajo', id);
+      formData.append('nombre_trabajo', nombre);
+      if (archivo) {
+        formData.append('ruta_trabajo', archivo);
+      }
+
+      return formData;
+    }
+  }).then(result => {
+    if (result.isConfirmed) {
+      $.ajax({
+        url: '../controllers/editarTrabajo.php',
+        type: 'POST',
+        data: result.value,
+        contentType: false,
+        processData: false,
+        dataType: 'json',
+        success: function(response) {
+          Swal.fire('Éxito', response.message, 'success').then(() => location.reload());
+        },
+        error: function() {
+          Swal.fire('Error', 'El servidor no respondió', 'error');
+        }
+      });
+    }
   });
 }
 </script>
