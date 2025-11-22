@@ -129,6 +129,30 @@ $resultado = $mysql->efectuarConsulta(" SELECT
 <!-- SweetAlert2 -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+<!-- estilo para la tabla cuando muestre los detalles del curso., lo dejo comentado por si alguien quiere ver como quedaria con css, personalmente lo prefiero mas simple -->
+<!-- <style>
+.detalles-curso-modal .list-group-item {
+    border-left: 3px solid #012040ff;
+    transition: all 0.3s ease;
+}
+
+.detalles-curso-modal .list-group-item:hover {
+    background-color: #f8f9fa;
+    transform: translateX(5px);
+}
+
+.detalles-curso-modal h5 {
+    color: #495057;
+    font-weight: 600;
+}
+
+.detalles-curso-modal .bi {
+    font-size: 1.2rem;
+}
+</style> -->
+<!-- fin del css de la tabla -->
+
+
   </head>
   <!--end::Head-->
   <!--begin::Body-->
@@ -289,7 +313,9 @@ $resultado = $mysql->efectuarConsulta(" SELECT
             <td><?= $c['id_curso'] ?></td>
             <td><?= $c['nombre_curso'] ?></td>
             <td>
-                <button class="btn btn-info btn-sm"><i class="bi bi-eye"></i></button>
+                <button class="btn btn-info btn-sm" onclick="verDetallesCurso(<?= $c['id_curso'] ?>)">
+    <i class="bi bi-eye"></i> 
+</button>
                 
             </td>
         </tr>
@@ -621,13 +647,32 @@ function buscarAprendiz(texto) {
             
             if (aprendices.length > 0) {
                 aprendices.forEach(aprendiz => {
-                    html += `
-                        <li class="list-group-item list-group-item-action" 
-                            style="cursor: pointer;" 
-                            onclick="seleccionarAprendiz(${aprendiz.id_aprendiz}, '${aprendiz.correo_aprendiz.replace(/'/g, "\\'")}')">
-                            ${aprendiz.correo_aprendiz}
-                        </li>
-                    `;
+                    // Verifica si ya tiene curso
+                    if(aprendiz.tiene_curso == 1){
+                        html += `
+                            <li class="list-group-item list-group-item-warning d-flex justify-content-between align-items-center" 
+                                style="cursor: not-allowed; opacity: 0.6;">
+                                <div>
+                                    <span>${aprendiz.correo_aprendiz}</span>
+                                    <br>
+                                    <small class="text-danger">
+                                        <i class="bi bi-exclamation-triangle"></i> 
+                                        Ya está en: ${aprendiz.curso_actual}
+                                    </small>
+                                </div>
+                                <span class="badge bg-warning text-dark">No disponible</span>
+                            </li>
+                        `;
+                    } else {
+                        html += `
+                            <li class="list-group-item list-group-item-action" 
+                                style="cursor: pointer;" 
+                                onclick="seleccionarAprendiz(${aprendiz.id_aprendiz}, '${aprendiz.correo_aprendiz.replace(/'/g, "\\'")}')">
+                                ${aprendiz.correo_aprendiz}
+                                <span class="badge bg-success float-end">Disponible</span>
+                            </li>
+                        `;
+                    }
                 });
                 html += '</ul>';
             } else {
@@ -711,8 +756,94 @@ function eliminarAprendiz(id, elemento) {
 </script>
 
 
+<!-- funcion que muestra los detalles del curso -->
+<script>
+function verDetallesCurso(idCurso) {
+    $.ajax({
+        url: '../controllers/obtenerDetallesCurso.php',
+        type: 'POST',
+        data: { id_curso: idCurso },
+        dataType: 'json',
+        success: function(response) {
+            if(response.success) {
+                mostrarModalDetalles(response);
+            } else {
+                Swal.fire('Error', response.message, 'error');
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("Error al obtener detalles:", error);
+            Swal.fire('Error', 'hubo un problema al cargar los detalles', 'error');
+        }
+    });
+}
 
-<!-- funcion para agregar curso, en progreso porque toca que crear un curso con los correos de los insrtuctores y los alumnos -->
+function mostrarModalDetalles(data) {
+    // HTML de instructores
+    let htmlInstructores = '';
+    if(data.instructores.length > 0) {
+        htmlInstructores = '<ul class="list-group mb-3">';
+        data.instructores.forEach(instructor => {
+            htmlInstructores += `
+                <li class="list-group-item d-flex align-items-center">
+                    <span>${instructor.correo_instructor}</span>
+                </li>
+            `;
+        });
+        htmlInstructores += '</ul>';
+    } else {
+        htmlInstructores = '<p class="text-muted">No hay instructores asignados</p>';
+    }
+
+    // Construye  el  HTML de aprendices
+    let htmlAprendices = '';
+    if(data.aprendices.length > 0) {
+        htmlAprendices = '<ul class="list-group mb-3">';
+        data.aprendices.forEach(aprendiz => {
+            htmlAprendices += `
+                <li class="list-group-item d-flex align-items-center">
+                    <span>${aprendiz.correo_aprendiz}</span>
+                </li>
+            `;
+        });
+        htmlAprendices += '</ul>';
+    } else {
+        htmlAprendices = '<p class="text-muted">No hay aprendices inscritos</p>';
+    }
+
+    //modal con toda la info
+    Swal.fire({
+        title: `<i class="bi bi-mortarboard-fill"></i> ${data.curso.nombre_curso}`,
+        html: `
+            <div class="text-start">
+                <div class="mb-4">
+                    <h5 class="border-bottom pb-2">
+                        Instructores (${data.instructores.length})
+                    </h5>
+                    ${htmlInstructores}
+                </div>
+                
+                <div class="mb-3">
+                    <h5 class="border-bottom pb-2">
+                        
+                        Aprendices (${data.aprendices.length})
+                    </h5>
+                    ${htmlAprendices}
+                </div>
+            </div>
+        `,
+        width: '600px',
+        confirmButtonText: 'Cerrar',
+        confirmButtonColor: '#6c757d',
+        customClass: {
+            container: 'detalles-curso-modal'
+        }
+    });
+}
+
+
+
+</script>
 
 
 

@@ -25,6 +25,33 @@ if($aprendices && (!is_array($aprendicesArray) || $aprendicesArray === null)){
     echo json_encode(["success"=>false, "message"=>"Error en la selección de aprendices"]);
     exit;
 }
+//Verifica que los aprendices no estén ya en otro curso
+if(!empty($aprendicesArray)){
+    $idsAprendices = implode(',', array_map('intval', $aprendicesArray));
+    
+    $sqlVerificar = "
+        SELECT a.correo_aprendiz, c.nombre_curso
+        FROM aprendices a
+        INNER JOIN cursos_has_aprendices cha ON a.id_aprendiz = cha.aprendices_id_aprendiz
+        INNER JOIN cursos c ON cha.cursos_id_curso = c.id_curso
+        WHERE a.id_aprendiz IN ($idsAprendices)
+    ";
+    
+    $resultadoVerificar = $mysql->efectuarConsulta($sqlVerificar);
+    
+    if($resultadoVerificar && $resultadoVerificar->num_rows > 0){
+        $aprendicesConCurso = [];
+        while($fila = $resultadoVerificar->fetch_assoc()){
+            $aprendicesConCurso[] = $fila['correo_aprendiz'] . "  ya esta en  " . $fila['nombre_curso'] . "";
+        }
+        
+        $mensaje = "aprendiz ya registrado en un curso :\n" . implode("\n", $aprendicesConCurso);
+        echo json_encode(["success"=>false, "message"=>$mensaje]);
+        exit;
+    }
+}
+
+
 
 // consulta con la insercion de codigo
 $sql = "INSERT INTO cursos (nombre_curso) VALUES ('$nombre')";
@@ -80,6 +107,6 @@ if($erroresInstructor > 0 || $erroresAprendiz > 0){
     echo json_encode(["success"=>false, "message"=>$mensaje]);
 }else{
     $totalAsociados = count($instructoresArray) + count($aprendicesArray);
-    echo json_encode(["success"=>true, "message"=>"El curso fue agregado correctamente con $totalAsociados usuario(s) asociado(s)"]);
+    echo json_encode(["success"=>true, "message"=>"El curso fue agregado correctamente"]);
 }
 ?>
