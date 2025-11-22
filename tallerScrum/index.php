@@ -516,7 +516,7 @@ $correo_user = $_SESSION['correo_'.$rol];
             <?php endif; ?>
 
             <div class="col-md-6">
-            <label class="form-label fw-semibold">Nueva Contraseña (opcional)</label>
+            <label class="form-label fw-semibold">Nueva Contraseña </label>
             <input type="password" class="form-control" name="password_usuario">
             </div>
 
