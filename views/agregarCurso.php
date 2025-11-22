@@ -263,11 +263,12 @@ $resultado = $mysql->efectuarConsulta(" SELECT
             <div class="row mb-3 align-items-center">
                 <div class="col-md-6 d-flex gap-2">
                 <?php if ($rol == 'Administrador'): ?>
-                     <button type="button" class="btn btn-success" onclick="agregarCurso()">➕ Curso</button>
+                     
                 <?php endif; ?>
                 </div>
             </div>
             <div class="row">
+              <button type="button" class="btn btn-success" onclick="agregarCurso()">➕ Curso</button>
               <!--begin::Col-->
                 <div class="table-responsive">
 <table id="tablaCursos" class="table table-striped table-bordered">
@@ -401,34 +402,26 @@ $('#tablaCursos').DataTable({
 
 });
 </script>
-<!--consulta de cesar, borrar apenas termine el boton de agregar curso:
-function agregarLibro() {
+
+<script>
+function agregarCurso() {
+  // Resetear el array al abrir el modal
+  instructoresSeleccionados = [];
+  
   Swal.fire({
-    title: 'Agregar Nuevo Libro',
+    title: 'Agregar Nuevo Curso',
     html: `
-      <form id="formAgregarLibro" class="text-start" action="controllers/agregarLibro.php" method="POST">
+      <form id="formAgregarCurso" class="text-start">
         <div class="mb-3">
-          <label for="titulo_libro" class="form-label">Titulo</label>
-          <input type="text" class="form-control" id="titulo_libro" name="titulo_libro" required>
+          <label for="nombre_curso" class="form-label">Nombre del Curso</label>
+          <input type="text" class="form-control" id="nombre_curso" name="nombre_curso" required>
         </div>
         <div class="mb-3">
-          <label for="autor_libro" class="form-label">Autor</label>
-          <input type="text" class="form-control" id="autor_libro" name="autor_libro" required>
-        </div>
-        <div class="mb-3">
-          <label for="ISBN" class="form-label">ISBN</label>
-          <input type="text" class="form-control" id="ISBN" name="ISBN" required>
-        </div>
-        <div class="mb-3">
-          <label for="categoria" class="form-label">Categoria</label>
-          <input type="text" id="busquedaCategoria" class="form-control" placeholder="Buscar Categoria..." onkeyup="buscarCategoria(this.value)">
-          <input type="hidden" id="categoria_libro" name="categoria_libro">
-          <div id="sugerencias" style="text-align:left; max-height:200px; margin-top: 5px;"></div>
-          <div id="categoriasSeleccionadas">  </div>
-        </div>
-        <div class="mb-3">
-            <label for="cantidad" class="form-label">Cantidad</label>
-            <input type="number" class="form-control" id="cantidad" name="cantidad" required>
+          <label for="instructor" class="form-label">Instructores</label>
+          <input type="text" id="busquedaInstructor" class="form-control" placeholder="Buscar Instructor..." onkeyup="buscarInstructor(this.value)">
+          <input type="hidden" id="instructores_curso" name="instructores_curso">
+          <div id="sugerencias" style="text-align:left; max-height:200px; overflow-y:auto; margin-top: 5px;"></div>
+          <div id="instructoresSeleccionados" style="margin-top: 10px;"></div>
         </div>
       </form>
     `,
@@ -436,24 +429,29 @@ function agregarLibro() {
     showCancelButton: true,
     cancelButtonText: 'Cancelar',
     focusConfirm: false,
+    didOpen: () => {
+      // Asegurarse de limpiar al abrir
+      document.getElementById('instructoresSeleccionados').innerHTML = '';
+      document.getElementById('instructores_curso').value = '';
+    },
     preConfirm: () => {
-      const titulo = document.getElementById('titulo_libro').value.trim();
-      const autor = document.getElementById('autor_libro').value.trim();
-      const ISBN = document.getElementById('ISBN').value.trim();
-      const categorias = document.getElementById('categoria_libro').value.trim();
-      const cantidad = document.getElementById('cantidad').value.trim();
+      const nombre = document.getElementById('nombre_curso').value.trim();
+      const instructores = document.getElementById('instructores_curso').value.trim();
 
-      if (!titulo || !autor || !ISBN || !categorias ||autor || !cantidad) {
-        Swal.showValidationMessage('Por favor, complete todos los campos.');
+      if (!nombre) {
+        Swal.showValidationMessage('Por favor, ingrese el nombre del curso.');
+        return false;
+      }
+
+      if (!instructores || instructores === '[]') {
+        Swal.showValidationMessage('Por favor, seleccione al menos un instructor.');
         return false;
       }
 
       const formData = new FormData();
-      formData.append('titulo_libro', titulo);
-      formData.append('autor_libro', autor);
-      formData.append('ISBN_libro', ISBN);
-      formData.append('categoria_libro', categorias);
-      formData.append('cantidad_libro', cantidad);
+      formData.append('nombre_curso', nombre);
+      formData.append('instructores_curso', instructores);
+      
       return formData;
     }
   }).then((result) => {
@@ -461,7 +459,7 @@ function agregarLibro() {
       const formData = result.value;
 
       $.ajax({
-        url: '../controllers/agregarLibro.php',
+        url: '../controllers/agregarCurso.php',
         type: 'POST',
         data: formData,
         contentType: false,
@@ -469,44 +467,44 @@ function agregarLibro() {
         dataType: 'json',
         success: function(response) {
           if (response.success) {
-            Swal.fire(' Éxito', response.message, 'success').then(() => {
+            Swal.fire('Éxito', response.message, 'success').then(() => {
               location.reload();
             });
           } else {
-            Swal.fire(' Atención', response.message, 'warning');
+            Swal.fire('Atención', response.message, 'warning');
           }
         },
         error: function(xhr, status, error) {
-          console.error("Error AJAX:", error, xhr.responseText);
-          Swal.fire(' Error', 'El servidor no respondió correctamente.', 'error');
+          console.error("Error AJAX:", error);
+          console.error("Respuesta del servidor:", xhr.responseText);
+          Swal.fire('Error', 'El servidor no respondió correctamente. Revisa la consola.', 'error');
         }
       });
     }
   });
 }
 
-function buscarCategoria(texto) {
-    // Si el texto es muy corto, limpia las sugerencias
+function buscarInstructor(texto) {
     if (texto.length < 2) {
         document.getElementById('sugerencias').innerHTML = '';
         return;
     }
 
     $.ajax({
-        url: '../controllers/buscarCategoria.php', 
+        url: '../controllers/buscarInstructor.php', 
         type: 'POST',
         dataType: 'json', 
         data: { query: texto },
-        success: function (categorias) {
+        success: function (instructores) {
             let html = '<ul class="list-group">';
-            // se utiliza .replace para que no rompa el codigo con comillas
-            if (categorias.length > 0) {
-                categorias.forEach(categoria => {
+            
+            if (instructores.length > 0) {
+                instructores.forEach(instructor => {
                     html += `
                         <li class="list-group-item list-group-item-action" 
                             style="cursor: pointer;" 
-                            onclick="seleccionarCategoria(${categoria.id}, '${categoria.nombre_categoria.replace(/'/g, "\\'")}')">
-                            ${categoria.nombre_categoria}
+                            onclick="seleccionarInstructor(${instructor.id_instructor}, '${instructor.correo_instructor.replace(/'/g, "\\'")}')">
+                            ${instructor.correo_instructor}
                         </li>
                     `;
                 });
@@ -514,11 +512,8 @@ function buscarCategoria(texto) {
             } else {
                 html += `
                     <div class="alert alert-info mb-0">
-                        <small>No se encontró la categoría "${texto}"</small>
+                        <small>No se encontró el instructor "${texto}"</small>
                     </div>
-                    <button type="button" class="btn btn-success btn-sm mt-2" onclick="agregarNuevaCategoria('${texto.replace(/'/g, "\\'")}')">
-                        <i class="bi bi-plus-circle"></i> Agregar nueva categoría
-                    </button>
                 `;
             }
 
@@ -526,149 +521,78 @@ function buscarCategoria(texto) {
         },
         error: function (xhr, status, error) {
             console.error("❌ Error en la búsqueda:", error);
-            document.getElementById('sugerencias').innerHTML = '<div class="text-danger ps-2">Error al buscar categorias.</div>';
+            console.error("Respuesta:", xhr.responseText);
+            document.getElementById('sugerencias').innerHTML = '<div class="text-danger ps-2">Error al buscar instructores.</div>';
         }
     });
 }
 
-let categoriasSeleccionadas = []; // lista de id
+let instructoresSeleccionados = [];
 
-function seleccionarCategoria(id, nombre) {    
-    // Convertir a numero
+function seleccionarInstructor(id, correo) {    
     id = parseInt(id);
-    console.log('ID convertido:', id, 'Tipo:', typeof id);
     
-    // Evitar repetidos
-    if (categoriasSeleccionadas.includes(id)) {
-        // Limpiar busqueda
+    if (instructoresSeleccionados.includes(id)) {
         document.getElementById('sugerencias').innerHTML = '';
-        document.getElementById('busquedaCategoria').value = '';
+        document.getElementById('busquedaInstructor').value = '';
         return;
     }
 
-    categoriasSeleccionadas.push(id);
+    instructoresSeleccionados.push(id);
+    document.getElementById('instructores_curso').value = JSON.stringify(instructoresSeleccionados);
 
-    // Actualizar input oculto (lo enviamos como JSON)
-    document.getElementById('categoria_libro').value = JSON.stringify(categoriasSeleccionadas);
-
-    // Agregar chip visual
-    const contenedor = document.querySelector('categoriasSeleccionadas');
-    const chip = document.querySelector('span');
+    const contenedor = document.getElementById('instructoresSeleccionados');
+    const chip = document.createElement('span');
 
     chip.style.cssText = `
         display: inline-flex;
         align-items: center;
-        background-color: #e8f5e9;
-        color: #2e7d32;
+        background-color: #e3f2fd;
+        color: #1565c0;
         padding: 6px 12px;
         border-radius: 30px;
         font-size: 14px;
-        border: 1px solid #c8e6c9;
+        border: 1px solid #90caf9;
+        margin-right: 5px;
+        margin-bottom: 5px;
     `;
     chip.innerHTML = `
-        ${nombre}
+        ${correo}
         <span 
-            onclick="eliminarCategoria(${id}, this)" 
+            onclick="eliminarInstructor(${id}, this)" 
             style="
                 margin-left: 8px;
                 font-size: 16px;
                 cursor: pointer;
+                font-weight: bold;
             "
         >&times;</span>
     `;
 
     contenedor.appendChild(chip);
 
-    // Limpiar sugerencias
     document.getElementById('sugerencias').innerHTML = '';
-    document.getElementById('busquedaCategoria').value = '';
-}  -->
+    document.getElementById('busquedaInstructor').value = '';
+}
+
+function eliminarInstructor(id, elemento) {
+    const index = instructoresSeleccionados.indexOf(id);
+    if (index > -1) {
+        instructoresSeleccionados.splice(index, 1);
+    }
+    
+    document.getElementById('instructores_curso').value = JSON.stringify(instructoresSeleccionados);
+    elemento.parentElement.remove();
+}
+
+
+
+</script>
+
 
 
 <!-- funcion para agregar curso, en progreso porque toca que crear un curso con los correos de los insrtuctores y los alumnos -->
 
-<script>
-function agregarCurso() {
-
-    $.ajax({
-        url: '../controllers/consultar_instructor.php',
-        type: 'GET',
-        dataType: 'json',
-        success: function(instructores) {
-
-            let opciones = "";
-            instructores.forEach(i => {
-                opciones += `<option value="${i.id_instructor}">${i.nombre}</option>`;
-            });
-
-            Swal.fire({
-                title: 'Agregar Nuevo Curso',
-                html: `
-                    <form id="formAgregarCurso">
-                        <div class="mb-3 text-start">
-                            <label class="form-label">Nombre del Curso</label>
-                            <input type="text" class="form-control" id="nombre_curso" required>
-                        </div>
-
-                        <div class="mb-3 text-start">
-                            <label class="form-label">Instructores</label>
-                            <select class="form-control" id="id_instructor" required>
-                                ${opciones}
-                            </select>
-                        </div>
-                    </form>
-                `,
-                confirmButtonText: 'Agregar',
-                showCancelButton: true,
-                cancelButtonText: 'Cancelar',
-                focusConfirm: false,
-                preConfirm: () => {
-                    const nombre = $("#nombre_curso").val().trim();
-                    const instructor = $("#id_instructor").val();
-
-                    if (!nombre || !instructor) {
-                        Swal.showValidationMessage('Completa todos los campos');
-                        return false;
-                    }
-
-                    return {
-                        nombre_curso: nombre,
-                        id_instructor: instructor
-                    };
-                }
-
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    
-                    $.ajax({
-                        url: '../controllers/agregarCurso.php',
-                        type: 'POST',
-                        data: result.value,
-                        dataType: 'json',
-                        success: function(response) {
-                            if (response.success) {
-                                Swal.fire('Éxito', response.message, 'success')
-                                .then(() => location.reload());
-                            } else {
-                                Swal.fire('Error', response.message, 'error');
-                            }
-                        },
-                        error: function(e){
-                            Swal.fire('Error', 'No se pudo conectar con el servidor', 'error');
-                        }
-                    });
-
-                }
-            });
-
-        },
-        error: function(e){
-            Swal.fire('Error', 'No se pudieron cargar los instructores', 'error');
-        }
-    });
-
-}
-</script>
 
 
 
