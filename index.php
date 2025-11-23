@@ -395,80 +395,74 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM trabajos");
       </nav>
       <!--end::Header-->
       <!--begin::Sidebar-->
-      <aside class="app-sidebar verde shadow">
-        <!--begin::Sidebar Brand-->
-        <div class="sidebar-brand">
-          <!--begin::Brand Link-->
-          <a href="./index.php" class="brand-link">
-            <!--begin::Brand Image-->
-           
-            <!--end::Brand Image-->
-            <!--begin::Brand Text-->
-            <span class="title"> senaEdu </span>
-            <!--end::Brand Text-->
+      <!-- REEMPLAZA LA SECCIÓN DEL SIDEBAR EN TU index.php CON ESTO: -->
+
+<aside class="app-sidebar verde shadow">
+  <div class="sidebar-brand">
+    <a href="./index.php" class="brand-link">
+      <span class="title"> senaEdu </span>
+    </a>
+  </div>
+  
+  <div class="sidebar-wrapper">
+    <nav class="mt-2">
+      <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="navigation" data-accordion="false" id="navigation">
+        
+        <li class="nav-item">
+          <a href="./index.php" class="nav-link active">
+            <i class="nav-icon bi bi-speedometer me-2"></i>
+            <span>Dashboard</span>
           </a>
-          <!--end::Brand Link-->
-        </div>
-        <!--end::Sidebar Brand-->
-        <!--begin::Sidebar Wrapper-->
-        <div class="sidebar-wrapper">
-          <nav class="mt-2">
-            <!--begin::Sidebar Menu-->
-            <ul
-              class="nav sidebar-menu flex-column"
-              data-lte-toggle="treeview"
-              role="navigation"
-              aria-label="Main navigation"
-              data-accordion="false"
-              id="navigation"
-            >
-              <li class="nav-item">
-                <a href="./index.php" class="nav-link active">
-                  <i class="nav-icon bi bi-speedometer me-2"></i>
-                  <span>
-                    Dashboard
-                  </span>
+        </li>
+        
+        <?php if ($rol == 'admin'): ?>
+                <li class="nav-item">
+                  <a href="./views/usuarios.php" class="nav-link">
+                    <i class="bi bi-file-earmark-person me-2"></i>
+                    <span>Usuarios</span>
                   </a>
-              </li>
-               <?php if ($rol == 'admin'): ?>
-              <li class="nav-item">
-                <a href="./views/usuarios.php" class="nav-link">
-                  <i class="bi bi-file-earmark-person me-2"></i>
-                  <span>Usuarios</span>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="./views/inventario.php" class="nav-link">
-                 <i class="bi bi-book me-2"> </i>
-                  <span> Libros </span>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="./views/reservas.php" class="nav-link">
-                 <i class="bi bi-journal-richtext me-2"> </i>
-                  <span> Reservas </span>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="./views/historialPrestamosAdmin.php" class="nav-link">
-                 <i class="bi bi-journal-arrow-down me-2"></i>
-                  <span> Prestamos </span>
-                </a>
-              </li>
+                </li>
+                <li class="nav-item">
+                  <a href="./views/inventario.php" class="nav-link">
+                    <i class="bi bi-book me-2"></i>
+                    <span>Libros</span>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="./views/reservas.php" class="nav-link">
+                    <i class="bi bi-journal-richtext me-2"></i>
+                    <span>Reservas</span>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="./views/historialPrestamosAdmin.php" class="nav-link">
+                    <i class="bi bi-journal-arrow-down me-2"></i>
+                    <span>Prestamos</span>
+                  </a>
+                </li>
               <?php endif; ?>
-               <?php if ($rol == 'aprendiz'): ?>
-              <li class="nav-item">
-                <a href="./views/gestionTrabajos.php" class="nav-link">
-                 <i class="bi bi-calendar-check me-2 me-2"> </i>
-                  <span> Trabajos </span>
-                </a>
-              </li>
+      
+              <?php if ($rol == 'instructor'): ?>
+                <li class="nav-item">
+                  <a href="./views/gestionTrabajosInstructor.php" class="nav-link">
+                    <i class="bi bi-check2-square me-2"></i>
+                    <span>Calificar Trabajos</span>
+                  </a>
+                </li>
               <?php endif; ?>
+      
+              <?php if ($rol == 'aprendiz'): ?>
+                <li class="nav-item">
+                  <a href="./views/gestionTrabajos.php" class="nav-link">
+                    <i class="bi bi-calendar-check me-2"></i>
+                    <span>Trabajos</span>
+                  </a>
+                </li>
+              <?php endif; ?>
+      
             </ul>
-            <!--end::Sidebar Menu-->
           </nav>
         </div>
-        <!--end::Sidebar Wrapper-->
       </aside>
       <!--end::Sidebar-->
       <!--begin::App Main-->
