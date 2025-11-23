@@ -451,14 +451,20 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM trabajos");
                 </li>
               <?php endif; ?>
       
-              <?php if ($rol == 'aprendiz'): ?>
-                <li class="nav-item">
-                  <a href="./views/gestionTrabajos.php" class="nav-link">
-                    <i class="bi bi-calendar-check me-2"></i>
-                    <span>Trabajos</span>
-                  </a>
-                </li>
-              <?php endif; ?>
+<?php if ($rol == 'aprendiz'): ?>
+  <li class="nav-item">
+    <a href="./views/gestionTrabajos.php" class="nav-link">
+      <i class="bi bi-calendar-check me-2"></i>
+      <span>Trabajos</span>
+    </a>
+  </li>
+  <li class="nav-item">
+    <a href="./views/misCalificaciones.php" class="nav-link">
+      <i class="bi bi-star me-2"></i>
+      <span>Mis Calificaciones</span>
+    </a>
+  </li>
+<?php endif; ?>
       
             </ul>
           </nav>

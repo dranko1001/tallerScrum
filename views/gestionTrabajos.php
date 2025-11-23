@@ -409,31 +409,43 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM trabajos");
         <div class="sidebar-wrapper">
           <nav class="mt-2">
             <!--begin::Sidebar Menu-->
-            <ul
-              class="nav sidebar-menu flex-column"
-              data-lte-toggle="treeview"
-              role="navigation"
-              aria-label="Main navigation"
-              data-accordion="false"
-              id="navigation"
-            >
-              <li class="nav-item">
-                <a href="../index.php" class="nav-link">
-                  <i class="nav-icon bi bi-speedometer me-2"></i>
-                  <span>
-                    Dashboard
-                  </span>
-                  </a>
-              </li>
-               <?php if ($rol == 'aprendiz'): ?>
-              <li class="nav-item">
-                <a href="./views/gestionTrabajos.php" class="nav-link active">
-                 <i class="nav-icon bi bi-calendar-check me-2 me-2"> </i>
-                  <span> Trabajos </span>
-                </a>
-              </li>
-              <?php endif; ?>
-            </ul>
+<!-- REEMPLAZA EL SIDEBAR COMPLETO EN gestionTrabajos.php (línea ~180-220) -->
+
+<aside class="app-sidebar verde shadow">
+  <div class="sidebar-brand">
+    <a href="../index.php" class="brand-link">
+      <span class="title">senaEdu</span>
+    </a>
+  </div>
+
+  <div class="sidebar-wrapper">
+    <nav class="mt-2">
+      <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="navigation">
+        <li class="nav-item">
+          <a href="../index.php" class="nav-link">
+            <i class="nav-icon bi bi-speedometer me-2"></i>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        
+        <?php if ($rol == 'aprendiz'): ?>
+          <li class="nav-item">
+            <a href="./gestionTrabajos.php" class="nav-link active">
+              <i class="bi bi-calendar-check me-2"></i>
+              <span>Trabajos</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="./misCalificaciones.php" class="nav-link">
+              <i class="bi bi-star me-2"></i>
+              <span>Mis Calificaciones</span>
+            </a>
+          </li>
+        <?php endif; ?>
+      </ul>
+    </nav>
+  </div>
+</aside>
             <!--end::Sidebar Menu-->
           </nav>
         </div>

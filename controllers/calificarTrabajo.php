@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $mysql->conectar();
 
     $idTrabajo = intval($_POST['id_trabajo']);
-    $calificacion = $_POST['calificacion'];
+    $calificacion = trim($_POST['calificacion']);
     $comentario = htmlspecialchars(trim($_POST['comentario']), ENT_QUOTES, 'UTF-8');
 
     // Validar que la calificación sea A o D
@@ -67,7 +67,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ";
 
         if ($mysql->efectuarConsulta($sqlUpdate)) {
-            echo json_encode(['success' => true, 'message' => 'Calificación actualizada exitosamente']);
+            echo json_encode([
+                'success' => true,
+                'message' => 'Calificación actualizada exitosamente',
+                'calificacion' => $calificacion
+            ]);
         } else {
             echo json_encode(['success' => false, 'message' => 'Error al actualizar la calificación']);
         }
@@ -80,7 +84,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ";
 
         if ($mysql->efectuarConsulta($sqlInsert)) {
-            echo json_encode(['success' => true, 'message' => 'Trabajo calificado exitosamente']);
+            echo json_encode([
+                'success' => true,
+                'message' => 'Trabajo calificado exitosamente',
+                'calificacion' => $calificacion
+            ]);
         } else {
             echo json_encode(['success' => false, 'message' => 'Error al guardar la calificación']);
         }
