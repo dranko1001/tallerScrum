@@ -230,7 +230,7 @@ $stats = $resultadoStats->fetch_assoc();
                 <div class="container-fluid">
 
                     <!-- Estadísticas -->
-                    <div class="row mb-4">
+                    <div class="row mb-4 mt-4">
                         <div class="col-lg-3 col-6">
                             <div class="card stat-card total">
                                 <div class="card-body">
