@@ -10,6 +10,10 @@ if (!isset($_SESSION['rol_usuario'])) {
   header("location: ./login.php");
   exit();
 }
+if ($rol !== 'aprendiz') {
+    header("location: ./login.php");
+    exit();
+}
 $mysql = new MySQL();
 $mysql->conectar();
 
