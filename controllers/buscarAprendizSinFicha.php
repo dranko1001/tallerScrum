@@ -13,9 +13,9 @@ if (empty($query)) {
     exit;
 }
 
-// Limpiar el query de caracteres peligrosos
+//sanitizacion o filtro mas bien de busqueda de aprendices, que no venga una comilla a putearnos la consulta
 $query = str_replace(["'", '"', '\\'], '', $query);
-
+//consulta extensa que busca al aprendiz y si tiene ficha o no
 $sql = "
     SELECT 
         a.id_aprendiz,
@@ -34,7 +34,7 @@ $sql = "
 ";
 
 $resultado = $mysql->efectuarConsulta($sql);
-
+//el arreglo que los muestra, en la documentacion de Javascript hay mas detalles de como funciona
 $aprendices = [];
 if ($resultado) {
     while ($fila = $resultado->fetch_assoc()) {
