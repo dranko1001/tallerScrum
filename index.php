@@ -296,59 +296,65 @@ $resultado_trabajos = $mysql->efectuarConsulta("SELECT * FROM trabajos");
 </head>
 <body class="layout-fixed sidebar-expand-lg sidebar-open bg-body-tertiary">
     <div class="app-wrapper">
-        <nav class="app-header navbar navbar-expand bg-body">
-            <div class="container-fluid">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" data-lte-toggle="sidebar" href="index.php" role="button">
-                            <i class="bi bi-list"></i>
-                        </a>
-                    </li>
-                    <li class="nav-item d-none d-md-block">
-                        <a href="index.php" class="nav-link">Inicio</a>
-                    </li>
-                    
-                </ul>
-                <ul class="navbar-nav ms-auto">
+           <nav class="app-header navbar navbar-expand bg-body">
+      <!--begin::Container-->
+      <div class="container-fluid">
+        <!--begin::Start Navbar Links-->
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" data-lte-toggle="sidebar" href="index.php" role="button">
+              <i class="bi bi-list"></i>
+            </a>
+          </li>
+          <li class="nav-item d-none d-md-block">
+            <a href="../index.php" class="nav-link">Inicio</a>
+          </li>
 
-                    <li class="nav-item dropdown user-menu">
-                        <a href="#" class="nav-link dropdown-toggle text-white fw-semibold" data-bs-toggle="dropdown">
-                            <span class="d-none d-md-inline"><i class="bi bi-person-circle me-1"></i><?php echo $nombre; ?></span>
-                        </a>
+        </ul>
+        <!--end::Start Navbar Links-->
 
-                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3 mt-2" style="min-width: 230px;">
-                            <li class="bg-primary text-white text-center rounded-top py-3">
-                                <p class="mb-0 fw-bold fs-5"><?php echo $nombre; ?></p>
-                                <small><?php echo $rol; ?></small>
-                            </li>
+        <!--begin::End Navbar Links-->
+        <ul class="navbar-nav ms-auto">
 
-                            <li><hr class="dropdown-divider m-0"></li>
+          <!--begin::User Menu Dropdown-->
+          <li class="nav-item dropdown user-menu">
+            <a href="#" class="nav-link dropdown-toggle text-white fw-semibold" data-bs-toggle="dropdown">
+              <span class="d-none d-md-inline"><i class="bi bi-person-circle me-1"></i><?php echo $nombre; ?></span>
+            </a>
 
-                            <li><hr class="dropdown-divider m-0"></li>
+            <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3 mt-2" style="min-width: 230px;">
+              <!-- Cabecera del usuario -->
+              <li class="bg-primary text-white text-center rounded-top py-3">
+                <p class="mb-0 fw-bold fs-5"><?php echo $nombre; ?></p>
+                <small><?php echo $rol; ?></small>
+              </li>
 
-                            <li>
-                                <a 
-                                    href="#" 
-                                    class="dropdown-item d-flex align-items-center py-2" 
-                                    data-bs-toggle="modal" 
-                                    data-bs-target="#modalEditarUsuario"
-                                >
-                                    <i class="bi bi-person-gear me-2"></i> Editar Perfil
-                                </a>
-                            </li>
+              <!-- Separador -->
+              <li>
+                <hr class="dropdown-divider m-0">
+              </li>
 
-                <li><hr class="dropdown-divider m-0"></li>
+              <!-- Opciones del menu -->
 
-                <li>
-                    <a href="./controllers/logout.php" class="dropdown-item d-flex align-items-center text-danger py-2">
-                    <i class="bi bi-box-arrow-right me-2"></i> Cerrar sesión
-                    </a>
-                </li>
-              </ul>
-            </li>
+              <!-- Separador -->
+              <li>
+                <hr class="dropdown-divider m-0">
+              </li>
+
+              <!-- Opción de cerrar sesión -->
+              <li>
+                <a href="../controllers/logout.php" class="dropdown-item d-flex align-items-center text-danger py-2">
+                  <i class="bi bi-box-arrow-right me-2"></i> Cerrar sesión
+                </a>
+              </li>
             </ul>
-          </div>
-        </nav>
+          </li>
+          <!--end::User Menu Dropdown-->
+        </ul>
+        <!--end::End Navbar Links-->
+      </div>
+      <!--end::Container-->
+    </nav>
       <aside class="app-sidebar verde shadow">
         <div class="sidebar-brand">
           <a href="./index.php" class="brand-link">
@@ -588,7 +594,7 @@ $resultado_trabajos = $mysql->efectuarConsulta("SELECT * FROM trabajos");
     ></script>
     
     <script>
-document.querySelector('#modalEditarUsuario form').addEventListener('submit', function(e){
+document.querySelector('#modalEditarUsuario').addEventListener('submit', function(e){
     e.preventDefault(); 
 
     let datos = new FormData(this);
