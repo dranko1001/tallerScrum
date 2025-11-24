@@ -169,16 +169,16 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  flex-wrap: wrap;           /* ✅ para que sea responsive */
-  gap: 30px;                 /* espacio entre columnas */
+  flex-wrap: wrap;          
+  gap: 30px;                 
   margin: 40px auto;
   max-width: 1400px;
   padding: 20px;
 }
 
 .card-documento {
-  flex: 1 1 30%;             /* ✅ tres columnas iguales */
-  min-width: 350px;          /* ancho mínimo para pantallas pequeñas */
+  flex: 1 1 30%;             
+  min-width: 350px;          
   background-color: #ffffff;
   padding: 30px 35px;
   border-radius: 16px;
@@ -210,7 +210,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
 
 .row-form {
   display: flex;
-  flex-direction: column; /* ✅ Fuerza disposición vertical */
+  flex-direction: column; 
   gap: 16px;
   width: 100%;
 }
