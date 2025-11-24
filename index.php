@@ -2,11 +2,7 @@
 header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
 header("Cache-Control: post-check=0, pre-check=0", false);
 header("Pragma: no-cache");
-<<<<<<< HEAD
 //conexion a la base de datos
-=======
-
->>>>>>> 36c7974b7f82dc2fb40dccdc2660518d7f9c2761
 require_once 'models/MySQL.php';
 session_start();
 
@@ -32,7 +28,6 @@ $resultado = $mysql->efectuarConsulta("SELECT * FROM trabajos");
 
 $resultadolibros = $mysql->efectuarConsulta("SELECT * FROM libros");
 ?>
->>>>>>> 36c7974b7f82dc2fb40dccdc2660518d7f9c2761
 
 <!doctype html>
 <html lang="en">
@@ -348,65 +343,77 @@ $resultadolibros = $mysql->efectuarConsulta("SELECT * FROM libros");
       <!--end::Header-->
 
       <!--begin::Sidebar-->
-      <aside class="app-sidebar verde shadow">
-        <div class="sidebar-brand">
-          <a href="./index.php" class="brand-link">
-            <span class="title"> senaEdu </span>
+      <!-- REEMPLAZA LA SECCIÓN DEL SIDEBAR EN TU index.php CON ESTO: -->
+
+<aside class="app-sidebar verde shadow">
+  <div class="sidebar-brand">
+    <a href="./index.php" class="brand-link">
+      <span class="title"> senaEdu </span>
+    </a>
+  </div>
+  
+  <div class="sidebar-wrapper">
+    <nav class="mt-2">
+      <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="navigation" data-accordion="false" id="navigation">
+        
+        <li class="nav-item">
+          <a href="./index.php" class="nav-link active">
+            <i class="nav-icon bi bi-speedometer me-2"></i>
+            <span>Dashboard</span>
           </a>
-        </div>
-
-        <div class="sidebar-wrapper">
-          <nav class="mt-2">
-            <ul
-              class="nav sidebar-menu flex-column"
-              data-lte-toggle="treeview"
-              role="navigation"
-              aria-label="Main navigation"
-              data-accordion="false"
-              id="navigation"
-            >
-              <li class="nav-item">
-                <a href="./index.php" class="nav-link active">
-                  <i class="nav-icon bi bi-speedometer me-2"></i>
-                  <span>Dashboard</span>
-                </a>
-              </li>
-
-              <?php if ($rol == 'admin'): ?>
-              <li class="nav-item">
-                <a href="./views/usuarios.php" class="nav-link">
-                  <i class="bi bi-file-earmark-person me-2"></i>
-                  <span>Usuarios</span>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="./views/inventario.php" class="nav-link">
-                  <i class="bi bi-book me-2"></i>
-                  <span>Libros</span>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="./views/reservas.php" class="nav-link">
-                  <i class="bi bi-journal-richtext me-2"></i>
-                  <span>Reservas</span>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="./views/historialPrestamosAdmin.php" class="nav-link">
-                  <i class="bi bi-journal-arrow-down me-2"></i>
-                  <span>Prestamos</span>
-                </a>
-              </li>
+        </li>
+        
+        <?php if ($rol == 'admin'): ?>
+                <li class="nav-item">
+                  <a href="./views/usuarios.php" class="nav-link">
+                    <i class="bi bi-file-earmark-person me-2"></i>
+                    <span>Usuarios</span>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="./views/inventario.php" class="nav-link">
+                    <i class="bi bi-book me-2"></i>
+                    <span>Libros</span>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="./views/reservas.php" class="nav-link">
+                    <i class="bi bi-journal-richtext me-2"></i>
+                    <span>Reservas</span>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="./views/historialPrestamosAdmin.php" class="nav-link">
+                    <i class="bi bi-journal-arrow-down me-2"></i>
+                    <span>Prestamos</span>
+                  </a>
+                </li>
               <?php endif; ?>
-
-              <?php if ($rol == 'aprendiz'): ?>
-              <li class="nav-item">
-                <a href="./views/gestionTrabajos.php" class="nav-link">
-                  <i class="bi bi-calendar-check me-2"></i>
-                  <span>Trabajos</span>
-                </a>
-              </li>
+      
+              <?php if ($rol == 'instructor'): ?>
+                <li class="nav-item">
+                  <a href="./views/gestionTrabajosInstructor.php" class="nav-link">
+                    <i class="bi bi-check2-square me-2"></i>
+                    <span>Calificar Trabajos</span>
+                  </a>
+                </li>
               <?php endif; ?>
+      
+<?php if ($rol == 'aprendiz'): ?>
+  <li class="nav-item">
+    <a href="./views/gestionTrabajos.php" class="nav-link">
+      <i class="bi bi-calendar-check me-2"></i>
+      <span>Trabajos</span>
+    </a>
+  </li>
+  <li class="nav-item">
+    <a href="./views/misCalificaciones.php" class="nav-link">
+      <i class="bi bi-star me-2"></i>
+      <span>Mis Calificaciones</span>
+    </a>
+  </li>
+<?php endif; ?>
+      
             </ul>
           </nav>
         </div>
