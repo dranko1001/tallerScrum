@@ -395,42 +395,39 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM trabajos");
       </nav>
       <!--end::Header-->
       <!--begin::Sidebar-->
-      <!-- REEMPLAZA LA SECCIÓN DEL SIDEBAR EN TU index.php CON ESTO: -->
-
-<aside class="app-sidebar verde shadow">
-  <div class="sidebar-brand">
-    <a href="./index.php" class="brand-link">
-      <span class="title"> senaEdu </span>
-    </a>
-  </div>
-  
-  <div class="sidebar-wrapper">
-    <nav class="mt-2">
-      <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="navigation" data-accordion="false" id="navigation">        
+      <aside class="app-sidebar verde shadow">
+        <div class="sidebar-brand">
+          <a href="./index.php" class="brand-link">
+            <span class="title"> senaEdu </span>
+          </a>
+        </div>
+        
+        <div class="sidebar-wrapper">
+          <nav class="mt-2">
+            <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="navigation" data-accordion="false" id="navigation">        
               <?php if ($rol == 'instructor'): ?>
                 <li class="nav-item">
                   <a href="./views/gestionTrabajosInstructor.php" class="nav-link">
-                    <i class="bi bi-check2-square me-2"></i>
+                      <i class="bi bi-check2-square me-2"></i>
                     <span>Calificar Trabajos</span>
                   </a>
                 </li>
               <?php endif; ?>
-      
-<?php if ($rol == 'aprendiz'): ?>
-  <li class="nav-item">
-    <a href="./views/gestionTrabajos.php" class="nav-link">
-      <i class="bi bi-calendar-check me-2"></i>
-      <span>Trabajos</span>
-    </a>
-  </li>
-  <li class="nav-item">
-    <a href="./views/misCalificaciones.php" class="nav-link">
-      <i class="bi bi-star me-2"></i>
-      <span>Mis Calificaciones</span>
-    </a>
-  </li>
-<?php endif; ?>
-      
+            
+              <?php if ($rol == 'aprendiz'): ?>
+                <li class="nav-item">
+                  <a href="./views/gestionTrabajos.php" class="nav-link">
+                    <i class="bi bi-calendar-check me-2"></i>
+                    <span>Trabajos</span>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="./views/misCalificaciones.php" class="nav-link">
+                    <i class="bi bi-star me-2"></i>
+                    <span>Mis Calificaciones</span>
+                  </a>
+                </li>
+              <?php endif; ?>
             </ul>
           </nav>
         </div>
@@ -450,7 +447,6 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM trabajos");
       <!--end::App Main-->
       <!--begin::Footer-->
       <footer class="app-footer">
-        
         <!--begin::Copyright-->
         <strong>
           Copyright &copy; 2014-2025&nbsp;

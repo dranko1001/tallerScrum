@@ -198,8 +198,8 @@ $stats = $resultadoStats->fetch_assoc();
 
             <div class="sidebar-wrapper">
                 <nav class="mt-2">
-                    <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="navigation">
-
+                    <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="navigation"
+            aria-label="Main navigation" data-accordion="false" id="navigation">
                         <?php if ($rol == 'aprendiz'): ?>
                             <li class="nav-item">
                                 <a href="./gestionTrabajos.php" class="nav-link">
