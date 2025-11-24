@@ -128,6 +128,15 @@ $correo_user = $nombre;
                                 <span>Dashboard</span>
                             </a>
                         </li>
+                        <li class="nav-item">
+                <a href="./views/verNotasAprendiz.php" class="nav-link active">
+                  <i class="nav-icon bi bi-speedometer me-2"></i>
+                  <span>
+                    ver nota
+                  </span>
+                  </a>
+              </li>
+              
                         <?php if ($rol == 'admin'): ?>
                         <li class="nav-item">
                             <a href="./usuarios.php" class="nav-link active">
@@ -135,24 +144,7 @@ $correo_user = $nombre;
                                 <span>Usuarios</span>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a href="./inventario.php" class="nav-link">
-                                <i class="bi bi-book me-2"></i>
-                                <span>Libros</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="./reservas.php" class="nav-link">
-                                <i class="bi bi-journal-richtext me-2"></i>
-                                <span>Reservas</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="./historialPrestamosAdmin.php" class="nav-link">
-                                <i class="bi bi-journal-arrow-down me-2"></i>
-                                <span>Prestamos</span>
-                            </a>
-                        </li>
+                       
                         <?php endif; ?>
                         <?php if ($rol == 'aprendiz'): ?>
                         <li class="nav-item">

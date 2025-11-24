@@ -37,10 +37,6 @@ class MySQL {
             mysqli_close($this->conexion);
         }
     }
-    // Método para obtener el objeto de conexión
-    public function obtenerConexion() {
-    return $this->conexion;
-    }
 
     // Método para ejecutar una consulta y devolver su resultado
     public function efectuarConsulta($consulta) {
