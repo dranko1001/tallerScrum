@@ -53,6 +53,6 @@ if ($erroresInstructor > 0) {
     $mensaje = "El curso fue creado pero $erroresInstructor instructor(es) no se asociaron.";
     echo json_encode(["success" => false, "message" => $mensaje]);
 } else {
-    echo json_encode(["success" => true, "message" => "El curso fue agregado correctamente con " . count($instructoresArray) . " instructor(es)"]);
+    echo json_encode(["success" => true, "message" => "El curso fue agregado correctamente "]);
 }
 ?>
