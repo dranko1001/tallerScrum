@@ -10,23 +10,14 @@ if (!isset($_SESSION['rol_usuario'])) {
     header("location: ./views/login.php");
     exit();
 }
-
 $mysql = new MySQL();
 $mysql->conectar();
 
-$rol    = $_SESSION['rol_usuario'];
-$nombre = $_SESSION['correo_'.$rol] ?? '';
+$rol= $_SESSION['rol_usuario'];
+$nombre=$SESSION['correo'.$rol];
 
-<<<<<<< HEAD
 //consulta para obtener los trabajos
-// $resultado=$mysql->efectuarConsulta("SELECT * FROM trabajos");
-// ?>
-=======
-$idUsuarioSesion = $_SESSION['id_'.$rol] ?? '';
-
-$resultado = $mysql->efectuarConsulta("SELECT * FROM trabajos");
-
-$resultadolibros = $mysql->efectuarConsulta("SELECT * FROM libros");
+$resultado=$mysql->efectuarConsulta("SELECT * FROM trabajos");
 ?>
 
 <!doctype html>
@@ -57,41 +48,49 @@ $resultadolibros = $mysql->efectuarConsulta("SELECT * FROM libros");
     <!--end::Primary Meta Tags-->
 
     <!--begin::Accessibility Features-->
+    <!-- Skip links will be dynamically added by accessibility.js -->
     <meta name="supported-color-schemes" content="light dark" />
     <link rel="preload" href="./css/adminlte.css" as="style" />
     <!--end::Accessibility Features-->
 
-    <!-- Fonts -->
+    <!--begin::Fonts-->
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css"
+      integrity="sha256-tXJfXfp6Ewt1ilPzLDtQnJV4hclT9XuaZUKyUvmyr+Q="
       crossorigin="anonymous"
       media="print"
       onload="this.media='all'"
     />
+    <!--end::Fonts-->
 
-    <!-- OverlayScrollbars -->
+    <!--begin::Third Party Plugin(OverlayScrollbars)-->
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/styles/overlayscrollbars.min.css"
       crossorigin="anonymous"
     />
+    <!--end::Third Party Plugin(OverlayScrollbars)-->
 
-    <!-- Bootstrap Icons -->
+    <!--begin::Third Party Plugin(Bootstrap Icons)-->
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
       crossorigin="anonymous"
     />
+    <!--end::Third Party Plugin(Bootstrap Icons)-->
 
-    <!-- AdminLTE -->
+    <!--begin::Required Plugin(AdminLTE)-->
     <link rel="stylesheet" href="./css/adminlte.css" />
-    <link rel="stylesheet" href="./css/style.css">
+    <!--end::Required Plugin(AdminLTE)-->
+    <!-- Estilo propio -->
+     <link rel="stylesheet" href="./css/style.css">
 
-    <!-- Apexcharts -->
+    <!-- apexcharts -->
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/apexcharts@3.37.1/dist/apexcharts.css"
+      integrity="sha256-4MX+61mt9NVvvuPjUWdUdyfZfxSB1/Rf9WtqRHgG5S0="
       crossorigin="anonymous"
     />
 
@@ -99,191 +98,243 @@ $resultadolibros = $mysql->efectuarConsulta("SELECT * FROM libros");
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/css/jsvectormap.min.css"
+      integrity="sha256-+uGLJmmTKOqBr+2E6KDYs/NRsHxSkONXFHUL0fy2O/4="
       crossorigin="anonymous"
     />
-   
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <!-- DataTables + Bootstrap -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- esto es para que funcione chars.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+<!-- DataTables + Bootstrap -->
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+<!-- DataTables núcleo -->
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
 
-    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
-    <script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css">
+<!-- Integración Bootstrap 5 -->
+<script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
 
-    <link href="https://cdn.datatables.net/columncontrol/1.1.0/css/columnControl.dataTables.min.css" rel="stylesheet">
-    <script src="https://cdn.datatables.net/columncontrol/1.1.0/js/dataTables.columnControl.min.js"></script>
+<!-- Extensión Responsive (versión compatible 2.5.0) -->
+<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css">
 
-    <!-- SweetAlert2 -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!-- Extensión Column Control (si de verdad la usas) -->
+<link href="https://cdn.datatables.net/columncontrol/1.1.0/css/columnControl.dataTables.min.css" rel="stylesheet">
+<script src="https://cdn.datatables.net/columncontrol/1.1.0/js/dataTables.columnControl.min.js"></script>
 
-    <style>
-      .btn-info {
-        background: linear-gradient(135deg, #17a2b8, #5bc0de);
-        border: none;
-        transition: all 0.3s ease;
-        color: white;
-        font-weight: 500;
-        letter-spacing: 0.3px;
-      }
-      .btn-info:hover {
-        transform: translateY(-5px) scale(1.05);
-        background: linear-gradient(135deg, #5bc0de, #17a2b8);
-        box-shadow: 0 8px 15px rgba(0, 123, 255, 0.3);
-      }
-      .btn-info:active {
-        transform: scale(0.98);
-        box-shadow: 0 3px 6px rgba(0,0,0,0.2);
-      }
-      .card {
-        transition: all 0.3s ease;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      }
-      .card:hover {
-        transform: translateY(-8px) scale(1.02);
-        box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-        cursor: pointer;
-      }
-      .container-documentos {
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
-        flex-wrap: wrap;
-        gap: 30px;
-        margin: 40px auto;
-        max-width: 1400px;
-        padding: 20px;
-      }
-      .card-documento {
-        flex: 1 1 30%;
-        min-width: 350px;
-        background-color: #ffffff;
-        padding: 30px 35px;
-        border-radius: 16px;
-        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-        min-height: 500px;
-      }
-      .card-documento:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
-      }
-      .titulo-seccion {
-        font-weight: 700;
-        color: #1e293b;
-        margin-bottom: 25px;
-        font-size: 1.2rem;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-      .form-documentos {
-        display: flex;
-        flex-direction: column;
-        gap: 18px;
-      }
-      .row-form {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-        width: 100%;
-      }
-      .form-group {
-        display: flex;
-        flex-direction: column;
-        flex: 1;
-        min-width: 180px;
-      }
-      .form-group label {
-        font-weight: 600;
-        color: #334155;
-        margin-bottom: 5px;
-      }
-      .form-group input[type="date"],
-      .form-group select {
-        border: 1px solid #cbd5e1;
-        border-radius: 8px;
-        padding: 8px 10px;
-        background-color: #f8fafc;
-        color: #0f172a;
-        transition: all 0.3s ease;
-      }
-      .form-group input[type="date"]:focus,
-      .form-group select:focus {
-        border-color: #2563eb;
-        box-shadow: 0 0 6px rgba(37, 99, 235, 0.3);
-        outline: none;
-      }
-      .btn-generar {
-        background-color: #048db7dd;
-        color: #ffffff;
-        font-weight: 600;
-        border: none;
-        border-radius: 8px;
-        padding: 12px 18px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        cursor: pointer;
-        align-self: flex-start;
-        transition: background-color 0.3s ease, transform 0.2s ease;
-      }
-      .btn-generar:hover {
-        background-color: #ff0000ff;
-        transform: translateY(-2px);
-      }
-      .btn-generar i {
-        font-size: 16px;
-      }
-      .btn-group {
-        display: flex;
-        gap: 15px;
-        align-items: center;
-        width: 100%;
-      }
-      .btn-excel {
-        background-color: #00a390ff;
-        color: #fff;
-        font-weight: 600;
-        border: none;
-        border-radius: 8px;
-        padding: 12px 18px;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        cursor: pointer;
-        transition: background-color 0.3s ease, transform 0.2s ease;
-        flex-grow: 1;
-      }
-      .btn-excel:hover {
-        background-color: #13882cff;
-        transform: translateY(-2px);
-        color: #fff;
-      }
-      .btn-group .btn-generar {
-        flex-grow: 1;
-        margin-top: 0;
-        align-self: unset;
-      }
-    </style>
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<style>
+
+    .btn-info {
+  background: linear-gradient(135deg, #17a2b8, #5bc0de);
+  border: none;
+  transition: all 0.3s ease;
+  color: white;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+.btn-info:hover {
+  transform: translateY(-5px) scale(1.05);
+  background: linear-gradient(135deg, #5bc0de, #17a2b8);
+  box-shadow: 0 8px 15px rgba(0, 123, 255, 0.3);
+}
+
+.btn-info:active {
+  transform: scale(0.98);
+  box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+}
+
+    .card {
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  cursor: pointer;
+}
+
+.container-documentos {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  flex-wrap: wrap;           
+  gap: 30px;                 /* espacio entre columnas */
+  margin: 40px auto;
+  max-width: 1400px;
+  padding: 20px;
+}
+
+.card-documento {
+  flex: 1 1 30%;             
+  min-width: 350px;          /* ancho mínimo para pantallas pequeñas */
+  background-color: #ffffff;
+  padding: 30px 35px;
+  border-radius: 16px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+
+.card-documento:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+}
+
+.titulo-seccion {
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 25px;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.form-documentos {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.row-form {
+  display: flex;
+  flex-direction: column; 
+  gap: 16px;
+  width: 100%;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 180px;
+}
+
+.form-group label {
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 5px;
+}
+
+.form-group input[type="date"],
+.form-group select {
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 8px 10px;
+  background-color: #f8fafc;
+  color: #0f172a;
+  transition: all 0.3s ease;
+}
+
+.form-group input[type="date"]:focus,
+.form-group select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 6px rgba(37, 99, 235, 0.3);
+  outline: none;
+}
+
+.btn-generar {
+  background-color: #048db7dd;
+  color: #ffffff;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  align-self: flex-start; /* alinea a la izquierda */
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn-generar:hover {
+  background-color: #ff0000ff;
+  transform: translateY(-2px);
+}
+
+.btn-generar i {
+  font-size: 16px;
+}
+
+.card-documento {
+  min-height: 500px; 
+}
+
+.btn-group {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+/* ... dentro de <style> ... */
+
+/* Modificación a .btn-group para alinear los botones */
+.btn-group {
+    display: flex;
+    gap: 15px; /* Aumenta el espacio entre botones */
+    align-items: center;
+    /* Nuevo: Añade esto para que los botones crezcan y se repartan el espacio */
+    width: 100%; 
+}
+
+/* Ajustes al botón de Excel para que se vea igual que el de PDF */
+.btn-excel {
+    background-color: #00a390ff;
+    color: #fff;
+    font-weight: 600; /* Asegura el mismo peso de fuente */
+    border: none;
+    border-radius: 8px; /* Usa el mismo radio que .btn-generar */
+    padding: 12px 18px; /* Usa el mismo padding que .btn-generar */
+    text-decoration: none;
+    display: inline-flex; /* Para alinear icono y texto */
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    
+    flex-grow: 1; 
+}
+
+.btn-excel:hover {
+    background-color: #13882cff;
+    transform: translateY(-2px);
+    color: #fff;
+}
+
+/* Asegura que el botón de PDF también crezca equitativamente en un grupo */
+.btn-group .btn-generar {
+    flex-grow: 1; 
+    margin-top: 0; /* Anula cualquier margen que pueda tener */
+    align-self: unset; /* Anula align-self: flex-start; del estilo anterior */
+}
+
+/* ... otras clases CSS ... */
+</style>
+
+<!-- script de los graficos -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   </head>
   <!--end::Head-->
-
   <!--begin::Body-->
-  <body class="layout-fixed sidebar-expand-lg sidebar-open bg-body-tertiary">
+<body class="layout-fixed sidebar-expand-lg sidebar-open bg-body-tertiary">
     <!--begin::App Wrapper-->
     <div class="app-wrapper">
       <!--begin::Header-->
       <nav class="app-header navbar navbar-expand bg-body">
+        <!--begin::Container-->
         <div class="container-fluid">
           <!--begin::Start Navbar Links-->
           <ul class="navbar-nav">
@@ -295,39 +346,40 @@ $resultadolibros = $mysql->efectuarConsulta("SELECT * FROM libros");
             <li class="nav-item d-none d-md-block">
               <a href="index.php" class="nav-link">Inicio</a>
             </li>
+            
           </ul>
           <!--end::Start Navbar Links-->
 
           <!--begin::End Navbar Links-->
           <ul class="navbar-nav ms-auto">
+
             <!--begin::User Menu Dropdown-->
             <li class="nav-item dropdown user-menu">
-              <a href="#" class="nav-link dropdown-toggle text-white fw-semibold" data-bs-toggle="dropdown">
-                <span class="d-none d-md-inline">
-                  <i class="bi bi-person-circle me-1"></i><?php echo htmlspecialchars($nombre); ?>
-                </span>
-              </a>
+  <a href="#" class="nav-link dropdown-toggle text-white fw-semibold" data-bs-toggle="dropdown">
+    <span class="d-none d-md-inline"><i class="bi bi-person-circle me-1"></i><?php echo $nombre; ?></span>
+  </a>
 
               <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3 mt-2" style="min-width: 230px;">
+                <!-- Cabecera del usuario -->
                 <li class="bg-primary text-white text-center rounded-top py-3">
-                  <p class="mb-0 fw-bold fs-5"><?php echo htmlspecialchars($nombre); ?></p>
-                  <small><?php echo htmlspecialchars($rol); ?></small>
+                  <p class="mb-0 fw-bold fs-5"><?php echo  $nombre; ?></p>
+                  <small><?php echo $rol; ?></small>
                 </li>
 
+                <!-- Separador -->
                 <li><hr class="dropdown-divider m-0"></li>
 
-                <!-- es el modal  -->
+                <!-- Opciones del menu -->
                 <li>
-                  <a href="#" 
-                     class="dropdown-item d-flex align-items-center py-2"
-                     data-bs-toggle="modal"
-                     data-bs-target="#modalEditarUsuario">
+                  <a href="./views/perfilUsuario.php" class="dropdown-item d-flex align-items-center py-2">
                     <i class="bi bi-person me-2 text-secondary"></i> Perfil
                   </a>
                 </li>
 
+                <!-- Separador -->
                 <li><hr class="dropdown-divider m-0"></li>
 
+                <!-- Opción de cerrar sesión -->
                 <li>
                   <a href="./controllers/logout.php" class="dropdown-item d-flex align-items-center text-danger py-2">
                     <i class="bi bi-box-arrow-right me-2"></i> Cerrar sesión
@@ -339,9 +391,9 @@ $resultadolibros = $mysql->efectuarConsulta("SELECT * FROM libros");
           </ul>
           <!--end::End Navbar Links-->
         </div>
+        <!--end::Container-->
       </nav>
       <!--end::Header-->
-
       <!--begin::Sidebar-->
       <!-- REEMPLAZA LA SECCIÓN DEL SIDEBAR EN TU index.php CON ESTO: -->
 
@@ -354,42 +406,7 @@ $resultadolibros = $mysql->efectuarConsulta("SELECT * FROM libros");
   
   <div class="sidebar-wrapper">
     <nav class="mt-2">
-      <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="navigation" data-accordion="false" id="navigation">
-        
-        <li class="nav-item">
-          <a href="./index.php" class="nav-link active">
-            <i class="nav-icon bi bi-speedometer me-2"></i>
-            <span>Dashboard</span>
-          </a>
-        </li>
-        
-        <?php if ($rol == 'admin'): ?>
-                <li class="nav-item">
-                  <a href="./views/usuarios.php" class="nav-link">
-                    <i class="bi bi-file-earmark-person me-2"></i>
-                    <span>Usuarios</span>
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a href="./views/inventario.php" class="nav-link">
-                    <i class="bi bi-book me-2"></i>
-                    <span>Libros</span>
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a href="./views/reservas.php" class="nav-link">
-                    <i class="bi bi-journal-richtext me-2"></i>
-                    <span>Reservas</span>
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a href="./views/historialPrestamosAdmin.php" class="nav-link">
-                    <i class="bi bi-journal-arrow-down me-2"></i>
-                    <span>Prestamos</span>
-                  </a>
-                </li>
-              <?php endif; ?>
-      
+      <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="navigation" data-accordion="false" id="navigation">        
               <?php if ($rol == 'instructor'): ?>
                 <li class="nav-item">
                   <a href="./views/gestionTrabajosInstructor.php" class="nav-link">
@@ -419,10 +436,8 @@ $resultadolibros = $mysql->efectuarConsulta("SELECT * FROM libros");
         </div>
       </aside>
       <!--end::Sidebar-->
-
       <!--begin::App Main-->
       <main class="app-main">
-<<<<<<< HEAD
         <!--begin::App Content Header-->
         <div class="app-content-header">
           <!--begin::Container-->
@@ -430,230 +445,42 @@ $resultadolibros = $mysql->efectuarConsulta("SELECT * FROM libros");
         </div>
         <!--end::App Content Header-->
         <!--begin::App Content-->
-
-
-
-        <!-- boton para llamar el formulario de agregar curso -->
-<button class="btn btn-info" onclick="agregarCurso()">
-  <i class="bi bi-plus-lg"></i> Agregar Curso
-</button>
-
-
-<!-- funcion para agregar un curso, esta conectada al controlador agregarcurso.php -->
-<script>
-  function agregarCurso() {
-  Swal.fire({
-    title: 'Agregar Nuevo Curso',
-    html: `
-      <form id="formAgregarCurso" class="text-start" action="controllers/agregarCurso.php" method="POST">
-        <div class="mb-3">
-          <label for="nombre_curso" class="form-label">Nombre del curso</label>
-          <input type="text" class="form-control" id="nombre_curso" name="nombre_curso" required>
-        </div>
-      </form>
-    `,
-    confirmButtonText: 'Agregar',
-    showCancelButton: true,
-    cancelButtonText: 'Cancelar',
-    focusConfirm: false,
-    preConfirm: () => {
-      const nombre = document.getElementById('nombre_curso').value.trim();
-
-      if (!nombre) {
-        Swal.showValidationMessage('Por favor, complete el nombre.');
-        return false;
-      }
-
-      const formData = new FormData();
-      formData.append('nombre_curso', nombre);
-
-      return formData;
-    }
-  }).then((result) => {
-    if (result.isConfirmed) {
-      const formData = result.value;
-
-      $.ajax({
-        url: 'controllers/agregarCurso.php',
-        type: 'POST',
-        data: formData,
-        contentType: false,
-        processData: false,
-        dataType: 'json',
-        success: function(response) {
-          if (response.success) {
-            Swal.fire(' Éxito', response.message, 'success').then(() => {
-              location.reload();
-            });
-          } else {
-            Swal.fire(' Atención', response.message, 'warning');
-          }
-        },
-        error: function(xhr, status, error) {
-          console.error("Error AJAX:", error, xhr.responseText);
-          Swal.fire(' Error', 'El servidor no respondió correctamente.', 'error');
-        }
-      });
-    }
-  });
-}
-</script>
-
-
-
- 
-=======
-        <div class="app-content-header"></div>
-
->>>>>>> 36c7974b7f82dc2fb40dccdc2660518d7f9c2761
-        <div class="app-content">
-          <div class="container-fluid">
-            <div class="row">
-              <?php if($rol != "admin"): ?>
-              <div class="table-responsive">
-                <div class="col"> 
-                  <button class="btn btn-sm btn-primary btnReservar mb-4 w-100" onclick="abrirCrearReserva()">
-                    <i class="bi bi-bookmark-plus"></i> Realizar Reserva
-                  </button> 
-                </div>
-                  
-                <table id="tablaLibros" class="table table-striped table-bordered" width="100%">
-                  <thead class="table-success">
-                    <tr>
-                      <th>ID</th>
-                      <th>Título</th>
-                      <th>Autor</th>
-                      <th>ISBN</th>
-                      <th>Categoría</th>
-                      <th>Cantidad</th>
-                      <th>Estado</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <?php while($fila = $resultadolibros->fetch_assoc()): ?>
-                    <tr>
-                      <td><?= $fila['id_libro'] ?></td>
-                      <td><?= $fila['titulo_libro'] ?></td>
-                      <td><?= $fila['autor_libro'] ?></td>
-                      <td><?= $fila['ISBN_libro'] ?></td>
-                      <td><?= $fila['categoria_libro'] ?></td>
-                      <td><?= $fila['cantidad_libro'] ?></td>
-                      <td>
-                        <?php if($fila['cantidad_libro'] == 0): ?>
-                          <span class="badge bg-danger">No disponible</span>
-                        <?php else: ?>
-                          <span class="badge bg-success"><?= $fila['disponibilidad_libro'] ?></span>
-                        <?php endif; ?>
-                      </td>
-                    </tr>
-                    <?php endwhile; ?>
-                  </tbody>
-                </table>
-              </div>
-              <?php endif; ?>
-            </div>
-          </div>
-        </div>
+       <!--end::App Content-->
       </main>
       <!--end::App Main-->
-
       <!--begin::Footer-->
       <footer class="app-footer">
+        
+        <!--begin::Copyright-->
         <strong>
-          Copyright &copy; 2014-2025
+          Copyright &copy; 2014-2025&nbsp;
           <a href="https://adminlte.io" class="text-decoration-none">senaEdu</a>.
         </strong>
         All rights reserved.
+        <!--end::Copyright-->
       </footer>
       <!--end::Footer-->
     </div>
     <!--end::App Wrapper-->
-
-
-                        <!--sirve para tomar con cual usario se ingresa en el editar perfil-->
-    <?php
-$rol = $_SESSION['rol_usuario'];
-$id_user = $_SESSION['id_'.$rol];
-$correo_user = $_SESSION['correo_'.$rol];
-?>
-
-<!-- Modal Editar Usuario -->
-<div class="modal fade" id="modalEditarUsuario" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-lg">
-    <div class="modal-content shadow-lg border-0 rounded-3">
-      
-      <div class="modal-header bg-primary text-white">
-        <h5 class="modal-title">Editar Perfil</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-      </div>
-
-      <div class="modal-body p-4">
-
-        <form action="./controllers/editar_perfil.php" method="POST">
-
-          <input type="hidden" name="rol_usuario" value="<?php echo $rol; ?>">
-          <input type="hidden" name="id_usuario" value="<?php echo $id_user; ?>">
-
-          <div class="row g-3">
-
-
-            <div class="col-md-8">
-              <label class="form-label fw-semibold">Correo</label>
-              <input type="email" class="form-control" name="correo_usuario" 
-                     value="<?php echo $correo_user; ?>" required>
-            </div>
-
-            <?php if($rol === 'admin'): ?>
-            <div class="col-md-6">
-              <label class="form-label fw-semibold">Rol</label>
-              <select name="nuevo_rol" class="form-select">
-                <option value="admin" <?php echo ($rol=='admin'?'selected':''); ?>>Administrador</option>
-                <option value="instructor">Instructor</option>
-                <option value="aprendiz">Aprendiz</option>
-              </select>
-            </div>
-            <?php endif; ?>
-
-            <div class="col-md-6">
-            <label class="form-label fw-semibold">Nueva Contraseña </label>
-            <input type="password" class="form-control" name="password_usuario">
-            </div>
-
-          </div>
-
-          <div class="mt-4 text-end">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-           <button type="submit" class="btn btn-primary"> Guardar</button>
-          </div>
-
-        </form>
-
-      </div>
-
-    </div>
-  </div>
-</div>
-
-    <!--  fin modal editar -->
-
-    <!-- Scripts -->
+    <!--begin::Script-->
+    <!--begin::Third Party Plugin(OverlayScrollbars)-->
     <script
       src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/browser/overlayscrollbars.browser.es6.min.js"
       crossorigin="anonymous"
     ></script>
-
+    <!--end::Third Party Plugin(OverlayScrollbars)--><!--begin::Required Plugin(popperjs for Bootstrap 5)-->
     <script
       src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
       crossorigin="anonymous"
     ></script>
-
+    <!--end::Required Plugin(popperjs for Bootstrap 5)--><!--begin::Required Plugin(Bootstrap 5)-->
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.min.js"
       crossorigin="anonymous"
     ></script>
-
+    <!--end::Required Plugin(Bootstrap 5)--><!--begin::Required Plugin(AdminLTE)-->
     <script src="public/js/adminlte.js"></script>
-
+    <!--end::Required Plugin(AdminLTE)--><!--begin::OverlayScrollbars Configure-->
     <script>
       const SELECTOR_SIDEBAR_WRAPPER = '.sidebar-wrapper';
       const Default = {
@@ -663,6 +490,8 @@ $correo_user = $_SESSION['correo_'.$rol];
       };
       document.addEventListener('DOMContentLoaded', function () {
         const sidebarWrapper = document.querySelector(SELECTOR_SIDEBAR_WRAPPER);
+
+        // Disable OverlayScrollbars on mobile devices to prevent touch interference
         const isMobile = window.innerWidth <= 992;
 
         if (
@@ -678,55 +507,10 @@ $correo_user = $_SESSION['correo_'.$rol];
             },
           });
         }
-
-        const tabla = document.getElementById('tablaLibros');
-        if (tabla) {
-          $('#tablaLibros').DataTable({
-            responsive: true
-          });
-        }
       });
     </script>
-<!--funcionalidad de el modal editar-->
-    <script>
-document.querySelector('#modalEditarUsuario form').addEventListener('submit', function(e){
-    e.preventDefault(); 
+    <!--end::OverlayScrollbars Configure-->
 
-    let datos = new FormData(this);
-
-    fetch('./controllers/editar_perfil.php', {
-        method: 'POST',
-        body: datos
-    })
-    .then(res => res.text())
-    .then(res => {
-
-        if(res.includes("OK")){
-            Swal.fire({
-                icon: 'success',
-                title: 'Actualizado correctamente',
-                timer: 1500,
-                showConfirmButton: false
-            });
-
-            let modal = bootstrap.Modal.getInstance(document.getElementById('modalEditarUsuario'));
-            modal.hide();
-
-            location.reload();
-        } 
-        else {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: res
-            });
-        }
-
-    });
-});
-</script>
-
-<<<<<<< HEAD
     <!-- jsvectormap -->
     <script
       src="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/js/jsvectormap.min.js"
@@ -738,29 +522,6 @@ document.querySelector('#modalEditarUsuario form').addEventListener('submit', fu
       integrity="sha256-XPpPaZlU8S/HWf7FZLAncLg2SAkP8ScUTII89x9D3lY="
       crossorigin="anonymous"
     ></script>
-<<<<<<<<< Temporary merge branch 1
-<script>
-$(document).ready(function() {
-   $('#tablaLibros').DataTable({
-    language: {
-        url: "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
-    },
-    pageLength: 5,
-    lengthMenu: [5, 10, 20, 50],
-    responsive: true,
-    autoWidth: true
-});
-
-});
-</script>
-
-
-
-
-
-=========
->>>>>>>>> Temporary merge branch 2
-=======
->>>>>>> 36c7974b7f82dc2fb40dccdc2660518d7f9c2761
   </body>
+  <!--end::Body-->
 </html>
