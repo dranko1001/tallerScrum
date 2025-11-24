@@ -2,8 +2,7 @@
 header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
 header("Cache-Control: post-check=0, pre-check=0", false);
 header("Pragma: no-cache");
-
-// Conexión a la base de datos
+//conexion a la base de datos
 require_once 'models/MySQL.php';
 session_start();
 
@@ -336,155 +335,98 @@ $resultado = $mysql->efectuarConsulta("SELECT * FROM trabajos");
                                 </a>
                             </li>
 
-                            <li>
-                                <a href="./controllers/logout.php" class="dropdown-item d-flex align-items-center text-danger py-2">
-                                    <i class="bi bi-box-arrow-right me-2"></i> Cerrar sesión
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-        </nav>
-        <aside class="app-sidebar verde shadow">
-            <div class="sidebar-brand">
-                <a href="./index.php" class="brand-link">
-                    <span class="title"> senaEdu </span>
-                    </a>
-                </div>
-            <div class="sidebar-wrapper">
-                <nav class="mt-2">
-                    <ul
-                        class="nav sidebar-menu flex-column"
-                        data-lte-toggle="treeview"
-                        role="navigation"
-                        aria-label="Main navigation"
-                        data-accordion="false"
-                        id="navigation"
-                    >
-                        <li class="nav-item">
-                            <a href="./index.php" class="nav-link active">
-                                <i class="nav-icon bi bi-speedometer me-2"></i>
-                                <span>
-                                    Dashboard
-                                </span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="./views/verNotasAprendiz.php" class="nav-link">
-                                <i class="nav-icon bi bi-speedometer me-2"></i>
-                                <span>
-                                    Ver Notas
-                                </span>
-                            </a>
-                        </li>
-                        <?php if ($rol == 'admin'): ?>
-                        <li class="nav-item">
-                            <a href="./views/agregar_usuario.php" class="nav-link">
-                                <i class="bi bi-file-earmark-person me-2"></i>
-                                <span>Usuarios</span>
-                            </a>
-                        </li>
-                        
-                        </li>
-                        <li class="nav-item">
-                        
-                        <?php endif; ?>
-                        <?php if ($rol == 'aprendiz'): ?>
-                        <li class="nav-item">
-                            <a href="./views/gestionTrabajos.php" class="nav-link">
-                                <i class="bi bi-calendar-check me-2 me-2"> </i>
-                                <span> Trabajos </span>
-                            </a>
-                        </li>
-                        <?php endif; ?>
-                    </ul>
-                    </nav>
-            </div>
-            </aside>
-        <main class="app-main">
-            <div class="app-content-header">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <h3 class="mb-0">Dashboard</h3>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            </main>
-        <?php
-        $rol = $_SESSION['rol_usuario'];
-        $id_user = $_SESSION['id_'.$rol];
-        $correo_user = $_SESSION['correo_'.$rol];
-        ?>
+                <!-- Separador -->
+                <li><hr class="dropdown-divider m-0"></li>
 
-        <div class="modal fade" id="modalEditarUsuario" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg">
-                <div class="modal-content shadow-lg border-0 rounded-3">
-                    
-                    <div class="modal-header bg-primary text-white">
-                        <h5 class="modal-title">Editar Perfil</h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                    </div>
-
-                    <div class="modal-body p-4">
-
-                        <form action="./controllers/editar_perfil.php" method="POST">
-
-                            <input type="hidden" name="rol_usuario" value="<?php echo $rol; ?>">
-                            <input type="hidden" name="id_usuario" value="<?php echo $id_user; ?>">
-
-                            <div class="row g-3">
-
-
-                                <div class="col-md-8">
-                                    <label class="form-label fw-semibold">Correo</label>
-                                    <input type="email" class="form-control" name="correo_usuario" 
-                                            value="<?php echo $correo_user; ?>" required>
-                                </div>
-
-                                <?php if($rol === 'admin'): ?>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold">Rol</label>
-                                    <select name="nuevo_rol" class="form-select">
-                                        <option value="admin" <?php echo ($rol=='admin'?'selected':''); ?>>Administrador</option>
-                                        <option value="instructor">Instructor</option>
-                                        <option value="aprendiz">Aprendiz</option>
-                                    </select>
-                                </div>
-                                <?php endif; ?>
-                                
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold">Nueva Contraseña </label>
-                                    <input type="password" class="form-control" name="password_usuario">
-                                </div>
-
-                            </div>
-
-                            <div class="mt-4 text-end">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                <button type="submit" class="btn btn-primary"> Guardar</button>
-                            </div>
-
-                        </form>
-
-                    </div>
-
-                </div>
-            </div>
+                <!-- Opción de cerrar sesión -->
+                <li>
+                  <a href="./controllers/logout.php" class="dropdown-item d-flex align-items-center text-danger py-2">
+                    <i class="bi bi-box-arrow-right me-2"></i> Cerrar sesión
+                  </a>
+                </li>
+              </ul>
+            </li>
+            <!--end::User Menu Dropdown-->
+          </ul>
+          <!--end::End Navbar Links-->
         </div>
-
-        <footer class="app-footer">
-            
-            <strong>
-                Copyright &copy; 2014-2025&nbsp;
-                <a href="https://adminlte.io" class="text-decoration-none">senaEdu</a>.
-            </strong>
-            All rights reserved.
-            </footer>
+        <!--end::Container-->
+      </nav>
+      <!--end::Header-->
+      <!--begin::Sidebar-->
+      <aside class="app-sidebar verde shadow">
+        <div class="sidebar-brand">
+          <a href="./index.php" class="brand-link">
+            <span class="title"> senaEdu </span>
+          </a>
         </div>
+        
+        <div class="sidebar-wrapper">
+          <nav class="mt-2">
+            <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="navigation" data-accordion="false" id="navigation">  
+              <?php if ($rol == 'admin'): ?>
+                <li class="nav-item">
+                  <a href="./index.php" class="nav-link">
+                      <i class="bi bi-speedometer me-2"></i>
+                    <span>Dashboard</span>
+                  </a>
+                </li>
+              <?php endif; ?>      
+              <?php if ($rol == 'instructor'): ?>
+                <li class="nav-item">
+                  <a href="./views/gestionTrabajosInstructor.php" class="nav-link">
+                      <i class="bi bi-check2-square me-2"></i>
+                    <span>Calificar Trabajos</span>
+                  </a>
+                </li>
+              <?php endif; ?>
+            
+              <?php if ($rol == 'aprendiz'): ?>
+                <li class="nav-item">
+                  <a href="./views/gestionTrabajos.php" class="nav-link">
+                    <i class="bi bi-calendar-check me-2"></i>
+                    <span>Trabajos</span>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="./views/misCalificaciones.php" class="nav-link">
+                    <i class="bi bi-star me-2"></i>
+                    <span>Mis Calificaciones</span>
+                  </a>
+                </li>
+              <?php endif; ?>
+            </ul>
+          </nav>
+        </div>
+      </aside>
+      <!--end::Sidebar-->
+      <!--begin::App Main-->
+      <main class="app-main">
+        <!--begin::App Content Header-->
+        <div class="app-content-header">
+          <!--begin::Container-->
+          <!--end::Container-->
+        </div>
+        <!--end::App Content Header-->
+        <!--begin::App Content-->
+       <!--end::App Content-->
+      </main>
+      <!--end::App Main-->
+      <!--begin::Footer-->
+      <footer class="app-footer">
+        <!--begin::Copyright-->
+        <strong>
+          Copyright &copy; 2014-2025&nbsp;
+          <a href="https://adminlte.io" class="text-decoration-none">senaEdu</a>.
+        </strong>
+        All rights reserved.
+        <!--end::Copyright-->
+      </footer>
+      <!--end::Footer-->
+    </div>
+    <!--end::App Wrapper-->
+    <!--begin::Script-->
+    <!--begin::Third Party Plugin(OverlayScrollbars)-->
     <script
         src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/browser/overlayscrollbars.browser.es6.min.js"
         crossorigin="anonymous"

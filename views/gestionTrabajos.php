@@ -7,7 +7,7 @@ require_once '../models/MySQL.php';
 session_start();
 
 if (!isset($_SESSION['rol_usuario'])) {
-  header("location: ./views/login.php");
+  header("location: ./login.php");
   exit();
 }
 $mysql = new MySQL();
@@ -47,7 +47,7 @@ $resultado = $mysql->efectuarConsulta("SELECT * FROM trabajos");
   <!--begin::Accessibility Features-->
   <!-- Skip links will be dynamically added by accessibility.js -->
   <meta name="supported-color-schemes" content="light dark" />
-  <link rel="preload" href="./css/adminlte.css" as="style" />
+  <link rel="preload" href="../css/adminlte.css" as="style" />
   <!--end::Accessibility Features-->
 
   <!--begin::Fonts-->
@@ -333,7 +333,7 @@ $resultado = $mysql->efectuarConsulta("SELECT * FROM trabajos");
             </a>
           </li>
           <li class="nav-item d-none d-md-block">
-            <a href="index.php" class="nav-link">Inicio</a>
+            <a href="../index.php" class="nav-link">Inicio</a>
           </li>
 
         </ul>
@@ -361,11 +361,6 @@ $resultado = $mysql->efectuarConsulta("SELECT * FROM trabajos");
               </li>
 
               <!-- Opciones del menu -->
-              <li>
-                <a href="./views/perfilUsuario.php" class="dropdown-item d-flex align-items-center py-2">
-                  <i class="bi bi-person me-2 text-secondary"></i> Perfil
-                </a>
-              </li>
 
               <!-- Separador -->
               <li>
@@ -374,7 +369,7 @@ $resultado = $mysql->efectuarConsulta("SELECT * FROM trabajos");
 
               <!-- Opción de cerrar sesión -->
               <li>
-                <a href="./controllers/logout.php" class="dropdown-item d-flex align-items-center text-danger py-2">
+                <a href="../controllers/logout.php" class="dropdown-item d-flex align-items-center text-danger py-2">
                   <i class="bi bi-box-arrow-right me-2"></i> Cerrar sesión
                 </a>
               </li>
@@ -392,7 +387,7 @@ $resultado = $mysql->efectuarConsulta("SELECT * FROM trabajos");
       <!--begin::Sidebar Brand-->
       <div class="sidebar-brand">
         <!--begin::Brand Link-->
-        <a href="./index.php" class="brand-link">
+        <a href="../index.php" class="brand-link">
           <!--begin::Brand Image-->
 
           <!--end::Brand Image-->
@@ -409,19 +404,17 @@ $resultado = $mysql->efectuarConsulta("SELECT * FROM trabajos");
           <!--begin::Sidebar Menu-->
           <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="navigation"
             aria-label="Main navigation" data-accordion="false" id="navigation">
-            <li class="nav-item">
-              <a href="../index.php" class="nav-link">
-                <i class="nav-icon bi bi-speedometer me-2"></i>
-                <span>
-                  Dashboard
-                </span>
-              </a>
-            </li>
             <?php if ($rol == 'aprendiz'): ?>
               <li class="nav-item">
-                <a href="./views/gestionTrabajos.php" class="nav-link active">
+                <a href="./gestionTrabajos.php" class="nav-link active">
                   <i class="nav-icon bi bi-calendar-check me-2 me-2"> </i>
                   <span> Trabajos </span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="./misCalificaciones.php" class="nav-link">
+                  <i class="bi bi-star me-2"></i>
+                    <span>Mis Calificaciones</span>
                 </a>
               </li>
             <?php endif; ?>
@@ -444,42 +437,50 @@ $resultado = $mysql->efectuarConsulta("SELECT * FROM trabajos");
       <div class="app-content">
         <div class="container-fluid">
           <div class="row">
-            <?php if ($rol != "admin"): ?>
-              <div class="table-responsive">
-                <div class="col">
-                  <button class="btn btn-sm btn-primary btnReservar mb-4 w-100" onclick="abrirCrearReserva()">
-                    <i class="bi bi-bookmark-plus"></i> Realizar Reserva
-                  </button>
-                </div>
-
-                <table id="tablaTrabajos" class="table table-striped table-bordered" width="100%">
-                  <thead class="table-success">
-                    <tr>
-                      <th>ID</th>
-                      <th>Nombre del Trabajo</th>
-                      <th>Fecha del Trabajo</th>
-                      <th>Acciones</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <?php while ($fila = $resultado->fetch_assoc()): ?>
-                      <tr>
-                        <td><?= $fila['id_trabajo'] ?></td>
-                        <td><?= $fila['nombre_trabajo'] ?></td>
-                        <td><?= $fila['fecha_trabajo'] ?></td>
-                        <td>
-                          <?php if ($fila['cantidad_libro'] == 0): ?>
-                            <span class="badge bg-danger">No disponible</span>
-                          <?php else: ?>
-                            <span class="badge bg-success"><?= $fila['disponibilidad_libro'] ?></span>
-                          <?php endif; ?>
-                        </td>
-                      </tr>
-                    <?php endwhile; ?>
-                  </tbody>
-                </table>
+            <div class="table-responsive">
+              <div class="col">
+                <button class="btn btn-sm btn-primary btnReservar mb-4 w-100" onclick="subirTrabajo()">
+                  <i class="bi bi-upload"></i> Subir Trabajo
+                </button>
               </div>
-            <?php endif; ?>
+
+              <table id="tablaTrabajos" class="table table-striped table-bordered" width="100%">
+                <thead class="table-success">
+                  <tr>
+                    <th>ID</th>
+                    <th>Nombre del Trabajo</th>
+                    <th>Fecha Limite del Trabajo</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <?php while ($fila = $resultado->fetch_assoc()): ?>
+                    <tr>
+                      <td><?= $fila['id_trabajo'] ?></td>
+                      <td><?= $fila['nombre_trabajo'] ?></td>
+                      <td><?= $fila['fecha_trabajo'] ?></td>
+                      <td class="justify-content-center d-flex gap-1">
+                        <!-- se agrega ../para que sirva la ruta y pueda visualizar el archivo -->
+                        <a class="btn btn-info btn-sm" title="Ver trabajo"
+                          href="<?php echo '../' . $fila['ruta_trabajo']; ?>" target="_blank">
+                          <i class="bi bi-eye"></i>
+                        </a> |
+                        <a class="btn btn-warning btn-sm" title="editar"
+                          onclick="editarTrabajo(<?php echo $fila['id_trabajo']; ?>)">
+                          <i class="bi bi-pencil-square"></i>
+                        </a>
+                        |
+                        <a class="btn btn-danger btn-sm" href="javascript:void(0);"
+                          onclick="eliminarTrabajo(<?php echo $fila['id_trabajo']; ?>)" title="Eliminar">
+                          <i class="bi bi-trash"></i>
+                        </a>
+
+                      </td>
+                    </tr>
+                  <?php endwhile; ?>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
@@ -510,7 +511,7 @@ $resultado = $mysql->efectuarConsulta("SELECT * FROM trabajos");
   <!--end::Required Plugin(popperjs for Bootstrap 5)--><!--begin::Required Plugin(Bootstrap 5)-->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
   <!--end::Required Plugin(Bootstrap 5)--><!--begin::Required Plugin(AdminLTE)-->
-  <script src="public/js/adminlte.js"></script>
+  <script src="../public/js/adminlte.js"></script>
   <!--end::Required Plugin(AdminLTE)--><!--begin::OverlayScrollbars Configure-->
   <script>
     const SELECTOR_SIDEBAR_WRAPPER = '.sidebar-wrapper';
@@ -547,6 +548,177 @@ $resultado = $mysql->efectuarConsulta("SELECT * FROM trabajos");
     integrity="sha256-/t1nN2956BT869E6H4V1dnt0X5pAQHPytli+1nTZm2Y=" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/maps/world.js"
     integrity="sha256-XPpPaZlU8S/HWf7FZLAncLg2SAkP8ScUTII89x9D3lY=" crossorigin="anonymous"></script>
+  <script>
+    $(document).ready(function () {
+      $('#tablaTrabajos').DataTable({
+        language: {
+          url: "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
+        },
+        pageLength: 5,
+        lengthMenu: [5, 10, 20, 50],
+        responsive: true,
+        autoWidth: true
+      });
+
+    });
+  </script>
+  <script>
+    function editarTrabajo(id) {
+      Swal.fire({
+        title: 'Editar Trabajo',
+        html: `
+      <form id="formEditarTrabajo" class="text-start" enctype="multipart/form-data">
+        <div class="mb-3">
+          <label class="form-label">Nombre del trabajo</label>
+          <input type="text" class="form-control" id="nombre_trabajo" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Subir Nueva Evidencia (opcional)</label>
+          <input type="file" accept=".pdf, .docx" class="form-control" id="ruta_trabajo">
+        </div>
+      </form>
+    `,
+        confirmButtonText: 'Guardar Cambios',
+        showCancelButton: true,
+        cancelButtonText: 'Cancelar',
+        preConfirm: () => {
+          const nombre = document.getElementById('nombre_trabajo').value.trim();
+          const archivo = document.getElementById('ruta_trabajo').files[0];
+
+          if (!nombre) {
+            Swal.showValidationMessage('El nombre del trabajo es obligatorio.');
+            return false;
+          }
+
+          const formData = new FormData();
+          formData.append('id_trabajo', id);
+          formData.append('nombre_trabajo', nombre);
+          if (archivo) {
+            formData.append('ruta_trabajo', archivo);
+          }
+
+          return formData;
+        }
+      }).then(result => {
+        if (result.isConfirmed) {
+          $.ajax({
+            url: '../controllers/editarTrabajo.php',
+            type: 'POST',
+            data: result.value,
+            contentType: false,
+            processData: false,
+            dataType: 'json',
+            success: function (response) {
+              Swal.fire('Éxito', response.message, 'success').then(() => location.reload());
+            },
+            error: function () {
+              Swal.fire('Error', 'El servidor no respondió', 'error');
+            }
+          });
+        }
+      });
+    }
+  </script>
+
+  <script>
+    function eliminarTrabajo(id) {
+      Swal.fire({
+        title: 'Eliminar Trabajo',
+        text: '¿Está seguro de que desea eliminar el trabajo con ID: ' + id + '?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Sí, eliminar"
+      }).then((result) => {
+        if (result.isConfirmed) {
+          Swal.fire({
+            title: "Eliminado!",
+            text: "El trabajo ha sido eliminado exitosamente.",
+            icon: "success",
+            timer: 2000,      // el tiempo que se demora en cerrar el alert 
+            showConfirmButton: false
+          }).then(() => {
+            window.location.href = '../controllers/eliminarTrabajo.php?id_trabajo=' + id;
+          });
+        }
+      });
+    }
+  </script>
+
+  <script>
+    function subirTrabajo() {
+      Swal.fire({
+        title: 'Subir Evidencia',
+        html: `
+      <form id="formAgregarTrabajo" class="text-start" enctype="multipart/form-data">
+        <div class="mb-3">
+          <label class="form-label">Nombre del trabajo</label>
+          <input type="text" class="form-control" id="nombre_trabajo" required>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Subir Evidencia</label>
+          <input type="file" accept=".pdf, .docx" class="form-control" id="ruta_trabajo" required>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Curso</label>
+          <select class="form-select" id="curso" required>
+            <option value="" disabled selected>Seleccione un curso</option>
+            <?php
+            $consultaCursos = $mysql->efectuarConsulta("SELECT id_curso, nombre_curso FROM cursos");
+            while ($fila = $consultaCursos->fetch_assoc()):
+              ?>
+              <option value="<?= $fila['id_curso'] ?>">
+                <?= $fila['nombre_curso'] ?>
+              </option>
+            <?php endwhile; ?>
+          </select>
+        </div>
+      </form>
+    `,
+        confirmButtonText: 'Agregar',
+        showCancelButton: true,
+        cancelButtonText: 'Cancelar',
+        preConfirm: () => {
+          const nombre = document.getElementById('nombre_trabajo').value.trim();
+          const archivo = document.getElementById('ruta_trabajo').files[0];
+          const curso = document.getElementById('curso').value;
+
+          if (!nombre || !archivo || !curso) {
+            Swal.showValidationMessage('Complete todos los campos.');
+            return false;
+          }
+
+          const formData = new FormData();
+          formData.append('nombre_trabajo', nombre);
+          formData.append('ruta_trabajo', archivo);
+          formData.append('cursos_id_curso', curso);
+
+          return formData;
+        }
+      }).then(result => {
+        if (result.isConfirmed) {
+          $.ajax({
+            url: '../controllers/agregarTrabajo.php',
+            type: 'POST',
+            data: result.value,
+            contentType: false,
+            processData: false,
+            dataType: 'json',
+            success: function (response) {
+              Swal.fire('Éxito', response.message, 'success').then(() => location.reload());
+            },
+            error: function () {
+              Swal.fire('Error', 'El servidor no respondió', 'error');
+            }
+          });
+        }
+      });
+    }
+  </script>
+
 </body>
 <!--end::Body-->
 
