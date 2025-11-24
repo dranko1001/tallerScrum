@@ -404,7 +404,15 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM trabajos");
         
         <div class="sidebar-wrapper">
           <nav class="mt-2">
-            <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="navigation" data-accordion="false" id="navigation">        
+            <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="navigation" data-accordion="false" id="navigation">  
+              <?php if ($rol == 'admin'): ?>
+                <li class="nav-item">
+                  <a href="./index.php" class="nav-link">
+                      <i class="bi bi-speedometer me-2"></i>
+                    <span>Dashboard</span>
+                  </a>
+                </li>
+              <?php endif; ?>      
               <?php if ($rol == 'instructor'): ?>
                 <li class="nav-item">
                   <a href="./views/gestionTrabajosInstructor.php" class="nav-link">
