@@ -16,9 +16,11 @@ $mysql->conectar();
 
 $rol = $_SESSION['rol_usuario'];
 // Se usa el correo de la sesión para el nombre de usuario
-$nombre = $_SESSION['correo_'.$rol]; 
+$nombre = $_SESSION['correo_'.$rol] ?? $rol; 
 
-$resultado = $mysql->efectuarConsulta("SELECT * FROM trabajos");
+// Nota: La consulta a 'trabajos' se mantiene si es necesaria en otras partes del código
+$resultado_trabajos = $mysql->efectuarConsulta("SELECT * FROM trabajos");
+// La variable $cargo_usuario y su lógica asociada han sido eliminadas.
 ?>
 
 <!doctype html>
@@ -335,25 +337,18 @@ $resultado = $mysql->efectuarConsulta("SELECT * FROM trabajos");
                                 </a>
                             </li>
 
-                <!-- Separador -->
                 <li><hr class="dropdown-divider m-0"></li>
 
-                <!-- Opción de cerrar sesión -->
                 <li>
-                  <a href="./controllers/logout.php" class="dropdown-item d-flex align-items-center text-danger py-2">
+                    <a href="./controllers/logout.php" class="dropdown-item d-flex align-items-center text-danger py-2">
                     <i class="bi bi-box-arrow-right me-2"></i> Cerrar sesión
-                  </a>
+                    </a>
                 </li>
               </ul>
             </li>
-            <!--end::User Menu Dropdown-->
-          </ul>
-          <!--end::End Navbar Links-->
-        </div>
-        <!--end::Container-->
-      </nav>
-      <!--end::Header-->
-      <!--begin::Sidebar-->
+            </ul>
+          </div>
+        </nav>
       <aside class="app-sidebar verde shadow">
         <div class="sidebar-brand">
           <a href="./index.php" class="brand-link">
@@ -363,7 +358,7 @@ $resultado = $mysql->efectuarConsulta("SELECT * FROM trabajos");
         
         <div class="sidebar-wrapper">
           <nav class="mt-2">
-            <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="navigation" data-accordion="false" id="navigation">  
+            <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="navigation" data-accordion="false" id="navigation"> 
               <?php if ($rol == 'admin'): ?>
                 <li class="nav-item">
                   <a href="./index.php" class="nav-link">
@@ -399,34 +394,148 @@ $resultado = $mysql->efectuarConsulta("SELECT * FROM trabajos");
           </nav>
         </div>
       </aside>
-      <!--end::Sidebar-->
-      <!--begin::App Main-->
       <main class="app-main">
-        <!--begin::App Content Header-->
         <div class="app-content-header">
-          <!--begin::Container-->
-          <!--end::Container-->
+            <div class="container mt-5">
+            
+            <?php 
+  
+            if ($rol == 'admin'): 
+            ?>
+
+                <h2 class="mt-5 mb-3">Administradores </h2>
+
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered table-hover text-center">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ID</th><th>Correo</th><th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodyAdministradores">
+                            <?php
+                            $resultado_admin = $mysql->efectuarConsulta("
+                                SELECT id_admin, correo_admin FROM `administrador` ORDER BY id_administrador ASC
+                            ");
+                            
+                            if ($resultado_admin && $resultado_admin->num_rows > 0) {
+                                while ($fila = $resultado_admin->fetch_assoc()):
+                            ?>
+                            <tr>
+                                <td><?= htmlspecialchars($fila['id_admin']) ?></td>
+                                <td><?= htmlspecialchars($fila['correo_admin']) ?></td>
+                                <td>
+                                    <button class="btn btn-warning btn-sm btn-editar" data-id="<?= $fila['id_admin'] ?>" data-rol="admin">Editar</button>
+                                    <button class="btn btn-danger btn-sm btn-eliminar" data-id="<?= $fila['id_admin'] ?>" data-rol="admin">Eliminar</button>
+                                </td>
+                            </tr>
+                            <?php
+                                endwhile;
+                            } else {
+                                echo '<tr><td colspan="3">No hay administradores registrados.</td></tr>';
+                            }
+                            ?>
+                        </tbody>
+
+                    </table>
+                </div>
+                
+                <hr>
+
+                <h2 class="mt-5 mb-3">Instructores </h2>
+
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered table-hover text-center">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ID</th><th>Correo</th><th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodyInstructores">
+                            <?php
+                            $resultado_instructor = $mysql->efectuarConsulta("
+                                SELECT id_instructor , correo_instructor FROM instructor ORDER BY id_instructor ASC
+                            ");
+                            
+                            if ($resultado_instructor && $resultado_instructor->num_rows > 0) {
+                                while ($fila = $resultado_instructor->fetch_assoc()):
+                            ?>
+                            <tr>
+                                <td><?= htmlspecialchars($fila['id_instructor']) ?></td>
+                                <td><?= htmlspecialchars($fila['correo_instructor']) ?></td>
+                                <td>
+                                    <button class="btn btn-warning btn-sm btn-editar" data-id="<?= $fila['id_instructor'] ?>" data-rol="instructor">Editar</button>
+                                    <button class="btn btn-danger btn-sm btn-eliminar" data-id="<?= $fila['id_instructor'] ?>" data-rol="instructor">Eliminar</button>
+                                </td>
+                            </tr>
+                            <?php
+                                endwhile;
+                            } else {
+                                echo '<tr><td colspan="3">No hay instructores registrados.</td></tr>';
+                            }
+                            ?>
+                        </tbody>
+                    </table>
+                </div>
+
+                <hr>
+
+                <h2 class="mt-5 mb-3">Aprendices </h2>
+
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered table-hover text-center">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ID</th><th>Correo</th><th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodyAprendices">
+                            <?php
+                            $resultado_aprendiz = $mysql->efectuarConsulta("
+                                SELECT id_aprendiz, correo_aprendiz FROM `aprendices` ORDER BY id_aprendiz ASC;
+                            ");
+                            
+                            if ($resultado_aprendiz && $resultado_aprendiz->num_rows > 0) {
+                                while ($fila = $resultado_aprendiz->fetch_assoc()):
+                            ?>
+                            <tr>
+                                <td><?= htmlspecialchars($fila['id_aprendiz']) ?></td>
+                                <td><?= htmlspecialchars($fila['correo_aprendiz']) ?></td>
+                                <td>
+                                    <button class="btn btn-warning btn-sm btn-editar" data-id="<?= $fila['id_aprendiz'] ?>" data-rol="aprendiz">Editar</button>
+                                    <button class="btn btn-danger btn-sm btn-eliminar" data-id="<?= $fila['id_aprendiz'] ?>" data-rol="aprendiz">Eliminar</button>
+                                </td>
+                            </tr>
+                            <?php
+                                endwhile;
+                            } else {
+                                echo '<tr><td colspan="3">No hay aprendices registrados.</td></tr>';
+                            }
+                            ?>
+                        </tbody>
+                    </table>
+                </div>
+
+        
+            
+            <?php 
+
+                        endif;
+            
+            
+            $mysql->desconectar();
+            ?>
+            </div>
         </div>
-        <!--end::App Content Header-->
-        <!--begin::App Content-->
-       <!--end::App Content-->
       </main>
-      <!--end::App Main-->
-      <!--begin::Footer-->
       <footer class="app-footer">
-        <!--begin::Copyright-->
         <strong>
           Copyright &copy; 2014-2025&nbsp;
           <a href="https://adminlte.io" class="text-decoration-none">senaEdu</a>.
         </strong>
         All rights reserved.
-        <!--end::Copyright-->
-      </footer>
-      <!--end::Footer-->
-    </div>
-    <!--end::App Wrapper-->
-    <!--begin::Script-->
-    <!--begin::Third Party Plugin(OverlayScrollbars)-->
+        </footer>
+      </div>
     <script
         src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/browser/overlayscrollbars.browser.es6.min.js"
         crossorigin="anonymous"
@@ -517,7 +626,7 @@ document.querySelector('#modalEditarUsuario form').addEventListener('submit', fu
 
 $(document).ready(function() {
     let rolUsuario = "<?php echo $rol; ?>";
-    let isQuerySuccessful = <?php echo ($resultadolibros !== false && is_object($resultadolibros)) ? 'true' : 'false'; ?>;
+    let isQuerySuccessful = <?php echo (isset($resultadolibros) && $resultadolibros !== false && is_object($resultadolibros)) ? 'true' : 'false'; ?>;
 
     if (rolUsuario === 'admin' && isQuerySuccessful) {
         $('#tablaLibros').DataTable({
@@ -528,6 +637,7 @@ $(document).ready(function() {
             }
         });
     }
+
 });
 
 </script>
