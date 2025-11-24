@@ -10,15 +10,17 @@ if (!isset($_SESSION['rol_usuario'])) {
   header("location: ./login.php");
   exit();
 }
-if ($rol !== 'aprendiz') {
-    header("location: ./login.php");
-    exit();
-}
+
 $mysql = new MySQL();
 $mysql->conectar();
 
 $rol = $_SESSION['rol_usuario'];
 $nombre = $_SESSION['correo_' . $rol];
+
+if ($rol !== 'aprendiz') {
+    header("location: ./login.php");
+    exit();
+}
 
 //consulta para obtener los trabajos
 $resultado = $mysql->efectuarConsulta("SELECT * FROM trabajos");
