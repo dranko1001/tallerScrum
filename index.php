@@ -13,10 +13,16 @@ if (!isset($_SESSION['rol_usuario'])) {
 $mysql = new MySQL();
 $mysql->conectar();
 
-$rol= $_SESSION['rol_usuario'];
-$nombre=$SESSION['correo'.$rol];
+  $rol= $_SESSION['rol_usuario'];
+$nombre=$_SESSION['correo_'.$rol];
 
 //consulta para obtener los trabajos
+
+
+
+
+
+
 $resultado=$mysql->efectuarConsulta("SELECT * FROM trabajos");
 ?>
 

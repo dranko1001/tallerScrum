@@ -13,8 +13,9 @@ if (!isset($_SESSION['rol_usuario'])) {
 $mysql = new MySQL();
 $mysql->conectar();
 
-$rol= $_SESSION['tipo_usuario'];
-$nombre=$_SESSION['nombre_usuario'];
+
+  $rol= $_SESSION['rol_usuario'];
+$nombre=$_SESSION['correo_'.$rol];
 
 //consulta para obtener los libros
 $resultado = $mysql->efectuarConsulta(" SELECT 

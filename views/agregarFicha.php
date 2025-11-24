@@ -14,8 +14,9 @@ if (!isset($_SESSION['rol_usuario'])) {
 $mysql = new MySQL();
 $mysql->conectar();
 
-$rol = $_SESSION['tipo_usuario'];
-$nombre = $_SESSION['nombre_usuario'];
+
+  $rol= $_SESSION['rol_usuario'];
+$nombre=$_SESSION['correo_'.$rol];
 
 // Consulta para obtener las fichas
 $resultado = $mysql->efectuarConsulta("
@@ -144,6 +145,7 @@ $resultado = $mysql->efectuarConsulta("
                 <div class="container-fluid">
                     <div class="row mb-3">
                         <div class="col-md-6">
+                            <!-- boton que llama la funcion -->
                             <button type="button" class="btn btn-success" onclick="agregarFicha()">
                                 ➕ Ficha
                             </button>
@@ -365,7 +367,7 @@ $resultado = $mysql->efectuarConsulta("
 
         const contenedor = document.getElementById('cursosSeleccionados');
         const chip = document.createElement('span');
-        
+        //colores que se muestran cuando se busca un curso, se pueden caqmbiar al gusto
         chip.style.cssText = `
             display: inline-flex;
             align-items: center;
