@@ -407,8 +407,8 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM trabajos");
             <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="navigation" data-accordion="false" id="navigation">  
               <?php if ($rol == 'admin'): ?>
                 <li class="nav-item">
-                  <a href="./index.php" class="nav-link">
-                      <i class="bi bi-speedometer me-2"></i>
+                  <a href="./index.php" class="nav-link active">
+                      <i class="nav-icon bi bi-speedometer me-2"></i>
                     <span>Dashboard</span>
                   </a>
                 </li>
