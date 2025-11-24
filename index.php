@@ -406,42 +406,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM trabajos");
   
   <div class="sidebar-wrapper">
     <nav class="mt-2">
-      <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="navigation" data-accordion="false" id="navigation">
-        
-        <li class="nav-item">
-          <a href="./index.php" class="nav-link active">
-            <i class="nav-icon bi bi-speedometer me-2"></i>
-            <span>Dashboard</span>
-          </a>
-        </li>
-        
-        <?php if ($rol == 'admin'): ?>
-                <li class="nav-item">
-                  <a href="./views/usuarios.php" class="nav-link">
-                    <i class="bi bi-file-earmark-person me-2"></i>
-                    <span>Usuarios</span>
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a href="./views/inventario.php" class="nav-link">
-                    <i class="bi bi-book me-2"></i>
-                    <span>Libros</span>
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a href="./views/reservas.php" class="nav-link">
-                    <i class="bi bi-journal-richtext me-2"></i>
-                    <span>Reservas</span>
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a href="./views/historialPrestamosAdmin.php" class="nav-link">
-                    <i class="bi bi-journal-arrow-down me-2"></i>
-                    <span>Prestamos</span>
-                  </a>
-                </li>
-              <?php endif; ?>
-      
+      <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="navigation" data-accordion="false" id="navigation">        
               <?php if ($rol == 'instructor'): ?>
                 <li class="nav-item">
                   <a href="./views/gestionTrabajosInstructor.php" class="nav-link">
@@ -480,54 +445,6 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM trabajos");
         </div>
         <!--end::App Content Header-->
         <!--begin::App Content-->
-        <div class="app-content">
-          <div class="container-fluid">
-            <div class="row">
-            <?php if($rol != "admin"): ?>
-              <div class="table-responsive">
-                  <div class="col"> 
-                      <button class="btn btn-sm btn-primary btnReservar mb-4 w-100" onclick="abrirCrearReserva()">
-                          <i class="bi bi-bookmark-plus"></i> Realizar Reserva
-                      </button> 
-                  </div>
-                  
-                  <table id="tablaLibros" class="table table-striped table-bordered" width="100%">
-                      <thead class="table-success">
-                          <tr>
-                              <th>ID</th>
-                              <th>Título</th>
-                              <th>Autor</th>
-                              <th>ISBN</th>
-                              <th>Categoría</th>
-                              <th>Cantidad</th>
-                              <th>Estado</th>
-                          </tr>
-                      </thead>
-                      <tbody>
-                          <?php while($fila = $resultadolibros->fetch_assoc()): ?>
-                              <tr>
-                                  <td><?= $fila['id_libro'] ?></td>
-                                  <td><?= $fila['titulo_libro'] ?></td>
-                                  <td><?= $fila['autor_libro'] ?></td>
-                                  <td><?= $fila['ISBN_libro'] ?></td>
-                                  <td><?= $fila['categoria_libro'] ?></td>
-                                  <td><?= $fila['cantidad_libro'] ?></td>
-                                  <td>
-                                      <?php if($fila['cantidad_libro'] == 0): ?>
-                                          <span class="badge bg-danger">No disponible</span>
-                                      <?php else: ?>
-                                          <span class="badge bg-success"><?= $fila['disponibilidad_libro'] ?></span>
-                                      <?php endif; ?>
-                                  </td>
-                              </tr>
-                          <?php endwhile; ?>
-                      </tbody>
-                  </table>
-              </div>
-            <?php endif; ?>
-            </div>
-          </div>
-        </div>
        <!--end::App Content-->
       </main>
       <!--end::App Main-->
