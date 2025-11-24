@@ -209,7 +209,7 @@ $stats = $resultadoStats->fetch_assoc();
                             </li>
                             <li class="nav-item">
                                 <a href="./misCalificaciones.php" class="nav-link active">
-                                    <i class="bi bi-star me-2"></i>
+                                    <i class="nav-icon bi bi-star me-2"></i>
                                     <span>Mis Calificaciones</span>
                                 </a>
                             </li>

@@ -333,7 +333,7 @@ $resultado = $mysql->efectuarConsulta("SELECT * FROM trabajos");
             </a>
           </li>
           <li class="nav-item d-none d-md-block">
-            <a href="index.php" class="nav-link">Inicio</a>
+            <a href="../index.php" class="nav-link">Inicio</a>
           </li>
 
         </ul>
@@ -387,7 +387,7 @@ $resultado = $mysql->efectuarConsulta("SELECT * FROM trabajos");
       <!--begin::Sidebar Brand-->
       <div class="sidebar-brand">
         <!--begin::Brand Link-->
-        <a href="./index.php" class="brand-link">
+        <a href="../index.php" class="brand-link">
           <!--begin::Brand Image-->
 
           <!--end::Brand Image-->
@@ -404,19 +404,17 @@ $resultado = $mysql->efectuarConsulta("SELECT * FROM trabajos");
           <!--begin::Sidebar Menu-->
           <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="navigation"
             aria-label="Main navigation" data-accordion="false" id="navigation">
-            <li class="nav-item">
-              <a href="../index.php" class="nav-link">
-                <i class="nav-icon bi bi-speedometer me-2"></i>
-                <span>
-                  Dashboard
-                </span>
-              </a>
-            </li>
             <?php if ($rol == 'aprendiz'): ?>
               <li class="nav-item">
-                <a href="./views/gestionTrabajos.php" class="nav-link active">
+                <a href="./gestionTrabajos.php" class="nav-link active">
                   <i class="nav-icon bi bi-calendar-check me-2 me-2"> </i>
                   <span> Trabajos </span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="./misCalificaciones.php" class="nav-link">
+                  <i class="bi bi-star me-2"></i>
+                    <span>Mis Calificaciones</span>
                 </a>
               </li>
             <?php endif; ?>
