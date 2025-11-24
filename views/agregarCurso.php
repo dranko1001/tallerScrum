@@ -431,21 +431,20 @@ $('#tablaCursos').DataTable({
 
 <!-- inicio de la funcion que agrega los cursos  -->
 <script>
+// Script para agregar cursos aprendices
 function agregarCurso() {
-  // Resetea los arreglos al abrir el modal
+  // Resetea el arreglo de instructores al abrir el modal
   instructoresSeleccionados = [];
-  aprendicesSeleccionados = [];
   
   Swal.fire({
     title: 'Agregar Nuevo Curso',
     html: `
       <form id="formAgregarCurso" class="text-start">
         <div class="mb-3">
-          <label for="nombre_curso" class="form-label">Nombre del Curso</label>
+          <label for="nombre_curso" class="form-label">Nombre del Curso *</label>
           <input type="text" class="form-control" id="nombre_curso" name="nombre_curso" required>
         </div>
         
-      
         <!-- Instructores -->
         <div class="mb-3">
           <label for="instructor" class="form-label">Instructores *</label>
@@ -453,15 +452,6 @@ function agregarCurso() {
           <input type="hidden" id="instructores_curso" name="instructores_curso">
           <div id="sugerenciasInstructor" style="text-align:left; max-height:200px; overflow-y:auto; margin-top: 5px;"></div>
           <div id="instructoresSeleccionados" style="margin-top: 10px;"></div>
-        </div>
-
-        <!-- APrendices -->
-        <div class="mb-3">
-          <label for="aprendiz" class="form-label">Aprendices (Opcional)</label>
-          <input type="text" id="busquedaAprendiz" class="form-control" placeholder="Buscar Aprendiz..." onkeyup="buscarAprendiz(this.value)">
-          <input type="hidden" id="aprendices_curso" name="aprendices_curso">
-          <div id="sugerenciasAprendiz" style="text-align:left; max-height:200px; overflow-y:auto; margin-top: 5px;"></div>
-          <div id="aprendicesSeleccionados" style="margin-top: 10px;"></div>
         </div>
       </form>
     `,
@@ -473,13 +463,10 @@ function agregarCurso() {
     didOpen: () => {
       document.getElementById('instructoresSeleccionados').innerHTML = '';
       document.getElementById('instructores_curso').value = '';
-      document.getElementById('aprendicesSeleccionados').innerHTML = '';
-      document.getElementById('aprendices_curso').value = '';
     },
     preConfirm: () => {
       const nombre = document.getElementById('nombre_curso').value.trim();
       const instructores = document.getElementById('instructores_curso').value.trim();
-      const aprendices = document.getElementById('aprendices_curso').value.trim();
 
       if (!nombre) {
         Swal.showValidationMessage('Por favor, ingrese el nombre del curso.');
@@ -487,14 +474,13 @@ function agregarCurso() {
       }
 
       if (!instructores || instructores === '[]') {
-        Swal.showValidationMessage('Por favor, seleccione al menos un instru.');
+        Swal.showValidationMessage('Por favor, seleccione al menos un instructor.');
         return false;
       }
 
       const formData = new FormData();
       formData.append('nombre_curso', nombre);
       formData.append('instructores_curso', instructores);
-      formData.append('aprendices_curso', aprendices || '[]');
       
       return formData;
     }
@@ -528,7 +514,7 @@ function agregarCurso() {
   });
 }
 
-// funcion que busca y agrega a los instrus por su correo
+// Función que busca y agrega a los instructores por su correo
 function buscarInstructor(texto) {
     if (texto.length < 2) {
         document.getElementById('sugerenciasInstructor').innerHTML = '';
@@ -587,7 +573,7 @@ function seleccionarInstructor(id, correo) {
 
     const contenedor = document.getElementById('instructoresSeleccionados');
     const chip = document.createElement('span');
-//el css que muestra el correo de los instructores al seleccionarlos, por cuestiones de diseño no pongan un color tan parecido al de los aprendices salvo que quieran hacer un color monocromatico
+    
     chip.style.cssText = `
         display: inline-flex;
         align-items: center;
@@ -629,8 +615,8 @@ function eliminarInstructor(id, elemento) {
     elemento.parentElement.remove();
 }
 //fin de la funcion que agrega instructores
-
-// inicio de la funcion que agrega los aprendices, toma los  datos de la db  por correo
+//FUNCION AGREGAR APRENDICES DESACTUALIZADA, ELIMINARLA DE SER NECESARIO PERO AHORA NO SE NECESITA
+// inicio de la funcion que agrega los aprendices, toma los  datos de la db  por correo, el modal fue eliminado y ahora los aprendices se agregan en fichas
 function buscarAprendiz(texto) {
     if (texto.length < 2) {
         document.getElementById('sugerenciasAprendiz').innerHTML = '';
@@ -757,6 +743,7 @@ function eliminarAprendiz(id, elemento) {
 
 
 <!-- funcion que muestra los detalles del curso -->
+<!-- Función que muestra los detalles del curso -->
 <script>
 function verDetallesCurso(idCurso) {
     $.ajax({
@@ -773,7 +760,7 @@ function verDetallesCurso(idCurso) {
         },
         error: function(xhr, status, error) {
             console.error("Error al obtener detalles:", error);
-            Swal.fire('Error', 'hubo un problema al cargar los detalles', 'error');
+            Swal.fire('Error', 'Hubo un problema al cargar los detalles', 'error');
         }
     });
 }
@@ -781,7 +768,7 @@ function verDetallesCurso(idCurso) {
 function mostrarModalDetalles(data) {
     // HTML de instructores
     let htmlInstructores = '';
-    if(data.instructores.length > 0) {
+    if(data.instructores && data.instructores.length > 0) {
         htmlInstructores = '<ul class="list-group mb-3">';
         data.instructores.forEach(instructor => {
             htmlInstructores += `
@@ -795,40 +782,16 @@ function mostrarModalDetalles(data) {
         htmlInstructores = '<p class="text-muted">No hay instructores asignados</p>';
     }
 
-    // Construye  el  HTML de aprendices
-    let htmlAprendices = '';
-    if(data.aprendices.length > 0) {
-        htmlAprendices = '<ul class="list-group mb-3">';
-        data.aprendices.forEach(aprendiz => {
-            htmlAprendices += `
-                <li class="list-group-item d-flex align-items-center">
-                    <span>${aprendiz.correo_aprendiz}</span>
-                </li>
-            `;
-        });
-        htmlAprendices += '</ul>';
-    } else {
-        htmlAprendices = '<p class="text-muted">No hay aprendices inscritos</p>';
-    }
-
-    //modal con toda la info
+    // Modal con la información del curso, ahora ya no muestra los aprendicves, porque se asocian a las fichas, en la DB hay una relacion igualmente que quedaria vacia
     Swal.fire({
         title: `<i class="bi bi-mortarboard-fill"></i> ${data.curso.nombre_curso}`,
         html: `
             <div class="text-start">
                 <div class="mb-4">
                     <h5 class="border-bottom pb-2">
-                        Instructores (${data.instructores.length})
+                        Instructores (${data.instructores ? data.instructores.length : 0})
                     </h5>
                     ${htmlInstructores}
-                </div>
-                
-                <div class="mb-3">
-                    <h5 class="border-bottom pb-2">
-                        
-                        Aprendices (${data.aprendices.length})
-                    </h5>
-                    ${htmlAprendices}
                 </div>
             </div>
         `,
@@ -840,9 +803,6 @@ function mostrarModalDetalles(data) {
         }
     });
 }
-
-
-
 </script>
 
 

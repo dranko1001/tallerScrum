@@ -13,8 +13,8 @@ if (empty($query)) {
     exit;
 }
 
-// Buscar cursos que coincidan 
-$query = $mysql->getConexion()->real_escape_string($query);
+// Limpiar el query de caracteres peligrosos
+$query = str_replace(["'", '"', '\\'], '', $query);
 
 $sql = "
     SELECT 

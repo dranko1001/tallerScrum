@@ -230,7 +230,7 @@ $resultado = $mysql->efectuarConsulta("
                     
                     <!-- Cursos -->
                     <div class="mb-3">
-                        <label for="curso" class="form-label">Cursos (Opcional)</label>
+                        <label for="curso" class="form-label">Cursos </label>
                         <input type="text" id="busquedaCurso" class="form-control" 
                                placeholder="Buscar Curso..." onkeyup="buscarCurso(this.value)">
                         <input type="hidden" id="cursos_ficha" name="cursos_ficha">
@@ -240,7 +240,7 @@ $resultado = $mysql->efectuarConsulta("
 
                     <!-- Aprendices -->
                     <div class="mb-3">
-                        <label for="aprendiz" class="form-label">Aprendices (Opcional)</label>
+                        <label for="aprendiz" class="form-label">Aprendices </label>
                         <input type="text" id="busquedaAprendiz" class="form-control" 
                                placeholder="Buscar Aprendiz..." onkeyup="buscarAprendiz(this.value)">
                         <input type="hidden" id="aprendices_ficha" name="aprendices_ficha">
