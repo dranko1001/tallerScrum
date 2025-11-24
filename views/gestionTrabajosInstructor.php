@@ -177,13 +177,6 @@ $resultadoTrabajos = $mysql->efectuarConsulta($sqlTrabajos);
             <div class="sidebar-wrapper">
                 <nav class="mt-2">
                     <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="navigation">
-                        <li class="nav-item">
-                            <a href="../index.php" class="nav-link">
-                                <i class="nav-icon bi bi-speedometer me-2"></i>
-                                <span>Dashboard</span>
-                            </a>
-                        </li>
-
                         <?php if ($rol == 'instructor'): ?>
                             <li class="nav-item">
                                 <a href="./gestionTrabajosInstructor.php" class="nav-link active">
