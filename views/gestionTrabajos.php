@@ -52,7 +52,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
     <!--begin::Accessibility Features-->
     <!-- Skip links will be dynamically added by accessibility.js -->
     <meta name="supported-color-schemes" content="light dark" />
-    <link rel="preload" href="./css/adminlte.css" as="style" />
+    <link rel="preload" href="../css/adminlte.css" as="style" />
     <!--end::Accessibility Features-->
 
     <!--begin::Fonts-->
@@ -373,18 +373,13 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
                 <li><hr class="dropdown-divider m-0"></li>
 
                 <!-- Opciones del menu -->
-                <li>
-                  <a href="./views/perfilUsuario.php" class="dropdown-item d-flex align-items-center py-2">
-                    <i class="bi bi-person me-2 text-secondary"></i> Perfil
-                  </a>
-                </li>
 
                 <!-- Separador -->
                 <li><hr class="dropdown-divider m-0"></li>
 
                 <!-- Opción de cerrar sesión -->
                 <li>
-                  <a href="./controllers/logout.php" class="dropdown-item d-flex align-items-center text-danger py-2">
+                  <a href="../controllers/logout.php" class="dropdown-item d-flex align-items-center text-danger py-2">
                     <i class="bi bi-box-arrow-right me-2"></i> Cerrar sesión
                   </a>
                 </li>
@@ -466,12 +461,11 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
         <div class="app-content">
           <div class="container-fluid">
             <div class="row">
-            <?php if($rol != "Administrador"): ?>
               <div class="table-responsive">
                   <div class="col"> 
-                      <button class="btn btn-sm btn-primary btnReservar mb-4 w-100" onclick="abrirCrearReserva()">
-                          <i class="bi bi-bookmark-plus"></i> Realizar Reserva
-                      </button> 
+                        <button class="btn btn-sm btn-primary btnReservar mb-4 w-100" onclick="subirTrabajo()">
+                            <i class="bi bi-upload"></i> Subir Trabajo
+                        </button>
                   </div>
                   
                   <table id="tablaTrabajos" class="table table-striped table-bordered" width="100%">
@@ -479,7 +473,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
                           <tr>
                               <th>ID</th>
                               <th>Nombre del Trabajo</th>
-                              <th>Fecha del Trabajo</th>
+                              <th>Fecha Limite del Trabajo</th>
                               <th>Acciones</th>
                           </tr>
                       </thead>
@@ -489,211 +483,32 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
                                   <td><?= $fila['id_trabajo'] ?></td>
                                   <td><?= $fila['nombre_trabajo'] ?></td>
                                   <td><?= $fila['fecha_trabajo'] ?></td>
-                                  <td>
-                                      <?php if($fila['cantidad_libro'] == 0): ?>
-                                          <span class="badge bg-danger">No disponible</span>
-                                      <?php else: ?>
-                                          <span class="badge bg-success"><?= $fila['disponibilidad_libro'] ?></span>
-                                      <?php endif; ?>
-                                  </td>
+                                  <td class="justify-content-center d-flex gap-1">
+                                  <!-- se agrega ../para que sirva la ruta y pueda visualizar el archivo -->
+                                  <a class="btn btn-info btn-sm" title="Ver trabajo" href="<?php echo '../'.$fila['ruta_trabajo']; ?>" 
+   target="_blank">
+    <i class="bi bi-eye"></i>
+</a> |
+                                  <a class="btn btn-warning btn-sm"  title="editar" onclick="editarTrabajo(<?php echo $fila['id_trabajo']; ?>)">
+          <i class="bi bi-pencil-square"></i>
+          </a>
+          | 
+          <a class="btn btn-danger btn-sm"  
+          href="javascript:void(0);" 
+          onclick="eliminarTrabajo(<?php echo $fila['id_trabajo']; ?>)" 
+          title="Eliminar"> 
+              <i class="bi bi-trash"></i>
+          </a>
+
+                            </td>
                               </tr>
                           <?php endwhile; ?>
                       </tbody>
                   </table>
               </div>
-            <?php endif; ?>
             </div>
           </div>
         </div>
-        <!-- graficos de la pagina principal -->
-        <?php if($rol == "Administrador"): ?>
-          <div class="row">
-            <div class="col-12 text-center mb-4">
-              <h3 class="d-flex justify-content-center align-items-center"><img src="media/graficos icon.png" alt="PDF" style="width:40px; height:40px; vertical-align:middle; margin-right:10px;">Graficos:</h3>
-            </div>
-          </div>
-        <div class="container mt-4">
-          <div class="row">
-            <!-- Gráfica grande a la izquierda -->
-            <div class="col-lg-8">
-              <div class="card" style="min-height: 660px; padding:1rem; border-radius:12px;">
-                <div class="card-body">
-                  <h4 class="titulo-seccion">
-                    <i class="fa-solid fa-book"></i> Total de libros registrados
-                  </h4>
-                  <canvas id="graficoTotalLibros" width="400" height="410"></canvas>
-                </div>
-              </div>
-            </div>
-
-            <!-- Contenedor de las dos pequeñas a la derecha -->
-            <div class="col-lg-4 d-flex flex-column justify-content-between">
-              <div class="card mb-3" style="min-height: 320px; padding:1rem; border-radius:12px;">
-                <div class="card-body">
-                  <h4 class="titulo-seccion">
-                    <i class="fa-solid fa-calendar-check"></i> Total de reservas realizadas
-                  </h4>
-                  <canvas id="graficoTotalReservas" width="300" height="100"></canvas>
-                </div>
-              </div>
-
-              <div class="card" style="min-height: 320px; padding:1rem; border-radius:12px;">
-                <div class="card-body">
-                  <h4 class="titulo-seccion">
-                    <i class="fa-solid fa-book-open-reader"></i> Total de préstamos realizados
-                  </h4>
-                  <canvas id="graficoTotalPrestamos" width="300" height="100"></canvas>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-<!-- botones de los modulos cesar!!! -->
-        <div class="container text-center mt-4">
-          <div class="row g-3">
-            <div class="col">
-              <a href="./views/usuarios.php"> <button class="btn btn-info w-100">
-                <i class="fa-solid fa-user"></i><img src="media/usuarios modulo icon.png" alt="PDF" style="width:30px; height:30px; vertical-align:middle; margin-right:6px;"> Usuarios
-              </button> 
-              </a>
-            </div>
-            <div class="col">
-              <a href="./views/inventario.php"> <button class="btn btn-info w-100">
-                <i class="fa-solid fa-book"></i><img src="media/libro icon.png" alt="PDF" style="width:30px; height:30px; vertical-align:middle; margin-right:6px;"> Libros
-              </button>
-              </a>
-            </div>
-            <div class="col">
-              <a href="./views/reservas.php"> <button class="btn btn-info w-100">
-                <i class="fa-solid fa-calendar-check"></i><img src="media/reservas icon.png" alt="PDF" style="width:30px; height:30px; vertical-align:middle; margin-right:6px;"> Reservas
-              </button>
-              </a>
-            </div>
-            <div class="col">
-              <a href="./views/historialPrestamosAdmin.php"> <button class="btn btn-info w-100 ">
-                <i class="fa-solid fa-book-open-reader"></i><img src="media/prestamos icon.png" alt="PDF" style="width:30px; height:30px; vertical-align:middle; margin-right:6px;"> Préstamos
-              </button>
-              </a>
-            </div>
-          </div>
-        </div>
-        <?php endif; ?>
-        <?php
-        $hoy = date('Y-m-d');
-        $inicioMes = date('Y-m-01');
-        ?>
-        <?php if ($rol == 'Administrador'): ?>
-          <div class="row">
-          <div class="col-12 text-center mt-4">
-            <h3 class="mb-0"><img src="media/documentos icon.png" alt="PDF" style="width:40px; height:40px; vertical-align:middle; margin-right:6px;">Generar Documentos:</h3>
-          </div>
-        </div>
-        <!-- === FORMULARIOS DE DOCUMENTOS === -->
-        <div class="container-documentos">
-
-          <!-- === PDF DE RESERVAS === -->
-          <div class="card-documento">
-        <h4 class="titulo-seccion">
-          <i class="fa-solid fa-calendar-check"></i> Generar reporte de las reservas
-        </h4>
-            <form action="views/generar_pdf_reservas.php" target="_blank" method="get" id="formReservas" onsubmit="return validarRangoFechas(this);" class="form-documentos">
-              <div class="row-form">
-                <div class="form-group">
-                  <label for="fechaInicio">Fecha inicio:</label>
-                  <input type="date" id="fechaInicio" name="fechaInicio" required value="<?php echo htmlspecialchars($inicioMes); ?>">
-                </div>
-
-                <div class="form-group">
-                  <label for="fechaFin">Fecha fin:</label>
-                  <input type="date" id="fechaFin" name="fechaFin" required value="<?php echo htmlspecialchars($hoy); ?>">
-                </div>
-
-                <div class="form-group">
-                  <label for="salida">Ver:</label>
-                  <select id="salida" name="salida">
-                    <option value="I">Ver en el navegador</option>
-                    <option value="D">Descargar</option>
-                  </select>
-                </div>
-
-                <div class="form-group">
-        <div style="text-align: center;">
-          <button type="submit" class="btn-generar">
-            <i class="fa-solid fa-file-pdf"> <img src="media/pdf icon.png" alt="PDF" style="width:20px; height:20px; vertical-align:middle; margin-right:6px;"></i> GENERAR PDF
-          </button>
-        </div>
-                </div>
-                
-              </div>
-            </form>
-          </div>
-
-          <!-- === PDF DE INVENTARIO === -->
-        <div class="card-documento">
-        <h4 class="titulo-seccion">
-          <i class="fa-solid fa-boxes-stacked"></i> Generar reporte del inventario
-        </h4>
-            <form action="views/generar_pdf_inventario.php" target="_blank" method="get" class="form-documentos">
-                <div class="row-form">
-                    <div class="form-group">
-                        <label for="salida_inventario">Ver:</label>
-                        <select id="salida_inventario" name="salida"> <option value="I">Ver en el navegador</option>
-                            <option value="D">Descargar</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group btn-group">
-
-
-                  <button type="submit" class="btn-generar">
-                    <i class="fa-solid fa-file-pdf"><img src="media/pdf icon.png" alt="PDF" style="width:20px; height:20px; vertical-align:middle; margin-right:6px;"></i> GENERAR PDF  
-                  </button>
-                        <a href="views/generar_excel_inventario.php" class="btn-excel">
-                            <i class="fa-solid fa-file-excel"><img src="media/excel icon.png" alt="PDF" style="width:20px; height:20px; vertical-align:middle; margin-right:6px;"></i>  EXCEL
-                        </a>
-                    </div>
-                </div>
-            </form>
-        </div>
-
-          <!-- === PDF DE PRÉSTAMOS === -->
-          <div class="card-documento">
-        <h4 class="titulo-seccion">
-          <i class="fa-solid fa-handshake"></i> Generar reporte de préstamos
-        </h4>
-            <form action="views/generar_pdf_prestamos.php" target="_blank" method="get" class="form-documentos" id="formPrestamos" onsubmit="return validarRangoFechas(this);">
-              <div class="row-form">
-                <div class="form-group">
-                  <label for="fechaInicio">Fecha inicio:</label>
-                  <input type="date" id="fechaInicio" name="fechaInicio" required value="<?php echo htmlspecialchars($inicioMes); ?>">
-                </div>
-
-                <div class="form-group">
-                  <label for="fechaFin">Fecha fin:</label>
-                  <input type="date" id="fechaFin" name="fechaFin" required value="<?php echo htmlspecialchars($hoy); ?>">
-                </div>
-
-                <div class="form-group">
-                  <label for="salida">Ver:</label>
-                  <select id="salida" name="salida">
-                    <option value="I">Ver en el navegador</option>
-                    <option value="D">Descargar</option>
-                  </select>
-                </div>
-
-                <div class="form-group btn-group">
-                  <button type="submit"  class="btn-generar">
-                    <i class="fa-solid fa-file-pdf"><img src="media/pdf icon.png" alt="PDF" style="width:20px; height:20px; vertical-align:middle; margin-right:6px;"></i> GENERAR PDF  
-                  </button>
-        <button type="submit" formaction="views/generar_excel_prestamos.php" class="btn-excel">
-          <i class="fa-solid fa-file-excel"><img src="media/excel icon.png" alt="PDF" style="width:20px; height:20px; vertical-align:middle; margin-right:6px;"></i> EXCEL
-        </button>
-                </div>
-              </div>
-            </form>
-          </div>
-        </div>
-        <?php endif; ?>
        <!--end::App Content-->
       </main>
       <!--end::App Main-->
@@ -728,7 +543,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
       crossorigin="anonymous"
     ></script>
     <!--end::Required Plugin(Bootstrap 5)--><!--begin::Required Plugin(AdminLTE)-->
-    <script src="public/js/adminlte.js"></script>
+    <script src="../public/js/adminlte.js"></script>
     <!--end::Required Plugin(AdminLTE)--><!--begin::OverlayScrollbars Configure-->
     <?php if($rol == "Administrador"): ?>
         <script src="js/graficos_libro.js"></script>
@@ -776,9 +591,9 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
       integrity="sha256-XPpPaZlU8S/HWf7FZLAncLg2SAkP8ScUTII89x9D3lY="
       crossorigin="anonymous"
     ></script>
-<script>
+    <script>
 $(document).ready(function() {
-   $('#tablaLibros').DataTable({
+   $('#tablaTrabajos').DataTable({
     language: {
         url: "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
     },
@@ -791,9 +606,115 @@ $(document).ready(function() {
 });
 </script>
 
+<script>
+function verTrabajo(id) {
+  Swal.fire({
+    title: 'Ver Trabajo',
+    text: 'Funcionalidad para ver el trabajo con ID: ' + id,
+    icon: 'info',
+    confirmButtonText: 'Cerrar'
+  });
+}
+</script>
 
+<script>
+function eliminarTrabajo(id) {
+  Swal.fire({
+    title: 'Eliminar Trabajo',
+    text: '¿Está seguro de que desea eliminar el trabajo con ID: ' + id + '?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Sí, eliminar"
+  }).then((result) => {
+    if (result.isConfirmed) {
+      Swal.fire({
+        title: "Eliminado!",
+        text: "El trabajo ha sido eliminado exitosamente.",
+        icon: "success",
+        timer: 2000,      // el tiempo que se demora en cerrar el alert 
+        showConfirmButton: false
+      }).then(() => {
+        window.location.href = '../controllers/eliminarTrabajo.php?id_trabajo=' + id;
+      });
+    }
+  });
+}
+</script>
 
+<script>
+function subirTrabajo() {
+  Swal.fire({
+    title: 'Subir Evidencia',
+    html: `
+      <form id="formAgregarTrabajo" class="text-start" enctype="multipart/form-data">
+        <div class="mb-3">
+          <label class="form-label">Nombre del trabajo</label>
+          <input type="text" class="form-control" id="nombre_trabajo" required>
+        </div>
 
+        <div class="mb-3">
+          <label class="form-label">Subir Evidencia</label>
+          <input type="file" accept=".pdf, .docx" class="form-control" id="ruta_trabajo" required>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Curso</label>
+          <select class="form-select" id="curso" required>
+            <option value="" disabled selected>Seleccione un curso</option>
+            <?php 
+              $consultaCursos = $mysql->efectuarConsulta("SELECT id_curso, nombre_curso FROM cursos");
+              while($fila=$consultaCursos->fetch_assoc()):
+            ?>
+              <option value="<?= $fila['id_curso'] ?>">
+                <?= $fila['nombre_curso'] ?>
+              </option>
+            <?php endwhile; ?>
+          </select>
+        </div>
+      </form>
+    `,
+    confirmButtonText: 'Agregar',
+    showCancelButton: true,
+    cancelButtonText: 'Cancelar',
+    preConfirm: () => {
+      const nombre = document.getElementById('nombre_trabajo').value.trim();
+      const archivo = document.getElementById('ruta_trabajo').files[0];
+      const curso = document.getElementById('curso').value;
+
+      if (!nombre || !archivo || !curso) {
+        Swal.showValidationMessage('Complete todos los campos.');
+        return false;
+      }
+
+      const formData = new FormData();
+      formData.append('nombre_trabajo', nombre);
+      formData.append('ruta_trabajo', archivo);
+      formData.append('cursos_id_curso', curso); 
+
+      return formData;
+    }
+  }).then(result => {
+    if (result.isConfirmed) {
+      $.ajax({
+        url: '../controllers/agregarTrabajo.php',
+        type: 'POST',
+        data: result.value,
+        contentType: false,
+        processData: false,
+        dataType: 'json',
+        success: function(response) {
+          Swal.fire('Éxito', response.message, 'success').then(() => location.reload());
+        },
+        error: function() {
+          Swal.fire('Error', 'El servidor no respondió', 'error');
+        }
+      });
+    }
+  });
+}
+</script>
 
   </body>
   <!--end::Body-->
