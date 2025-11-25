@@ -135,186 +135,6 @@ $resultado = $mysql->efectuarConsulta("SELECT * FROM trabajos");
       box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
     }
 
-    .card {
-      transition: all 0.3s ease;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    .card:hover {
-      transform: translateY(-8px) scale(1.02);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-      cursor: pointer;
-    }
-
-    .container-documentos {
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      flex-wrap: wrap;
-      gap: 30px;
-      /* espacio entre columnas */
-      margin: 40px auto;
-      max-width: 1400px;
-      padding: 20px;
-    }
-
-    .card-documento {
-      flex: 1 1 30%;
-      min-width: 350px;
-      /* ancho mínimo para pantallas pequeñas */
-      background-color: #ffffff;
-      padding: 30px 35px;
-      border-radius: 16px;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-
-    .card-documento:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
-    }
-
-    .titulo-seccion {
-      font-weight: 700;
-      color: #1e293b;
-      margin-bottom: 25px;
-      font-size: 1.2rem;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .form-documentos {
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-    }
-
-    .row-form {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      width: 100%;
-    }
-
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-      min-width: 180px;
-    }
-
-    .form-group label {
-      font-weight: 600;
-      color: #334155;
-      margin-bottom: 5px;
-    }
-
-    .form-group input[type="date"],
-    .form-group select {
-      border: 1px solid #cbd5e1;
-      border-radius: 8px;
-      padding: 8px 10px;
-      background-color: #f8fafc;
-      color: #0f172a;
-      transition: all 0.3s ease;
-    }
-
-    .form-group input[type="date"]:focus,
-    .form-group select:focus {
-      border-color: #2563eb;
-      box-shadow: 0 0 6px rgba(37, 99, 235, 0.3);
-      outline: none;
-    }
-
-    .btn-generar {
-      background-color: #048db7dd;
-      color: #ffffff;
-      font-weight: 600;
-      border: none;
-      border-radius: 8px;
-      padding: 12px 18px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      cursor: pointer;
-      align-self: flex-start;
-      /* alinea a la izquierda */
-      transition: background-color 0.3s ease, transform 0.2s ease;
-    }
-
-    .btn-generar:hover {
-      background-color: #ff0000ff;
-      transform: translateY(-2px);
-    }
-
-    .btn-generar i {
-      font-size: 16px;
-    }
-
-    .card-documento {
-      min-height: 500px;
-    }
-
-    .btn-group {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
-
-    /* ... dentro de <style> ... */
-
-    /* Modificación a .btn-group para alinear los botones */
-    .btn-group {
-      display: flex;
-      gap: 15px;
-      /* Aumenta el espacio entre botones */
-      align-items: center;
-      /* Nuevo: Añade esto para que los botones crezcan y se repartan el espacio */
-      width: 100%;
-    }
-
-    /* Ajustes al botón de Excel para que se vea igual que el de PDF */
-    .btn-excel {
-      background-color: #00a390ff;
-      color: #fff;
-      font-weight: 600;
-      /* Asegura el mismo peso de fuente */
-      border: none;
-      border-radius: 8px;
-      /* Usa el mismo radio que .btn-generar */
-      padding: 12px 18px;
-      /* Usa el mismo padding que .btn-generar */
-      text-decoration: none;
-      display: inline-flex;
-      /* Para alinear icono y texto */
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      cursor: pointer;
-      transition: background-color 0.3s ease, transform 0.2s ease;
-
-      flex-grow: 1;
-    }
-
-    .btn-excel:hover {
-      background-color: #13882cff;
-      transform: translateY(-2px);
-      color: #fff;
-    }
-
-    /* Asegura que el botón de PDF también crezca equitativamente en un grupo */
-    .btn-group .btn-generar {
-      flex-grow: 1;
-      margin-top: 0;
-      /* Anula cualquier margen que pueda tener */
-      align-self: unset;
-      /* Anula align-self: flex-start; del estilo anterior */
-    }
-
-    /* ... otras clases CSS ... */
   </style>
 
   <!-- script de los graficos -->
@@ -440,16 +260,20 @@ $resultado = $mysql->efectuarConsulta("SELECT * FROM trabajos");
       </div>
       <!--end::App Content Header-->
       <!--begin::App Content-->
-      <div class="app-content">
-        <div class="container-fluid">
-          <div class="row">
+<div class="app-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col">
+        <button class="btn btn-sm btn-primary btnReservar mb-4 w-100" onclick="subirTrabajo()">
+          <i class="bi bi-upload"></i> Subir Trabajo
+        </button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <div class="card shadow-sm">
+          <div class="card-body">
             <div class="table-responsive">
-              <div class="col">
-                <button class="btn btn-sm btn-primary btnReservar mb-4 w-100" onclick="subirTrabajo()">
-                  <i class="bi bi-upload"></i> Subir Trabajo
-                </button>
-              </div>
-
               <table id="tablaTrabajos" class="table table-striped table-bordered" width="100%">
                 <thead class="table-success">
                   <tr>
@@ -466,7 +290,6 @@ $resultado = $mysql->efectuarConsulta("SELECT * FROM trabajos");
                       <td><?= $fila['nombre_trabajo'] ?></td>
                       <td><?= $fila['fecha_trabajo'] ?></td>
                       <td class="justify-content-center d-flex gap-1">
-                        <!-- se agrega ../para que sirva la ruta y pueda visualizar el archivo -->
                         <a class="btn btn-info btn-sm" title="Ver trabajo"
                           href="<?php echo '../' . $fila['ruta_trabajo']; ?>" target="_blank">
                           <i class="bi bi-eye"></i>
@@ -474,13 +297,11 @@ $resultado = $mysql->efectuarConsulta("SELECT * FROM trabajos");
                         <a class="btn btn-warning btn-sm" title="editar"
                           onclick="editarTrabajo(<?php echo $fila['id_trabajo']; ?>)">
                           <i class="bi bi-pencil-square"></i>
-                        </a>
-                        |
+                        </a> |
                         <a class="btn btn-danger btn-sm" href="javascript:void(0);"
                           onclick="eliminarTrabajo(<?php echo $fila['id_trabajo']; ?>)" title="Eliminar">
                           <i class="bi bi-trash"></i>
                         </a>
-
                       </td>
                     </tr>
                   <?php endwhile; ?>
@@ -489,7 +310,12 @@ $resultado = $mysql->efectuarConsulta("SELECT * FROM trabajos");
             </div>
           </div>
         </div>
+      </div> 
+
       </div>
+    </div>
+  </div>
+</div>
       <!--end::App Content-->
     </main>
     <!--end::App Main-->
