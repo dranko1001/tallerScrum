@@ -401,7 +401,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM trabajos");
       </nav>
       <!--end::Header-->
       <!--begin::Sidebar-->
-      <!-- REEMPLAZA LA SECCIÓN DEL SIDEBAR EN TU index.php CON ESTO: -->
+      <!-- sidebar -->
 
 <aside class="app-sidebar verde shadow">
   <div class="sidebar-brand">
@@ -421,6 +421,32 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM trabajos");
                   </a>
                 </li>
               <?php endif; ?>
+
+              <!-- inicio de los if del administrador -->
+               <?php if ($rol == 'admin'): ?>
+                    <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="navigation">
+                        <li class="nav-item">
+                            <a href="../index.php" class="nav-link">
+                                <i class="bi bi-file-earmark-person mb-2 me-2"></i>
+                                <span>Usuarios</span>
+                            </a>
+                        </li>
+
+                                              <li class="nav-item">
+                            <a href="views/agregarCurso.php" class="nav-link">
+                                <i class="bi bi-clipboard-data mb-2 me-2"></i>
+                                <span>Cursos</span>
+                            </a>
+
+                                                                          <li class="nav-item">
+                            <a href="views/agregarFicha.php" class="nav-link">
+                                <i class="bi bi-layout-text-sidebar-reverse mb-2 me-2"></i>
+                                <span>Ficha</span>
+                            </a>
+<?php endif; ?>
+
+
+             <!-- fin del los if administrador -->
       
 <?php if ($rol == 'aprendiz'): ?>
   <li class="nav-item">

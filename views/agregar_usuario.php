@@ -342,7 +342,7 @@ $correo_user = $nombre;
             showConfirmButton: false,
             timer: 2000
         }).then(() => {
-            window.location.href = './index.php'; 
+            window.location.href = './agregar_usuario.php'; 
         });
         
     } 

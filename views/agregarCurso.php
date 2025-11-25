@@ -245,11 +245,25 @@ $resultado = $mysql->efectuarConsulta(" SELECT
               id="navigation"
             >
               <li class="nav-item">
-                <a href="../index.php" class="nav-link">
-                  <i class="bi bi-speedometer me-2"></i>
-                  <span>
-                    Inicio     
-                  </span>
+                    <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="navigation">
+                        <li class="nav-item">
+                            <a href="../index.php" class="nav-link">
+                                <i class="bi bi-file-earmark-person mb-2 me-2"></i>
+                                <span>Usuarios</span>
+                            </a>
+                        </li>
+
+                                              <li class="nav-item">
+                            <a href="./agregarCurso.php" class="nav-link">
+                                <i class="bi bi-clipboard-data mb-2 me-2"></i>
+                                <span>Cursos</span>
+                            </a>
+
+                                                                          <li class="nav-item">
+                            <a href="./agregarFicha.php" class="nav-link">
+                                <i class="bi bi-layout-text-sidebar-reverse mb-2 me-2"></i>
+                                <span>Ficha</span>
+                            </a>
                   </a>
               </li>
             </ul>
@@ -268,7 +282,7 @@ $resultado = $mysql->efectuarConsulta(" SELECT
             <!--begin::Row-->
  <div class="position-relative">
   <h3 class="text-center">
-    <i class="bi bi-mortarboard-fill"></i> Cursos
+    <i class="bi bi-clipboard-data"></i> Cursos
   </h3>
   <ol class="breadcrumb position-absolute end-0 top-50 translate-middle-y">
     <li class="breadcrumb-item"><a href="./agregarCurso.php">Cursos</a></li>
@@ -292,8 +306,13 @@ $resultado = $mysql->efectuarConsulta(" SELECT
                 <?php endif; ?>
                 </div>
             </div>
-            <div class="row">
-              <button type="button" class="btn btn-success" onclick="agregarCurso()">➕ Curso</button>
+            <!-- inicio de boton agregar curso -->
+  <div class="row mb-3">
+  <div class="col-md-6">
+    <button type="button" class="btn btn-success" onclick="agregarCurso()">➕ Curso</button>
+  </div>
+</div>
+<!-- fin del boton agregar curso -->
               <!--begin::Col-->
                 <div class="table-responsive">
 <table id="tablaCursos" class="table table-striped table-bordered">
