@@ -1,4 +1,4 @@
-<?php 
+<?php
 header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
 header("Cache-Control: post-check=0, pre-check=0", false);
 header("Pragma: no-cache");
@@ -7,608 +7,706 @@ require_once 'models/MySQL.php';
 session_start();
 
 if (!isset($_SESSION['rol_usuario'])) {
-    header("location: ./views/login.php");
-    exit();
+  header("location: ./views/login.php");
+  exit();
 }
+
 $mysql = new MySQL();
 $mysql->conectar();
 
-$rol= $_SESSION['rol_usuario'];
-$nombre=$_SESSION['correo_'.$rol];
+$rol = $_SESSION['rol_usuario'];
+// Se usa el correo de la sesión para el nombre de usuario
+$nombre = $_SESSION['correo_' . $rol] ?? $rol;
 
-//consulta para obtener los trabajos
-$resultado=$mysql->efectuarConsulta("SELECT * FROM trabajos");
+// Nota: La consulta a 'trabajos' se mantiene si es necesaria en otras partes del código
+$resultado_trabajos = $mysql->efectuarConsulta("SELECT * FROM trabajos");
+// La variable $cargo_usuario y su lógica asociada han sido eliminadas.
 ?>
 
 <!doctype html>
 <html lang="en">
-  <!--begin::Head-->
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title> EduSena </title>
 
-    <!--begin::Accessibility Meta Tags-->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-    <meta name="color-scheme" content="light dark" />
-    <meta name="theme-color" content="#007bff" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#1a1a1a" media="(prefers-color-scheme: dark)" />
-    <!--end::Accessibility Meta Tags-->
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title> EduSena </title>
 
-    <!--begin::Primary Meta Tags-->
-    <meta name="title" content="AdminLTE v4 | Dashboard" />
-    <meta name="author" content="ColorlibHQ" />
-    <meta
-      name="description"
-      content="AdminLTE is a Free Bootstrap 5 Admin Dashboard, 30 example pages using Vanilla JS. Fully accessible with WCAG 2.1 AA compliance."
-    />
-    <meta
-      name="keywords"
-      content="bootstrap 5, bootstrap, bootstrap 5 admin dashboard, bootstrap 5 dashboard, bootstrap 5 charts, bootstrap 5 calendar, bootstrap 5 datepicker, bootstrap 5 tables, bootstrap 5 datatable, vanilla js datatable, colorlibhq, colorlibhq dashboard, colorlibhq admin dashboard, accessible admin panel, WCAG compliant"
-    />
-    <!--end::Primary Meta Tags-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="theme-color" content="#007bff" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#1a1a1a" media="(prefers-color-scheme: dark)" />
+  <meta name="title" content="AdminLTE v4 | Dashboard" />
+  <meta name="author" content="ColorlibHQ" />
+  <meta
+    name="description"
+    content="AdminLTE is a Free Bootstrap 5 Admin Dashboard, 30 example pages using Vanilla JS. Fully accessible with WCAG 2.1 AA compliance." />
+  <meta
+    name="keywords"
+    content="bootstrap 5, bootstrap, bootstrap 5 admin dashboard, bootstrap 5 dashboard, bootstrap 5 charts, bootstrap 5 calendar, bootstrap 5 datepicker, bootstrap 5 tables, bootstrap 5 datatable, vanilla js datatable, colorlibhq, colorlibhq dashboard, colorlibhq admin dashboard, accessible admin panel, WCAG compliant" />
+  <meta name="supported-color-schemes" content="light dark" />
+  <link rel="preload" href="./css/adminlte.css" as="style" />
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css"
+    integrity="sha256-tXJfXfp6Ewt1ilPzLDtQnJV4hclT9XuaZUKyUvmyr+Q="
+    crossorigin="anonymous"
+    media="print"
+    onload="this.media='all'" />
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/styles/overlayscrollbars.min.css"
+    crossorigin="anonymous" />
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+    crossorigin="anonymous" />
+  <link rel="stylesheet" href="./css/adminlte.css" />
+  <link rel="stylesheet" href="./css/style.css">
 
-    <!--begin::Accessibility Features-->
-    <!-- Skip links will be dynamically added by accessibility.js -->
-    <meta name="supported-color-schemes" content="light dark" />
-    <link rel="preload" href="./css/adminlte.css" as="style" />
-    <!--end::Accessibility Features-->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/apexcharts@3.37.1/dist/apexcharts.css"
+    integrity="sha256-4MX+61mt9NVvvuPjUWdyfZfxSB1/Rf9WtqRHgG5S0="
+    crossorigin="anonymous" />
 
-    <!--begin::Fonts-->
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css"
-      integrity="sha256-tXJfXfp6Ewt1ilPzLDtQnJV4hclT9XuaZUKyUvmyr+Q="
-      crossorigin="anonymous"
-      media="print"
-      onload="this.media='all'"
-    />
-    <!--end::Fonts-->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/css/jsvectormap.min.css"
+    integrity="sha256-+uGLJmmTKOqBr+2E6KDYs/NRsHxSkONXFHUL0fy2O/4="
+    crossorigin="anonymous" />
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <!--begin::Third Party Plugin(OverlayScrollbars)-->
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/styles/overlayscrollbars.min.css"
-      crossorigin="anonymous"
-    />
-    <!--end::Third Party Plugin(OverlayScrollbars)-->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <!--begin::Third Party Plugin(Bootstrap Icons)-->
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
-      crossorigin="anonymous"
-    />
-    <!--end::Third Party Plugin(Bootstrap Icons)-->
+  <script src="public/js/editar_usuario.js"></script>
 
-    <!--begin::Required Plugin(AdminLTE)-->
-    <link rel="stylesheet" href="./css/adminlte.css" />
-    <!--end::Required Plugin(AdminLTE)-->
-    <!-- Estilo propio -->
-     <link rel="stylesheet" href="./css/style.css">
 
-    <!-- apexcharts -->
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/apexcharts@3.37.1/dist/apexcharts.css"
-      integrity="sha256-4MX+61mt9NVvvuPjUWdUdyfZfxSB1/Rf9WtqRHgG5S0="
-      crossorigin="anonymous"
-    />
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <!-- jsvectormap -->
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/css/jsvectormap.min.css"
-      integrity="sha256-+uGLJmmTKOqBr+2E6KDYs/NRsHxSkONXFHUL0fy2O/4="
-      crossorigin="anonymous"
-    />
-    <!-- jQuery -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
 
-<!-- esto es para que funcione chars.js -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
 
-<!-- DataTables + Bootstrap -->
-<!-- jQuery -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+  <script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css">
 
-<!-- DataTables núcleo -->
-<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+  <link href="https://cdn.datatables.net/columncontrol/1.1.0/css/columnControl.dataTables.min.css" rel="stylesheet">
+  <script src="https://cdn.datatables.net/columncontrol/1.1.0/js/dataTables.columnControl.min.js"></script>
 
-<!-- Integración Bootstrap 5 -->
-<script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<!-- Extensión Responsive (versión compatible 2.5.0) -->
-<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
-<script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
-<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css">
-
-<!-- Extensión Column Control (si de verdad la usas) -->
-<link href="https://cdn.datatables.net/columncontrol/1.1.0/css/columnControl.dataTables.min.css" rel="stylesheet">
-<script src="https://cdn.datatables.net/columncontrol/1.1.0/js/dataTables.columnControl.min.js"></script>
-
-<!-- SweetAlert2 -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-<style>
-
+  <style>
     .btn-info {
-  background: linear-gradient(135deg, #17a2b8, #5bc0de);
-  border: none;
-  transition: all 0.3s ease;
-  color: white;
-  font-weight: 500;
-  letter-spacing: 0.3px;
-}
+      background: linear-gradient(135deg, #17a2b8, #5bc0de);
+      border: none;
+      transition: all 0.3s ease;
+      color: white;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+    }
 
-.btn-info:hover {
-  transform: translateY(-5px) scale(1.05);
-  background: linear-gradient(135deg, #5bc0de, #17a2b8);
-  box-shadow: 0 8px 15px rgba(0, 123, 255, 0.3);
-}
+    .btn-info:hover {
+      transform: translateY(-5px) scale(1.05);
+      background: linear-gradient(135deg, #5bc0de, #17a2b8);
+      box-shadow: 0 8px 15px rgba(0, 123, 255, 0.3);
+    }
 
-.btn-info:active {
-  transform: scale(0.98);
-  box-shadow: 0 3px 6px rgba(0,0,0,0.2);
-}
+    .btn-info:active {
+      transform: scale(0.98);
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+    }
 
     .card {
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
 
-.card:hover {
-  transform: translateY(-8px) scale(1.02);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-  cursor: pointer;
-}
+    .card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+    }
 
-.container-documentos {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  flex-wrap: wrap;           
-  gap: 30px;                 /* espacio entre columnas */
-  margin: 40px auto;
-  max-width: 1400px;
-  padding: 20px;
-}
+    .container-documentos {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 30px;
+      /* espacio entre columnas */
+      margin: 40px auto;
+      max-width: 1400px;
+      padding: 20px;
+    }
 
-.card-documento {
-  flex: 1 1 30%;             
-  min-width: 350px;          /* ancho mínimo para pantallas pequeñas */
-  background-color: #ffffff;
-  padding: 30px 35px;
-  border-radius: 16px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
+    .card-documento {
+      flex: 1 1 30%;
+      min-width: 350px;
+      /* ancho mínimo para pantallas pequeñas */
+      background-color: #ffffff;
+      padding: 30px 35px;
+      border-radius: 16px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
 
 
-.card-documento:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
-}
+    .card-documento:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+    }
 
-.titulo-seccion {
-  font-weight: 700;
-  color: #1e293b;
-  margin-bottom: 25px;
-  font-size: 1.2rem;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
+    .titulo-seccion {
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 25px;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
 
-.form-documentos {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
+    .form-documentos {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
 
-.row-form {
-  display: flex;
-  flex-direction: column; 
-  gap: 16px;
-  width: 100%;
-}
+    .row-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      width: 100%;
+    }
 
-.form-group {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-width: 180px;
-}
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-width: 180px;
+    }
 
-.form-group label {
-  font-weight: 600;
-  color: #334155;
-  margin-bottom: 5px;
-}
+    .form-group label {
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 5px;
+    }
 
-.form-group input[type="date"],
-.form-group select {
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
-  padding: 8px 10px;
-  background-color: #f8fafc;
-  color: #0f172a;
-  transition: all 0.3s ease;
-}
+    .form-group input[type="date"],
+    .form-group select {
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 8px 10px;
+      background-color: #f8fafc;
+      color: #0f172a;
+      transition: all 0.3s ease;
+    }
 
-.form-group input[type="date"]:focus,
-.form-group select:focus {
-  border-color: #2563eb;
-  box-shadow: 0 0 6px rgba(37, 99, 235, 0.3);
-  outline: none;
-}
+    .form-group input[type="date"]:focus,
+    .form-group select:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 6px rgba(37, 99, 235, 0.3);
+      outline: none;
+    }
 
-.btn-generar {
-  background-color: #048db7dd;
-  color: #ffffff;
-  font-weight: 600;
-  border: none;
-  border-radius: 8px;
-  padding: 12px 18px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  cursor: pointer;
-  align-self: flex-start; /* alinea a la izquierda */
-  transition: background-color 0.3s ease, transform 0.2s ease;
-}
+    .btn-generar {
+      background-color: #048db7dd;
+      color: #ffffff;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      align-self: flex-start;
+      /* alinea a la izquierda */
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
 
-.btn-generar:hover {
-  background-color: #ff0000ff;
-  transform: translateY(-2px);
-}
+    .btn-generar:hover {
+      background-color: #ff0000ff;
+      transform: translateY(-2px);
+    }
 
-.btn-generar i {
-  font-size: 16px;
-}
+    .btn-generar i {
+      font-size: 16px;
+    }
 
-.card-documento {
-  min-height: 500px; 
-}
+    .card-documento {
+      min-height: 500px;
+    }
 
-.btn-group {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-/* ... dentro de <style> ... */
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
 
-/* Modificación a .btn-group para alinear los botones */
-.btn-group {
-    display: flex;
-    gap: 15px; /* Aumenta el espacio entre botones */
-    align-items: center;
-    /* Nuevo: Añade esto para que los botones crezcan y se repartan el espacio */
-    width: 100%; 
-}
+    /* Modificación a .btn-group para alinear los botones */
+    .btn-group {
+      display: flex;
+      gap: 15px;
+      /* Aumenta el espacio entre botones */
+      align-items: center;
+      /* Nuevo: Añade esto para que los botones crezcan y se repartan el espacio */
+      width: 100%;
+    }
 
-/* Ajustes al botón de Excel para que se vea igual que el de PDF */
-.btn-excel {
-    background-color: #00a390ff;
-    color: #fff;
-    font-weight: 600; /* Asegura el mismo peso de fuente */
-    border: none;
-    border-radius: 8px; /* Usa el mismo radio que .btn-generar */
-    padding: 12px 18px; /* Usa el mismo padding que .btn-generar */
-    text-decoration: none;
-    display: inline-flex; /* Para alinear icono y texto */
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    
-    flex-grow: 1; 
-}
+    /* Ajustes al botón de Excel para que se vea igual que el de PDF */
+    .btn-excel {
+      background-color: #00a390ff;
+      color: #fff;
+      font-weight: 600;
+      /* Asegura el mismo peso de fuente */
+      border: none;
+      border-radius: 8px;
+      /* Usa el mismo radio que .btn-generar */
+      padding: 12px 18px;
+      /* Usa el mismo padding que .btn-generar */
+      text-decoration: none;
+      display: inline-flex;
+      /* Para alinear icono y texto */
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
 
-.btn-excel:hover {
-    background-color: #13882cff;
-    transform: translateY(-2px);
-    color: #fff;
-}
+      flex-grow: 1;
+    }
 
-/* Asegura que el botón de PDF también crezca equitativamente en un grupo */
-.btn-group .btn-generar {
-    flex-grow: 1; 
-    margin-top: 0; /* Anula cualquier margen que pueda tener */
-    align-self: unset; /* Anula align-self: flex-start; del estilo anterior */
-}
+    .btn-excel:hover {
+      background-color: #13882cff;
+      transform: translateY(-2px);
+      color: #fff;
+    }
 
-/* ... otras clases CSS ... */
-</style>
+    /* Asegura que el botón de PDF también crezca equitativamente en un grupo */
+    .btn-group .btn-generar {
+      flex-grow: 1;
+      margin-top: 0;
+      /* Anula cualquier margen que pueda tener */
+      align-self: unset;
+      /* Anula align-self: flex-start; del estilo anterior */
+    }
 
-<!-- script de los graficos -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    /* ... otras clases CSS ... */
+  </style>
 
-  </head>
-  <!--end::Head-->
-  <!--begin::Body-->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
 <body class="layout-fixed sidebar-expand-lg sidebar-open bg-body-tertiary">
-    <!--begin::App Wrapper-->
-    <div class="app-wrapper">
-      <!--begin::Header-->
-      <nav class="app-header navbar navbar-expand bg-body">
-        <!--begin::Container-->
-        <div class="container-fluid">
-          <!--begin::Start Navbar Links-->
-          <ul class="navbar-nav">
-            <li class="nav-item">
-              <a class="nav-link" data-lte-toggle="sidebar" href="index.php" role="button">
-                <i class="bi bi-list"></i>
-              </a>
-            </li>
-            <li class="nav-item d-none d-md-block">
-              <a href="index.php" class="nav-link">Inicio</a>
-            </li>
-            
-          </ul>
-          <!--end::Start Navbar Links-->
+  <div class="app-wrapper">
+    <nav class="app-header navbar navbar-expand bg-body">
+      <!--begin::Container-->
+      <div class="container-fluid">
+        <!--begin::Start Navbar Links-->
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" data-lte-toggle="sidebar" href="index.php" role="button">
+              <i class="bi bi-list"></i>
+            </a>
+          </li>
+          <li class="nav-item d-none d-md-block">
+            <a href="../index.php" class="nav-link">Inicio</a>
+          </li>
 
-          <!--begin::End Navbar Links-->
-          <ul class="navbar-nav ms-auto">
+        </ul>
+        <!--end::Start Navbar Links-->
 
-            <!--begin::User Menu Dropdown-->
-            <li class="nav-item dropdown user-menu">
-  <a href="#" class="nav-link dropdown-toggle text-white fw-semibold" data-bs-toggle="dropdown">
-    <span class="d-none d-md-inline"><i class="bi bi-person-circle me-1"></i><?php echo $nombre; ?></span>
-  </a>
+        <!--begin::End Navbar Links-->
+        <ul class="navbar-nav ms-auto">
 
-              <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3 mt-2" style="min-width: 230px;">
-                <!-- Cabecera del usuario -->
-                <li class="bg-primary text-white text-center rounded-top py-3">
-                  <p class="mb-0 fw-bold fs-5"><?php echo  $nombre; ?></p>
-                  <small><?php echo $rol; ?></small>
-                </li>
+          <!--begin::User Menu Dropdown-->
+          <li class="nav-item dropdown user-menu">
+            <a href="#" class="nav-link dropdown-toggle text-white fw-semibold" data-bs-toggle="dropdown">
+              <span class="d-none d-md-inline"><i class="bi bi-person-circle me-1"></i><?php echo $nombre; ?></span>
+            </a>
 
-                <!-- Separador -->
-                <li><hr class="dropdown-divider m-0"></li>
-
-                <!-- Opciones del menu -->
-      
-                <!-- Separador -->
-                <li><hr class="dropdown-divider m-0"></li>
-
-                <!-- Opción de cerrar sesión -->
-                <li>
-                  <a href="./controllers/logout.php" class="dropdown-item d-flex align-items-center text-danger py-2">
-                    <i class="bi bi-box-arrow-right me-2"></i> Cerrar sesión
-                  </a>
-                </li>
-              </ul>
-            </li>
-            <!--end::User Menu Dropdown-->
-          </ul>
-          <!--end::End Navbar Links-->
-        </div>
-        <!--end::Container-->
-      </nav>
-      <!--end::Header-->
-      <!--begin::Sidebar-->
-      <aside class="app-sidebar verde shadow">
-        <!--begin::Sidebar Brand-->
-        <div class="sidebar-brand">
-          <!--begin::Brand Link-->
-          <a href="./index.php" class="brand-link">
-            <!--begin::Brand Image-->
-           
-            <!--end::Brand Image-->
-            <!--begin::Brand Text-->
-            <span class="title"> senaEdu </span>
-            <!--end::Brand Text-->
-          </a>
-          <!--end::Brand Link-->
-        </div>
-        <!--end::Sidebar Brand-->
-        <!--begin::Sidebar Wrapper-->
-        <div class="sidebar-wrapper">
-          <nav class="mt-2">
-            <!--begin::Sidebar Menu-->
-            <ul
-              class="nav sidebar-menu flex-column"
-              data-lte-toggle="treeview"
-              role="navigation"
-              aria-label="Main navigation"
-              data-accordion="false"
-              id="navigation"
-            >
-              <li class="nav-item">
-                <a href="./index.php" class="nav-link active">
-                  <i class="nav-icon bi bi-speedometer me-2"></i>
-                  <span>
-                    Dashboard
-                  </span>
-                  </a>
+            <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3 mt-2" style="min-width: 230px;">
+              <!-- Cabecera del usuario -->
+              <li class="bg-primary text-white text-center rounded-top py-3">
+                <p class="mb-0 fw-bold fs-5"><?php echo $nombre; ?></p>
+                <small><?php echo $rol; ?></small>
               </li>
-               <li class="nav-item">
-                <a href="./views/verNotasAprendiz.php" class="nav-link active">
-                  <i class="nav-icon bi bi-speedometer me-2"></i>
-                  <span>
-                    ver nota
-                  </span>
-                  </a>
+
+              <!-- Separador -->
+              <li>
+                <hr class="dropdown-divider m-0">
               </li>
-               <?php if ($rol == 'admin'): ?>
-              <li class="nav-item">
-                <a href="./views/usuarios.php" class="nav-link">
-                  <i class="bi bi-file-earmark-person me-2"></i>
-                  <span>Usuarios</span>
+
+              <!-- Opciones del menu -->
+
+              <!-- Separador -->
+              <li>
+                <hr class="dropdown-divider m-0">
+              </li>
+
+              <!-- Opción de cerrar sesión -->
+              <li>
+                <a href="../controllers/logout.php" class="dropdown-item d-flex align-items-center text-danger py-2">
+                  <i class="bi bi-box-arrow-right me-2"></i> Cerrar sesión
                 </a>
               </li>
+            </ul>
+          </li>
+          <!--end::User Menu Dropdown-->
+        </ul>
+        <!--end::End Navbar Links-->
+      </div>
+      <!--end::Container-->
+    </nav>
+    <aside class="app-sidebar verde shadow">
+      <div class="sidebar-brand">
+        <a href="./index.php" class="brand-link">
+          <span class="title"> senaEdu </span>
+        </a>
+      </div>
+
+      <div class="sidebar-wrapper">
+        <nav class="mt-2">
+          <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="navigation" data-accordion="false" id="navigation">
+            <?php if ($rol == 'admin'): ?>
               <li class="nav-item">
-                <a href="./views/inventario.php" class="nav-link">
-                 <i class="bi bi-book me-2"> </i>
-                  <span> Libros </span>
+                <a href="./index.php" class="nav-link">
+                  <i class="bi bi-speedometer me-2"></i>
+                  <span>Dashboard</span>
                 </a>
               </li>
+            <?php endif; ?>
+            <?php if ($rol == 'instructor'): ?>
               <li class="nav-item">
-                <a href="./views/reservas.php" class="nav-link">
-                 <i class="bi bi-journal-richtext me-2"> </i>
-                  <span> Reservas </span>
+                <a href="./views/gestionTrabajosInstructor.php" class="nav-link">
+                  <i class="bi bi-check2-square me-2"></i>
+                  <span>Calificar Trabajos</span>
                 </a>
               </li>
-              <li class="nav-item">
-   
-              <?php endif; ?>
-               <?php if ($rol == 'aprendiz'): ?>
+            <?php endif; ?>
+
+            <?php if ($rol == 'aprendiz'): ?>
               <li class="nav-item">
                 <a href="./views/gestionTrabajos.php" class="nav-link">
-                 <i class="bi bi-calendar-check me-2 me-2"> </i>
-                  <span> Trabajos </span>
+                  <i class="bi bi-calendar-check me-2"></i>
+                  <span>Trabajos</span>
                 </a>
               </li>
-              <?php endif; ?>
-            </ul>
-            <!--end::Sidebar Menu-->
-          </nav>
-        </div>
-        <!--end::Sidebar Wrapper-->
-      </aside>
-      <!--end::Sidebar-->
-      <!--begin::App Main-->
-      <main class="app-main">
-        <!--begin::App Content Header-->
-        <div class="app-content-header">
-          <!--begin::Container-->
-          <!--end::Container-->
-        </div>
-        <!--end::App Content Header-->
-        <!--begin::App Content-->
-        <div class="app-content">
-          <div class="container-fluid">
-            <div class="row">
-            <?php if($rol != "admin"): ?>
-              <div class="table-responsive">
-                  <div class="col"> 
-                      <button class="btn btn-sm btn-primary btnReservar mb-4 w-100" onclick="abrirCrearReserva()">
-                          <i class="bi bi-bookmark-plus"></i> Realizar Reserva
-                      </button> 
-                  </div>
-
-                  
-
-                  <a href="./views/verNotasAprendiz.php">
-                    <button>ver notas </button>
-                  </a>
-                  <table id="tablaLibros" class="table table-striped table-bordered" width="100%">
-                      <thead class="table-success">
-                          <tr>
-                              <th>ID</th>
-                              <th>Título</th>
-                              <th>Autor</th>
-                              <th>ISBN</th>
-                              <th>Categoría</th>
-                              <th>Cantidad</th>
-                              <th>Estado</th>
-                          </tr>
-                      </thead>
-                      <tbody>
-                          <?php while($fila = $resultadolibros->fetch_assoc()): ?>
-                              <tr>
-                                  <td><?= $fila['id_libro'] ?></td>
-                                  <td><?= $fila['titulo_libro'] ?></td>
-                                  <td><?= $fila['autor_libro'] ?></td>
-                                  <td><?= $fila['ISBN_libro'] ?></td>
-                                  <td><?= $fila['categoria_libro'] ?></td>
-                                  <td><?= $fila['cantidad_libro'] ?></td>
-                                  <td>
-                                      <?php if($fila['cantidad_libro'] == 0): ?>
-                                          <span class="badge bg-danger">No disponible</span>
-                                      <?php else: ?>
-                                          <span class="badge bg-success"><?= $fila['disponibilidad_libro'] ?></span>
-                                      <?php endif; ?>
-                                  </td>
-                              </tr>
-                          <?php endwhile; ?>
-                      </tbody>
-                  </table>
-              </div>
+              <li class="nav-item">
+                <a href="./views/misCalificaciones.php" class="nav-link">
+                  <i class="bi bi-star me-2"></i>
+                  <span>Mis Calificaciones</span>
+                </a>
+              </li>
             <?php endif; ?>
+          </ul>
+        </nav>
+      </div>
+    </aside>
+    <main class="app-main">
+      <div class="app-content-header">
+        <div class="container mt-5">
+
+          <?php
+
+          if ($rol == 'admin'):
+          ?>
+
+            <h2 class="mt-5 mb-3">Administradores </h2>
+
+            <div class="table-responsive">
+              <table class="table table-striped table-bordered table-hover text-center">
+                <thead class="table-dark">
+                  <tr>
+                    <th>ID</th>
+                    <th>Correo</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="tbodyAdministradores">
+                  <?php
+                  $resultado_admin = $mysql->efectuarConsulta("
+                                SELECT id_admin, correo_admin FROM `administrador` ORDER BY id_administrador ASC
+                            ");
+
+                  if ($resultado_admin && $resultado_admin->num_rows > 0) {
+                    while ($fila = $resultado_admin->fetch_assoc()):
+                  ?>
+                      <tr>
+                        <td><?= htmlspecialchars($fila['id_admin']) ?></td>
+                        <td><?= htmlspecialchars($fila['correo_admin']) ?></td>
+                        <td>
+
+                          <button class="btn btn-warning btnEditar"
+                            data-id="<?= $row['id'] ?>"
+                            data-rol="<?= $row['rol'] ?>"
+                            data-correo="<?= $row['correo'] ?>">
+                            Editar
+                          </button>
+
+                          <button class="btn btn-danger btn-sm btn-eliminar" data-id="<?= $fila['id_admin'] ?>" data-rol="admin">Eliminar</button>
+                        </td>
+                      </tr>
+                  <?php
+                    endwhile;
+                  } else {
+                    echo '<tr><td colspan="3">No hay administradores registrados.</td></tr>';
+                  }
+                  ?>
+                </tbody>
+
+              </table>
             </div>
-          </div>
+
+            <hr>
+
+            <h2 class="mt-5 mb-3">Instructores </h2>
+
+            <div class="table-responsive">
+              <table class="table table-striped table-bordered table-hover text-center">
+                <thead class="table-dark">
+                  <tr>
+                    <th>ID</th>
+                    <th>Correo</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="tbodyInstructores">
+                  <?php
+                  $resultado_instructor = $mysql->efectuarConsulta("
+                                SELECT id_instructor , correo_instructor FROM instructor ORDER BY id_instructor ASC
+                            ");
+
+                  if ($resultado_instructor && $resultado_instructor->num_rows > 0) {
+                    while ($fila = $resultado_instructor->fetch_assoc()):
+                  ?>
+                      <tr>
+                        <td><?= htmlspecialchars($fila['id_instructor']) ?></td>
+                        <td><?= htmlspecialchars($fila['correo_instructor']) ?></td>
+                        <td>
+                          <button class="btn btn-warning btn-sm btn-editar" data-id="<?= $fila['id_instructor'] ?>" data-rol="instructor">Editar</button>
+                          <button class="btn btn-danger btn-sm btn-eliminar" data-id="<?= $fila['id_instructor'] ?>" data-rol="instructor">Eliminar</button>
+                        </td>
+                      </tr>
+                  <?php
+                    endwhile;
+                  } else {
+                    echo '<tr><td colspan="3">No hay instructores registrados.</td></tr>';
+                  }
+                  ?>
+                </tbody>
+              </table>
+            </div>
+
+            <hr>
+
+            <h2 class="mt-5 mb-3">Aprendices </h2>
+
+            <div class="table-responsive">
+              <table class="table table-striped table-bordered table-hover text-center">
+                <thead class="table-dark">
+                  <tr>
+                    <th>ID</th>
+                    <th>Correo</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="tbodyAprendices">
+                  <?php
+                  $resultado_aprendiz = $mysql->efectuarConsulta("
+                                SELECT id_aprendiz, correo_aprendiz FROM `aprendices` ORDER BY id_aprendiz ASC;
+                            ");
+
+                  if ($resultado_aprendiz && $resultado_aprendiz->num_rows > 0) {
+                    while ($fila = $resultado_aprendiz->fetch_assoc()):
+                  ?>
+                      <tr>
+                        <td><?= htmlspecialchars($fila['id_aprendiz']) ?></td>
+                        <td><?= htmlspecialchars($fila['correo_aprendiz']) ?></td>
+                        <td>
+                          <button class="btn btn-warning btn-sm btn-editar"
+                            data-id="<?= $fila['id_aprendiz'] ?>"
+                            data-rol="aprendiz"
+                            data-correo="<?= $fila['correo_aprendiz'] ?>"
+                            data-bs-toggle="modal"
+                            data-bs-target="#modalEditarUsuario">
+                            Editar
+                          </button>
+
+
+
+
+                          <button class="btn btn-danger btn-sm btn-eliminar" data-id="<?= $fila['id_aprendiz'] ?>" data-rol="aprendiz">Eliminar</button>
+                        </td>
+                      </tr>
+                  <?php
+                    endwhile;
+                  } else {
+                    echo '<tr><td colspan="3">No hay aprendices registrados.</td></tr>';
+                  }
+                  ?>
+                </tbody>
+              </table>
+            </div>
+
+
+
+          <?php
+
+          endif;
+
+
+          $mysql->desconectar();
+          ?>
         </div>
-       <!--end::App Content-->
-      </main>
-      <!--end::App Main-->
-      <!--begin::Footer-->
-      <footer class="app-footer">
-        
-        <!--begin::Copyright-->
-        <strong>
-          Copyright &copy; 2014-2025&nbsp;
-          <a href="https://adminlte.io" class="text-decoration-none">senaEdu</a>.
-        </strong>
-        All rights reserved.
-        <!--end::Copyright-->
-      </footer>
-      <!--end::Footer-->
+      </div>
+    </main>
+    <footer class="app-footer">
+      <strong>
+        Copyright &copy; 2014-2025&nbsp;
+        <a href="https://adminlte.io" class="text-decoration-none">senaEdu</a>.
+      </strong>
+      All rights reserved.
+    </footer>
+  </div>
+  <script
+    src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/browser/overlayscrollbars.browser.es6.min.js"
+    crossorigin="anonymous"></script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+    crossorigin="anonymous"></script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.min.js"
+    crossorigin="anonymous"></script>
+  <script src="public/js/adminlte.js"></script>
+  <script>
+    const SELECTOR_SIDEBAR_WRAPPER = '.sidebar-wrapper';
+    const Default = {
+      scrollbarTheme: 'os-theme-light',
+      scrollbarAutoHide: 'leave',
+      scrollbarClickScroll: true,
+    };
+    document.addEventListener('DOMContentLoaded', function() {
+      const sidebarWrapper = document.querySelector(SELECTOR_SIDEBAR_WRAPPER);
+
+      const isMobile = window.innerWidth <= 992;
+
+      if (
+        sidebarWrapper &&
+        OverlayScrollbarsGlobal?.OverlayScrollbars !== undefined &&
+        !isMobile
+      ) {
+        OverlayScrollbarsGlobal.OverlayScrollbars(sidebarWrapper, {
+          scrollbars: {
+            theme: Default.scrollbarTheme,
+            autoHide: Default.scrollbarAutoHide,
+            clickScroll: Default.scrollbarClickScroll,
+          },
+        });
+      }
+    });
+  </script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/js/jsvectormap.min.js"
+    integrity="sha256-/t1nN2956BT869E6H4V1dnt0X5pAQHPytli+1nTZm2Y="
+    crossorigin="anonymous"></script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/maps/world.js"
+    integrity="sha256-XPpPaZlU8S/HWf7FZLAncLg2SAkP8ScUTII89x9D3lY="
+    crossorigin="anonymous"></script>
+
+  <script>
+    document.querySelector('#modalEditarUsuario').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      let datos = new FormData(this);
+
+      fetch('./controllers/editar_perfil.php', {
+          method: 'POST',
+          body: datos
+        })
+        .then(res => res.text())
+        .then(res => {
+
+          if (res.includes("OK")) {
+            Swal.fire({
+              icon: 'success',
+              title: 'Actualizado correctamente',
+              timer: 1500,
+              showConfirmButton: false
+            });
+
+            let modal = bootstrap.Modal.getInstance(document.getElementById('modalEditarUsuario'));
+            modal.hide();
+
+            location.reload();
+          } else {
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: res
+            });
+          }
+
+        });
+    });
+
+    $(document).ready(function() {
+      let rolUsuario = "<?php echo $rol; ?>";
+      let isQuerySuccessful = <?php echo (isset($resultadolibros) && $resultadolibros !== false && is_object($resultadolibros)) ? 'true' : 'false'; ?>;
+
+      if (rolUsuario === 'admin' && isQuerySuccessful) {
+        $('#tablaLibros').DataTable({
+          "responsive": true,
+          "autoWidth": false,
+          "language": {
+            "url": "//cdn.datatables.net/plug-ins/1.10.21/i18n/Spanish.json"
+          }
+        });
+      }
+
+    });
+  </script>
+  <div class="modal fade" id="modalEditarUsuario" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <h5 class="modal-title">Editar usuario</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body">
+          <form id="formEditarUsuario">
+            <input type="hidden" id="editar_id">
+            <input type="hidden" id="editar_rol">
+
+            <div class="mb-3">
+              <label for="editar_correo" class="form-label">Correo</label>
+              <input type="email" id="editar_correo" class="form-control">
+            </div>
+
+            <div class="mb-3">
+              <label for="editar_pass" class="form-label">Nueva contraseña (opcional)</label>
+              <input type="password" id="editar_pass" class="form-control">
+            </div>
+          </form>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          <button class="btn btn-primary" id="btnGuardarCambios">Guardar cambios</button>
+        </div>
+
+      </div>
     </div>
-    <!--end::App Wrapper-->
-    <!--begin::Script-->
-    <!--begin::Third Party Plugin(OverlayScrollbars)-->
-    <script
-      src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/browser/overlayscrollbars.browser.es6.min.js"
-      crossorigin="anonymous"
-    ></script>
-    <!--end::Third Party Plugin(OverlayScrollbars)--><!--begin::Required Plugin(popperjs for Bootstrap 5)-->
-    <script
-      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
-      crossorigin="anonymous"
-    ></script>
-    <!--end::Required Plugin(popperjs for Bootstrap 5)--><!--begin::Required Plugin(Bootstrap 5)-->
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.min.js"
-      crossorigin="anonymous"
-    ></script>
-    <!--end::Required Plugin(Bootstrap 5)--><!--begin::Required Plugin(AdminLTE)-->
-    <script src="public/js/adminlte.js"></script>
-    <!--end::Required Plugin(AdminLTE)--><!--begin::OverlayScrollbars Configure-->
-    <script>
-      const SELECTOR_SIDEBAR_WRAPPER = '.sidebar-wrapper';
-      const Default = {
-        scrollbarTheme: 'os-theme-light',
-        scrollbarAutoHide: 'leave',
-        scrollbarClickScroll: true,
-      };
-      document.addEventListener('DOMContentLoaded', function () {
-        const sidebarWrapper = document.querySelector(SELECTOR_SIDEBAR_WRAPPER);
+  </div>
+  <script src="public/js/editar_usuario.js"></script>
 
-        // Disable OverlayScrollbars on mobile devices to prevent touch interference
-        const isMobile = window.innerWidth <= 992;
+</body>
 
-        if (
-          sidebarWrapper &&
-          OverlayScrollbarsGlobal?.OverlayScrollbars !== undefined &&
-          !isMobile
-        ) {
-          OverlayScrollbarsGlobal.OverlayScrollbars(sidebarWrapper, {
-            scrollbars: {
-              theme: Default.scrollbarTheme,
-              autoHide: Default.scrollbarAutoHide,
-              clickScroll: Default.scrollbarClickScroll,
-            },
-          });
-        }
-      });
-    </script>
-    <!--end::OverlayScrollbars Configure-->
-
-    <!-- jsvectormap -->
-    <script
-      src="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/js/jsvectormap.min.js"
-      integrity="sha256-/t1nN2956BT869E6H4V1dnt0X5pAQHPytli+1nTZm2Y="
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/maps/world.js"
-      integrity="sha256-XPpPaZlU8S/HWf7FZLAncLg2SAkP8ScUTII89x9D3lY="
-      crossorigin="anonymous"
-    ></script>
-  </body>
-  <!--end::Body-->
 </html>
