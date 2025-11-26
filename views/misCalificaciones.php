@@ -91,59 +91,29 @@ $stats = $resultadoStats->fetch_assoc();
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
     <style>
         .btn-info {
-            background: linear-gradient(135deg, #17a2b8, #5bc0de);
-            border: none;
-            transition: all 0.3s ease;
-            color: white;
-            font-weight: 500;
-            letter-spacing: 0.3px;
+        background: linear-gradient(135deg, #17a2b8, #5bc0de);
+        border: none;
+        transition: all 0.3s ease;
+        color: white;
+        font-weight: 500;
+        letter-spacing: 0.3px;
         }
 
         .btn-info:hover {
-            transform: translateY(-5px) scale(1.05);
-            background: linear-gradient(135deg, #5bc0de, #17a2b8);
-            box-shadow: 0 8px 15px rgba(0, 123, 255, 0.3);
+        transform: translateY(-5px) scale(1.05);
+        background: linear-gradient(135deg, #5bc0de, #17a2b8);
+        box-shadow: 0 8px 15px rgba(0, 123, 255, 0.3);
         }
 
-        .card {
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        .btn-info:active {
+        transform: scale(0.98);
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
         }
 
-        .badge-calificacion {
-            font-size: 1.1rem;
-            padding: 8px 15px;
-            font-weight: 600;
-        }
-
-        .stat-card {
-            border-left: 4px solid;
-            transition: transform 0.2s;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .stat-card.total {
-            border-color: #007bff;
-        }
-
-        .stat-card.aprobados {
-            border-color: #28a745;
-        }
-
-        .stat-card.desaprobados {
-            border-color: #dc3545;
-        }
-
-        .stat-card.pendientes {
-            border-color: #ffc107;
-        }
     </style>
+
 </head>
 
 <body class="layout-fixed sidebar-expand-lg sidebar-open bg-body-tertiary">
@@ -333,14 +303,14 @@ $stats = $resultadoStats->fetch_assoc();
                                                             <?php endif; ?>
                                                         </td>
                                                         <td><?= $calif['correo_instructor'] ?? 'No asignado' ?></td>
-                                                        <td class="text-center">
-                                                            <div class="btn-group" role="group">
+                                                        <td class="justify-content-center d-flex gap-1">
+                                                        
                                                                 <?php if ($calif['ruta_trabajo'] && file_exists('../' . $calif['ruta_trabajo'])): ?>
                                                                     <a class="btn btn-info btn-sm" title="Ver mi trabajo"
                                                                         href="<?= '../' . $calif['ruta_trabajo'] ?>"
                                                                         target="_blank">
                                                                         <i class="bi bi-eye"></i>
-                                                                    </a>
+                                                                    </a>  | 
                                                                 <?php endif; ?>
 
                                                                 <?php if ($calif['calificacion_nota'] && $calif['comentario_nota']): ?>
@@ -350,7 +320,7 @@ $stats = $resultadoStats->fetch_assoc();
                                                                         <i class="bi bi-chat-left-text"></i>
                                                                     </button>
                                                                 <?php endif; ?>
-                                                            </div>
+
                                                         </td>
                                                     </tr>
                                                 <?php endwhile; ?>
