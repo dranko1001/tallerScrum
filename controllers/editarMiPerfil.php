@@ -23,9 +23,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $rol = $_SESSION['rol_usuario'];
     $correo = htmlspecialchars(trim($_POST['correo']), ENT_QUOTES, 'UTF-8');
-    $password = isset($_POST['password']) ? trim($_POST['password']) : '';
+    $passwordActual = isset($_POST['password_actual']) ? trim($_POST['password_actual']) : '';
+    $passwordNueva = isset($_POST['password_nueva']) ? trim($_POST['password_nueva']) : '';
 
-    // Determinar tabla y campos según el rol
     if ($rol === 'admin') {
         $tabla = 'administrador';
         $campoId = 'id_admin';
@@ -49,22 +49,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
-    // Construir query de actualización
-    if (!empty($password)) {
-        // Actualizar correo y contraseña
-        if (strlen($password) < 6) {
-            echo json_encode(['success' => false, 'message' => 'La contraseña debe tener al menos 6 caracteres']);
+    if (!empty($passwordNueva)) {
+
+        if (empty($passwordActual)) {
+            echo json_encode(['success' => false, 'message' => 'Debe ingresar su contraseña actual']);
             exit();
         }
-        $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+
+        if (strlen($passwordNueva) < 6) {
+            echo json_encode(['success' => false, 'message' => 'La nueva contraseña debe tener al menos 6 caracteres']);
+            exit();
+        }
+
+        $consultaPassword = $mysql->efectuarConsulta("SELECT $campoPassword FROM $tabla WHERE $campoId = '$id'");
+        $userData = mysqli_fetch_assoc($consultaPassword);
+
+        if (!password_verify($passwordActual, $userData[$campoPassword])) {
+            echo json_encode(['success' => false, 'message' => 'La contraseña actual es incorrecta']);
+            exit();
+        }
+
+        $passwordHash = password_hash($passwordNueva, PASSWORD_DEFAULT);
         $sqlUpdate = "UPDATE $tabla SET $campoCorreo = '$correo', $campoPassword = '$passwordHash' WHERE $campoId = '$id'";
     } else {
-        // Solo actualizar correo
         $sqlUpdate = "UPDATE $tabla SET $campoCorreo = '$correo' WHERE $campoId = '$id'";
     }
 
     if ($mysql->efectuarConsulta($sqlUpdate)) {
-        // Actualizar sesión
         $_SESSION['correo_' . $rol] = $correo;
         echo json_encode(['success' => true, 'message' => 'Perfil actualizado exitosamente']);
     } else {

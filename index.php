@@ -1,651 +1,694 @@
-<?php 
+<?php
 header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
 header("Cache-Control: post-check=0, pre-check=0", false);
 header("Pragma: no-cache");
-//conexion a la base de datos
+
 require_once 'models/MySQL.php';
 session_start();
 
 if (!isset($_SESSION['rol_usuario'])) {
-    header("location: ./views/login.php");
-    exit();
+  header("location: views/login.php");
+  exit();
 }
 
 $mysql = new MySQL();
 $mysql->conectar();
 
 $rol = $_SESSION['rol_usuario'];
-// Se usa el correo de la sesión para el nombre de usuario
-$nombre = $_SESSION['correo_'.$rol] ?? $rol; 
+$nombre = $_SESSION['correo_' . $rol];
 
-// Nota: La consulta a 'trabajos' se mantiene si es necesaria en otras partes del código
-$resultado_trabajos = $mysql->efectuarConsulta("SELECT * FROM trabajos");
-// La variable $cargo_usuario y su lógica asociada han sido eliminadas.
+if ($rol == 'admin') {
+  $consultaAdmins = $mysql->efectuarConsulta("SELECT * FROM administrador ORDER BY id_admin ASC");
+  $consultaInstructores = $mysql->efectuarConsulta("SELECT * FROM instructor ORDER BY id_instructor ASC");
+  $consultaAprendices = $mysql->efectuarConsulta("SELECT * FROM aprendices ORDER BY id_aprendiz ASC");
+}
 ?>
 
 <!doctype html>
-<html lang="en">
+<html lang="es">
+
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title> EduSena </title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>EduSena</title>
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-    <meta name="color-scheme" content="light dark" />
-    <meta name="theme-color" content="#007bff" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#1a1a1a" media="(prefers-color-scheme: dark)" />
-    <meta name="title" content="AdminLTE v4 | Dashboard" />
-    <meta name="author" content="ColorlibHQ" />
-    <meta
-        name="description"
-        content="AdminLTE is a Free Bootstrap 5 Admin Dashboard, 30 example pages using Vanilla JS. Fully accessible with WCAG 2.1 AA compliance."
-    />
-    <meta
-        name="keywords"
-        content="bootstrap 5, bootstrap, bootstrap 5 admin dashboard, bootstrap 5 dashboard, bootstrap 5 charts, bootstrap 5 calendar, bootstrap 5 datepicker, bootstrap 5 tables, bootstrap 5 datatable, vanilla js datatable, colorlibhq, colorlibhq dashboard, colorlibhq admin dashboard, accessible admin panel, WCAG compliant"
-    />
-    <meta name="supported-color-schemes" content="light dark" />
-    <link rel="preload" href="./css/adminlte.css" as="style" />
-    <link
-        rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css"
-        integrity="sha256-tXJfXfp6Ewt1ilPzLDtQnJV4hclT9XuaZUKyUvmyr+Q="
-        crossorigin="anonymous"
-        media="print"
-        onload="this.media='all'"
-    />
-    <link
-        rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/styles/overlayscrollbars.min.css"
-        crossorigin="anonymous"
-    />
-    <link
-        rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
-        crossorigin="anonymous"
-    />
-    <link rel="stylesheet" href="./css/adminlte.css" />
-    <link rel="stylesheet" href="./css/style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="theme-color" content="#007bff" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#1a1a1a" media="(prefers-color-scheme: dark)" />
 
-    <link
-        rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/apexcharts@3.37.1/dist/apexcharts.css"
-        integrity="sha256-4MX+61mt9NVvvuPjUWdyfZfxSB1/Rf9WtqRHgG5S0="
-        crossorigin="anonymous"
-    />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css"
+    crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/styles/overlayscrollbars.min.css"
+    crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+    crossorigin="anonymous" />
+  <link rel="stylesheet" href="css/adminlte.css" />
+  <link rel="stylesheet" href="css/style.css">
 
-    <link
-        rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/css/jsvectormap.min.css"
-        integrity="sha256-+uGLJmmTKOqBr+2E6KDYs/NRsHxSkONXFHUL0fy2O/4="
-        crossorigin="anonymous"
-    />
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+  <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+  <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+  <script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
-
-<script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
-
-<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
-<script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
-<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css">
-
-<link href="https://cdn.datatables.net/columncontrol/1.1.0/css/columnControl.dataTables.min.css" rel="stylesheet">
-<script src="https://cdn.datatables.net/columncontrol/1.1.0/js/dataTables.columnControl.min.js"></script>
-
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-<style>
-
+  <style>
     .btn-info {
-  background: linear-gradient(135deg, #17a2b8, #5bc0de);
-  border: none;
-  transition: all 0.3s ease;
-  color: white;
-  font-weight: 500;
-  letter-spacing: 0.3px;
-}
+      background: linear-gradient(135deg, #17a2b8, #5bc0de);
+      border: none;
+      transition: all 0.3s ease;
+      color: white;
+      font-weight: 500;
+    }
 
-.btn-info:hover {
-  transform: translateY(-5px) scale(1.05);
-  background: linear-gradient(135deg, #5bc0de, #17a2b8);
-  box-shadow: 0 8px 15px rgba(0, 123, 255, 0.3);
-}
-
-.btn-info:active {
-  transform: scale(0.98);
-  box-shadow: 0 3px 6px rgba(0,0,0,0.2);
-}
+    .btn-info:hover {
+      transform: translateY(-5px) scale(1.05);
+      background: linear-gradient(135deg, #5bc0de, #17a2b8);
+      box-shadow: 0 8px 15px rgba(0, 123, 255, 0.3);
+    }
 
     .card {
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
+    }
 
-.card:hover {
-  transform: translateY(-8px) scale(1.02);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-  cursor: pointer;
-}
+    .swal2-input,
+    .swal2-textarea {
+      background-color: #fff !important;
+      border: 1px solid #ced4da !important;
+    }
 
-.container-documentos {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  flex-wrap: wrap;             
-  gap: 30px;                   /* espacio entre columnas */
-  margin: 40px auto;
-  max-width: 1400px;
-  padding: 20px;
-}
-
-.card-documento {
-  flex: 1 1 30%;             
-  min-width: 350px;            /* ancho mínimo para pantallas pequeñas */
-  background-color: #ffffff;
-  padding: 30px 35px;
-  border-radius: 16px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-
-.card-documento:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
-}
-
-.titulo-seccion {
-  font-weight: 700;
-  color: #1e293b;
-  margin-bottom: 25px;
-  font-size: 1.2rem;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.form-documentos {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-
-.row-form {
-  display: flex;
-  flex-direction: column; 
-  gap: 16px;
-  width: 100%;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-width: 180px;
-}
-
-.form-group label {
-  font-weight: 600;
-  color: #334155;
-  margin-bottom: 5px;
-}
-
-.form-group input[type="date"],
-.form-group select {
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
-  padding: 8px 10px;
-  background-color: #f8fafc;
-  color: #0f172a;
-  transition: all 0.3s ease;
-}
-
-.form-group input[type="date"]:focus,
-.form-group select:focus {
-  border-color: #2563eb;
-  box-shadow: 0 0 6px rgba(37, 99, 235, 0.3);
-  outline: none;
-}
-
-.btn-generar {
-  background-color: #048db7dd;
-  color: #ffffff;
-  font-weight: 600;
-  border: none;
-  border-radius: 8px;
-  padding: 12px 18px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  cursor: pointer;
-  align-self: flex-start; /* alinea a la izquierda */
-  transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-.btn-generar:hover {
-  background-color: #ff0000ff;
-  transform: translateY(-2px);
-}
-
-.btn-generar i {
-  font-size: 16px;
-}
-
-.card-documento {
-  min-height: 500px; 
-}
-
-.btn-group {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
-/* Modificación a .btn-group para alinear los botones */
-.btn-group {
-    display: flex;
-    gap: 15px; /* Aumenta el espacio entre botones */
-    align-items: center;
-    /* Nuevo: Añade esto para que los botones crezcan y se repartan el espacio */
-    width: 100%; 
-}
-
-/* Ajustes al botón de Excel para que se vea igual que el de PDF */
-.btn-excel {
-    background-color: #00a390ff;
-    color: #fff;
-    font-weight: 600; /* Asegura el mismo peso de fuente */
-    border: none;
-    border-radius: 8px; /* Usa el mismo radio que .btn-generar */
-    padding: 12px 18px; /* Usa el mismo padding que .btn-generar */
-    text-decoration: none;
-    display: inline-flex; /* Para alinear icono y texto */
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    
-    flex-grow: 1; 
-}
-
-.btn-excel:hover {
-    background-color: #13882cff;
-    transform: translateY(-2px);
-    color: #fff;
-}
-
-/* Asegura que el botón de PDF también crezca equitativamente en un grupo */
-.btn-group .btn-generar {
-    flex-grow: 1; 
-    margin-top: 0; /* Anula cualquier margen que pueda tener */
-    align-self: unset; /* Anula align-self: flex-start; del estilo anterior */
-}
-
-/* ... otras clases CSS ... */
-</style>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+    .swal2-input:focus,
+    .swal2-textarea:focus {
+      border-color: #80bdff !important;
+      box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25) !important;
+    }
+  </style>
 </head>
+
 <body class="layout-fixed sidebar-expand-lg sidebar-open bg-body-tertiary">
-    <div class="app-wrapper">
-           <nav class="app-header navbar navbar-expand bg-body">
-      <!--begin::Container-->
+  <div class="app-wrapper">
+    <nav class="app-header navbar navbar-expand bg-body">
       <div class="container-fluid">
-        <!--begin::Start Navbar Links-->
         <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link" data-lte-toggle="sidebar" href="index.php" role="button">
+            <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button">
               <i class="bi bi-list"></i>
             </a>
           </li>
           <li class="nav-item d-none d-md-block">
-            <a href="../index.php" class="nav-link">Inicio</a>
+            <a href="index.php" class="nav-link">Inicio</a>
           </li>
-
         </ul>
-        <!--end::Start Navbar Links-->
 
-        <!--begin::End Navbar Links-->
         <ul class="navbar-nav ms-auto">
-
-          <!--begin::User Menu Dropdown-->
           <li class="nav-item dropdown user-menu">
             <a href="#" class="nav-link dropdown-toggle text-white fw-semibold" data-bs-toggle="dropdown">
               <span class="d-none d-md-inline"><i class="bi bi-person-circle me-1"></i><?php echo $nombre; ?></span>
             </a>
 
             <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3 mt-2" style="min-width: 230px;">
-              <!-- Cabecera del usuario -->
               <li class="bg-primary text-white text-center rounded-top py-3">
                 <p class="mb-0 fw-bold fs-5"><?php echo $nombre; ?></p>
-                <small><?php echo $rol; ?></small>
+                <small><?php echo ucfirst($rol); ?></small>
               </li>
-
-              <!-- Separador -->
               <li>
                 <hr class="dropdown-divider m-0">
               </li>
-
-              <!-- Opciones del menu -->
-
-              <!-- Separador -->
+              <li>
+                <button class="dropdown-item d-flex align-items-center py-2" onclick="editarMiPerfil()">
+                  <i class="bi bi-person-gear me-2"></i> Editar mi perfil
+                </button>
+              </li>
               <li>
                 <hr class="dropdown-divider m-0">
               </li>
-
-              <!-- Opción de cerrar sesión -->
               <li>
-                <a href="../controllers/logout.php" class="dropdown-item d-flex align-items-center text-danger py-2">
+                <a href="controllers/logout.php" class="dropdown-item d-flex align-items-center text-danger py-2">
                   <i class="bi bi-box-arrow-right me-2"></i> Cerrar sesión
                 </a>
               </li>
             </ul>
           </li>
-          <!--end::User Menu Dropdown-->
         </ul>
-        <!--end::End Navbar Links-->
       </div>
-      <!--end::Container-->
     </nav>
-      <aside class="app-sidebar verde shadow">
-        <div class="sidebar-brand">
-          <a href="./index.php" class="brand-link">
-            <span class="title"> senaEdu </span>
-          </a>
-        </div>
-        
-        <div class="sidebar-wrapper">
-          <nav class="mt-2">
-            <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="navigation" data-accordion="false" id="navigation"> 
-              <?php if ($rol == 'admin'): ?>
-                <li class="nav-item">
-                  <a href="./index.php" class="nav-link active">
-                      <i class="nav-icon bi bi-speedometer me-2"></i>
-                    <span>Dashboard</span>
-                  </a>
-                </li>
-              <?php endif; ?>      
-              <?php if ($rol == 'instructor'): ?>
-                <li class="nav-item">
-                  <a href="./views/gestionTrabajosInstructor.php" class="nav-link">
-                      <i class="bi bi-check2-square me-2"></i>
-                    <span>Calificar Trabajos</span>
-                  </a>
-                </li>
-              <?php endif; ?>
-            
-              <?php if ($rol == 'aprendiz'): ?>
-                <li class="nav-item">
-                  <a href="./views/gestionTrabajos.php" class="nav-link">
-                    <i class="bi bi-calendar-check me-2"></i>
-                    <span>Trabajos</span>
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a href="./views/misCalificaciones.php" class="nav-link">
-                    <i class="bi bi-star me-2"></i>
-                    <span>Mis Calificaciones</span>
-                  </a>
-                </li>
-              <?php endif; ?>
-            </ul>
-          </nav>
-        </div>
-      </aside>
-      <main class="app-main">
-        <div class="app-content-header">
-            <div class="container mt-5">
-            
-            <?php 
-  
-            if ($rol == 'admin'): 
-            ?>
 
-                <h2 class="mt-5 mb-3">Administradores </h2>
-
-                <div class="table-responsive">
-                    <table class="table table-striped table-bordered table-hover text-center">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>ID</th><th>Correo</th><th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tbodyAdministradores">
-                            <?php
-                            $resultado_admin = $mysql->efectuarConsulta("
-                                SELECT id_admin, correo_admin FROM `administrador` ORDER BY id_administrador ASC
-                            ");
-                            
-                            if ($resultado_admin && $resultado_admin->num_rows > 0) {
-                                while ($fila = $resultado_admin->fetch_assoc()):
-                            ?>
-                            <tr>
-                                <td><?= htmlspecialchars($fila['id_admin']) ?></td>
-                                <td><?= htmlspecialchars($fila['correo_admin']) ?></td>
-                                <td>
-                                    <button class="btn btn-warning btn-sm btn-editar" data-id="<?= $fila['id_admin'] ?>" data-rol="admin">Editar</button>
-                                    <button class="btn btn-danger btn-sm btn-eliminar" data-id="<?= $fila['id_admin'] ?>" data-rol="admin">Eliminar</button>
-                                </td>
-                            </tr>
-                            <?php
-                                endwhile;
-                            } else {
-                                echo '<tr><td colspan="3">No hay administradores registrados.</td></tr>';
-                            }
-                            ?>
-                        </tbody>
-
-                    </table>
-                </div>
-                
-                <hr>
-
-                <h2 class="mt-5 mb-3">Instructores </h2>
-
-                <div class="table-responsive">
-                    <table class="table table-striped table-bordered table-hover text-center">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>ID</th><th>Correo</th><th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tbodyInstructores">
-                            <?php
-                            $resultado_instructor = $mysql->efectuarConsulta("
-                                SELECT id_instructor , correo_instructor FROM instructor ORDER BY id_instructor ASC
-                            ");
-                            
-                            if ($resultado_instructor && $resultado_instructor->num_rows > 0) {
-                                while ($fila = $resultado_instructor->fetch_assoc()):
-                            ?>
-                            <tr>
-                                <td><?= htmlspecialchars($fila['id_instructor']) ?></td>
-                                <td><?= htmlspecialchars($fila['correo_instructor']) ?></td>
-                                <td>
-                                    <button class="btn btn-warning btn-sm btn-editar" data-id="<?= $fila['id_instructor'] ?>" data-rol="instructor">Editar</button>
-                                    <button class="btn btn-danger btn-sm btn-eliminar" data-id="<?= $fila['id_instructor'] ?>" data-rol="instructor">Eliminar</button>
-                                </td>
-                            </tr>
-                            <?php
-                                endwhile;
-                            } else {
-                                echo '<tr><td colspan="3">No hay instructores registrados.</td></tr>';
-                            }
-                            ?>
-                        </tbody>
-                    </table>
-                </div>
-
-                <hr>
-
-                <h2 class="mt-5 mb-3">Aprendices </h2>
-
-                <div class="table-responsive">
-                    <table class="table table-striped table-bordered table-hover text-center">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>ID</th><th>Correo</th><th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tbodyAprendices">
-                            <?php
-                            $resultado_aprendiz = $mysql->efectuarConsulta("
-                                SELECT id_aprendiz, correo_aprendiz FROM `aprendices` ORDER BY id_aprendiz ASC;
-                            ");
-                            
-                            if ($resultado_aprendiz && $resultado_aprendiz->num_rows > 0) {
-                                while ($fila = $resultado_aprendiz->fetch_assoc()):
-                            ?>
-                            <tr>
-                                <td><?= htmlspecialchars($fila['id_aprendiz']) ?></td>
-                                <td><?= htmlspecialchars($fila['correo_aprendiz']) ?></td>
-                                <td>
-                                    <button class="btn btn-warning btn-sm btn-editar" data-id="<?= $fila['id_aprendiz'] ?>" data-rol="aprendiz">Editar</button>
-                                    <button class="btn btn-danger btn-sm btn-eliminar" data-id="<?= $fila['id_aprendiz'] ?>" data-rol="aprendiz">Eliminar</button>
-                                </td>
-                            </tr>
-                            <?php
-                                endwhile;
-                            } else {
-                                echo '<tr><td colspan="3">No hay aprendices registrados.</td></tr>';
-                            }
-                            ?>
-                        </tbody>
-                    </table>
-                </div>
-
-        
-            
-            <?php 
-
-                        endif;
-            
-            
-            $mysql->desconectar();
-            ?>
-            </div>
-        </div>
-      </main>
-      <footer class="app-footer">
-        <strong>
-          Copyright &copy; 2014-2025&nbsp;
-          <a href="https://adminlte.io" class="text-decoration-none">senaEdu</a>.
-        </strong>
-        All rights reserved.
-        </footer>
+    <aside class="app-sidebar verde shadow">
+      <div class="sidebar-brand">
+        <a href="index.php" class="brand-link">
+          <span class="title">senaEdu</span>
+        </a>
       </div>
-    <script
-        src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/browser/overlayscrollbars.browser.es6.min.js"
-        crossorigin="anonymous"
-    ></script>
-    <script
-        src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
-        crossorigin="anonymous"
-    ></script>
-    <script
-        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.min.js"
-        crossorigin="anonymous"
-    ></script>
-    <script src="public/js/adminlte.js"></script>
-    <script>
-        const SELECTOR_SIDEBAR_WRAPPER = '.sidebar-wrapper';
-        const Default = {
-            scrollbarTheme: 'os-theme-light',
-            scrollbarAutoHide: 'leave',
-            scrollbarClickScroll: true,
-        };
-        document.addEventListener('DOMContentLoaded', function () {
-            const sidebarWrapper = document.querySelector(SELECTOR_SIDEBAR_WRAPPER);
 
-            const isMobile = window.innerWidth <= 992;
+      <div class="sidebar-wrapper">
+        <nav class="mt-2">
+          <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="navigation">
+            <li class="nav-item">
+              <a href="index.php" class="nav-link active">
+                <i class="nav-icon bi bi-speedometer me-2"></i>
+                <span>Dashboard</span>
+              </a>
+            </li>
 
-            if (
-                sidebarWrapper &&
-                OverlayScrollbarsGlobal?.OverlayScrollbars !== undefined &&
-                !isMobile
-            ) {
-                OverlayScrollbarsGlobal.OverlayScrollbars(sidebarWrapper, {
-                    scrollbars: {
-                        theme: Default.scrollbarTheme,
-                        autoHide: Default.scrollbarAutoHide,
-                        clickScroll: Default.scrollbarClickScroll,
-                    },
-                });
-            }
-        });
-    </script>
-    <script
-        src="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/js/jsvectormap.min.js"
-        integrity="sha256-/t1nN2956BT869E6H4V1dnt0X5pAQHPytli+1nTZm2Y="
-        crossorigin="anonymous"
-    ></script>
-    <script
-        src="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/maps/world.js"
-        integrity="sha256-XPpPaZlU8S/HWf7FZLAncLg2SAkP8ScUTII89x9D3lY="
-        crossorigin="anonymous"
-    ></script>
-    
-    <script>
-document.querySelector('#modalEditarUsuario').addEventListener('submit', function(e){
-    e.preventDefault(); 
+            <?php if ($rol == 'admin'): ?>
+              <li class="nav-item">
+                <a href="views/usuarios.php" class="nav-link">
+                  <i class="bi bi-people me-2"></i>
+                  <span>Usuarios</span>
+                </a>
+              </li>
+            <?php endif; ?>
 
-    let datos = new FormData(this);
+            <?php if ($rol == 'instructor'): ?>
+              <li class="nav-item">
+                <a href="views/gestionTrabajosInstructor.php" class="nav-link">
+                  <i class="nav-icon bi bi-check2-square me-2"></i>
+                  <span>Calificar Trabajos</span>
+                </a>
+              </li>
+            <?php endif; ?>
 
-    fetch('./controllers/editar_perfil.php', {
-        method: 'POST',
-        body: datos
-    })
-    .then(res => res.text())
-    .then(res => {
+            <?php if ($rol == 'aprendiz'): ?>
+              <li class="nav-item">
+                <a href="views/gestionTrabajos.php" class="nav-link">
+                  <i class="bi bi-calendar-check me-2"></i>
+                  <span>Trabajos</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="views/misCalificaciones.php" class="nav-link">
+                  <i class="bi bi-star me-2"></i>
+                  <span>Mis Calificaciones</span>
+                </a>
+              </li>
+            <?php endif; ?>
+          </ul>
+        </nav>
+      </div>
+    </aside>
 
-        if(res.includes("OK")){
-            Swal.fire({
-                icon: 'success',
-                title: 'Actualizado correctamente',
-                timer: 1500,
-                showConfirmButton: false
-            });
+    <main class="app-main">
+      <div class="app-content">
+        <div class="container-fluid">
 
-            let modal = bootstrap.Modal.getInstance(document.getElementById('modalEditarUsuario'));
-            modal.hide();
+          <?php if ($rol == 'admin'): ?>
+            <div class="row mb-4">
+              <div class="col-12">
+                <h1 class="mt-4">Gestión de Usuarios</h1>
+                <button class="btn btn-success" onclick="agregarUsuario()">
+                  <i class="bi bi-person-plus"></i> Agregar Usuario
+                </button>
+              </div>
+            </div>
 
-            location.reload();
-        } 
-        else {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: res
-            });
-        }
+            <div class="row">
+              <div class="col-12">
+                <div class="card shadow-sm">
+                  <div class="card-header bg-danger text-white">
+                    <h3 class="card-title mb-0">
+                      <i class="bi bi-shield-check me-2"></i>Administradores
+                    </h3>
+                  </div>
 
+                  <div class="card-body">
+                    <div class="table-responsive">
+                      <table id="tablaAdmins" class="table table-striped table-bordered" width="100%">
+                        <thead class="table-danger">
+                          <tr>
+                            <th>ID</th>
+                            <th>Correo</th>
+                            <th>Rol</th>
+                            <th>Acciones</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <?php while ($admin = $consultaAdmins->fetch_assoc()): ?>
+                            <tr>
+                              <td><?= $admin['id_admin'] ?></td>
+                              <td><?= $admin['correo_admin'] ?></td>
+                              <td><span class="badge bg-danger"><?= $admin['rol_usuario'] ?></span></td>
+                              <td>
+                                <button class="btn btn-warning btn-sm" title="Editar"
+                                  onclick='editarUsuario(<?= json_encode($admin) ?>, "admin")'>
+                                  <i class="bi bi-pencil-square"></i>
+                                </button>
+                                <button class="btn btn-danger btn-sm" title="Eliminar"
+                                  onclick='eliminarUsuario(<?= $admin["id_admin"] ?>, "admin")'>
+                                  <i class="bi bi-trash"></i>
+                                </button>
+                              </td>
+                            </tr>
+                          <?php endwhile; ?>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-12">
+                <div class="card shadow-sm">
+                  <div class="card-header bg-warning text-dark">
+                    <h3 class="card-title mb-0">
+                      <i class="bi bi-person-badge me-2"></i>Instructores
+                    </h3>
+                  </div>
+
+                  <div class="card-body">
+                    <div class="table-responsive">
+                      <table id="tablaInstructores" class="table table-striped table-bordered" width="100%">
+                        <thead class="table-warning">
+                          <tr>
+                            <th>ID</th>
+                            <th>Correo</th>
+                            <th>Rol</th>
+                            <th>Acciones</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <?php while ($instructor = $consultaInstructores->fetch_assoc()): ?>
+                            <tr>
+                              <td><?= $instructor['id_instructor'] ?></td>
+                              <td><?= $instructor['correo_instructor'] ?></td>
+                              <td><span class="badge bg-warning text-dark"><?= $instructor['rol_usuario'] ?></span></td>
+                              <td>
+                                <button class="btn btn-warning btn-sm" title="Editar"
+                                  onclick='editarUsuario(<?= json_encode($instructor) ?>, "instructor")'>
+                                  <i class="bi bi-pencil-square"></i>
+                                </button>
+                                <button class="btn btn-danger btn-sm" title="Eliminar"
+                                  onclick='eliminarUsuario(<?= $instructor["id_instructor"] ?>, "instructor")'>
+                                  <i class="bi bi-trash"></i>
+                                </button>
+                              </td>
+                            </tr>
+                          <?php endwhile; ?>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-12">
+                <div class="card shadow-sm">
+                  <div class="card-header bg-success text-white">
+                    <h3 class="card-title mb-0">
+                      <i class="bi bi-mortarboard me-2"></i>Aprendices
+                    </h3>
+                  </div>
+
+                  <div class="card-body">
+                    <div class="table-responsive">
+                      <table id="tablaAprendices" class="table table-striped table-bordered" width="100%">
+                        <thead class="table-success">
+                          <tr>
+                            <th>ID</th>
+                            <th>Correo</th>
+                            <th>Rol</th>
+                            <th>Acciones</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <?php while ($aprendiz = $consultaAprendices->fetch_assoc()): ?>
+                            <tr>
+                              <td><?= $aprendiz['id_aprendiz'] ?></td>
+                              <td><?= $aprendiz['correo_aprendiz'] ?></td>
+                              <td><span class="badge bg-success"><?= $aprendiz['rol_usuario'] ?></span></td>
+                              <td>
+                                <button class="btn btn-warning btn-sm" title="Editar"
+                                  onclick='editarUsuario(<?= json_encode($aprendiz) ?>, "aprendiz")'>
+                                  <i class="bi bi-pencil-square"></i>
+                                </button>
+                                <button class="btn btn-danger btn-sm" title="Eliminar"
+                                  onclick='eliminarUsuario(<?= $aprendiz["id_aprendiz"] ?>, "aprendiz")'>
+                                  <i class="bi bi-trash"></i>
+                                </button>
+                              </td>
+                            </tr>
+                          <?php endwhile; ?>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <?php else: ?>
+            <div class="row">
+              <div class="col-12 text-center mt-5">
+                <h1>Bienvenido a senaEdu</h1>
+                <p class="text-muted">Utiliza el menú lateral para navegar</p>
+              </div>
+            </div>
+          <?php endif; ?>
+
+        </div>
+      </div>
+    </main>
+
+    <footer class="app-footer">
+      <strong>
+        Copyright &copy; 2014-2025&nbsp;
+        <a href="https://adminlte.io" class="text-decoration-none">senaEdu</a>.
+      </strong>
+      All rights reserved.
+    </footer>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
+  <script src="public/js/adminlte.js"></script>
+
+  <script>
+    $(document).ready(function () {
+      $('#tablaAdmins, #tablaInstructores, #tablaAprendices').DataTable({
+        language: {
+          url: "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
+        },
+        pageLength: 10,
+        lengthMenu: [5, 10, 20, 50],
+        responsive: true,
+        autoWidth: true
+      });
     });
-});
 
-$(document).ready(function() {
-    let rolUsuario = "<?php echo $rol; ?>";
-    let isQuerySuccessful = <?php echo (isset($resultadolibros) && $resultadolibros !== false && is_object($resultadolibros)) ? 'true' : 'false'; ?>;
+    function agregarUsuario() {
+      Swal.fire({
+        title: 'Agregar Usuario',
+        html: `
+          <form id="formAgregarUsuario" class="text-start">
+            <div class="mb-3">
+              <label class="form-label fw-bold">Rol:</label>
+              <select class="form-select" id="rol" required style="background-color: #fff !important;">
+                <option value="" disabled selected>Seleccione un rol</option>
+                <option value="admin">Administrador</option>
+                <option value="instructor">Instructor</option>
+                <option value="aprendiz">Aprendiz</option>
+              </select>
+            </div>
+            
+            <div class="mb-3">
+              <label class="form-label fw-bold">Correo electrónico:</label>
+              <input type="email" class="form-control" id="correo" 
+                     placeholder="ejemplo@correo.com" required style="background-color: #fff !important;">
+            </div>
+            
+            <div class="mb-3">
+              <label class="form-label fw-bold">Contraseña:</label>
+              <input type="password" class="form-control" id="password" 
+                     placeholder="Mínimo 6 caracteres" required style="background-color: #fff !important;">
+            </div>
+          </form>
+        `,
+        width: '500px',
+        confirmButtonText: 'Guardar',
+        showCancelButton: true,
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#28a745',
+        preConfirm: () => {
+          const rol = document.getElementById('rol').value;
+          const correo = document.getElementById('correo').value.trim();
+          const password = document.getElementById('password').value;
 
-    if (rolUsuario === 'admin' && isQuerySuccessful) {
-        $('#tablaLibros').DataTable({
-            "responsive": true,
-            "autoWidth": false,
-            "language": {
-                "url": "//cdn.datatables.net/plug-ins/1.10.21/i18n/Spanish.json"
+          if (!rol || !correo || !password) {
+            Swal.showValidationMessage('Debe completar todos los campos');
+            return false;
+          }
+
+          if (password.length < 6) {
+            Swal.showValidationMessage('La contraseña debe tener al menos 6 caracteres');
+            return false;
+          }
+
+          return { rol, correo, password };
+        }
+      }).then(result => {
+        if (result.isConfirmed) {
+          $.ajax({
+            url: 'controllers/agregarUsuario.php',
+            type: 'POST',
+            data: result.value,
+            dataType: 'json',
+            success: function (response) {
+              if (response.success) {
+                Swal.fire({
+                  icon: 'success',
+                  title: 'Éxito',
+                  text: response.message,
+                  timer: 2000,
+                  showConfirmButton: false
+                }).then(() => location.reload());
+              } else {
+                Swal.fire('Error', response.message, 'error');
+              }
+            },
+            error: function () {
+              Swal.fire('Error', 'No se pudo conectar con el servidor', 'error');
             }
-        });
+          });
+        }
+      });
     }
 
-});
+    function editarUsuario(usuario, tipoUsuario) {
+      let idField, correoField, correoValue;
 
-</script>
+      if (tipoUsuario === 'admin') {
+        idField = 'id_admin';
+        correoField = 'correo_admin';
+        correoValue = usuario.correo_admin;
+      } else if (tipoUsuario === 'instructor') {
+        idField = 'id_instructor';
+        correoField = 'correo_instructor';
+        correoValue = usuario.correo_instructor;
+      } else {
+        idField = 'id_aprendiz';
+        correoField = 'correo_aprendiz';
+        correoValue = usuario.correo_aprendiz;
+      }
+
+      Swal.fire({
+        title: 'Editar Usuario',
+        html: `
+          <form id="formEditarUsuario" class="text-start">
+            <div class="mb-3">
+              <label class="form-label fw-bold">Rol:</label>
+              <select class="form-select" id="rol_edit" required style="background-color: #fff !important;">
+                <option value="admin" ${usuario.rol_usuario === 'Administrador' ? 'selected' : ''}>Administrador</option>
+                <option value="instructor" ${usuario.rol_usuario === 'Instructor' ? 'selected' : ''}>Instructor</option>
+                <option value="aprendiz" ${usuario.rol_usuario === 'Aprendiz' ? 'selected' : ''}>Aprendiz</option>
+              </select>
+            </div>
+            
+            <div class="mb-3">
+              <label class="form-label fw-bold">Correo electrónico:</label>
+              <input type="email" class="form-control" id="correo_edit" 
+                     value="${correoValue}" required style="background-color: #fff !important;">
+            </div>
+          </form>
+        `,
+        width: '500px',
+        confirmButtonText: 'Actualizar',
+        showCancelButton: true,
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#ffc107',
+        preConfirm: () => {
+          const rol = document.getElementById('rol_edit').value;
+          const correo = document.getElementById('correo_edit').value.trim();
+
+          if (!rol || !correo) {
+            Swal.showValidationMessage('Debe completar todos los campos');
+            return false;
+          }
+
+          return {
+            id: usuario[idField],
+            rol_anterior: tipoUsuario,
+            rol_nuevo: rol,
+            correo: correo
+          };
+        }
+      }).then(result => {
+        if (result.isConfirmed) {
+          $.ajax({
+            url: 'controllers/editarUsuario.php',
+            type: 'POST',
+            data: result.value,
+            dataType: 'json',
+            success: function (response) {
+              if (response.success) {
+                Swal.fire({
+                  icon: 'success',
+                  title: 'Éxito',
+                  text: response.message,
+                  timer: 2000,
+                  showConfirmButton: false
+                }).then(() => location.reload());
+              } else {
+                Swal.fire('Error', response.message, 'error');
+              }
+            },
+            error: function () {
+              Swal.fire('Error', 'No se pudo conectar con el servidor', 'error');
+            }
+          });
+        }
+      });
+    }
+
+    function eliminarUsuario(id, tipoUsuario) {
+      Swal.fire({
+        title: '¿Está seguro?',
+        text: 'Esta acción eliminará el usuario permanentemente',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc3545',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          $.ajax({
+            url: 'controllers/eliminarUsuario.php',
+            type: 'POST',
+            data: { id: id, tipo_usuario: tipoUsuario },
+            dataType: 'json',
+            success: function (response) {
+              if (response.success) {
+                Swal.fire({
+                  icon: 'success',
+                  title: 'Eliminado',
+                  text: response.message,
+                  timer: 2000,
+                  showConfirmButton: false
+                }).then(() => location.reload());
+              } else {
+                Swal.fire('Error', response.message, 'error');
+              }
+            },
+            error: function () {
+              Swal.fire('Error', 'No se pudo conectar con el servidor', 'error');
+            }
+          });
+        }
+      });
+    }
+
+    function editarMiPerfil() {
+      Swal.fire({
+        title: 'Editar mi Perfil',
+        html: `
+          <form id="formEditarPerfil" class="text-start">
+            <div class="mb-3">
+              <label class="form-label fw-bold">Correo electrónico:</label>
+              <input type="email" class="form-control" id="mi_correo" 
+                     value="<?= $nombre ?>" required style="background-color: #fff !important; border: 1px solid #ced4da !important;">
+            </div>
+            
+            <hr class="my-4">
+            
+            <h6 class="mb-3">Cambiar contraseña</h6>
+            
+            <div class="mb-3">
+              <label class="form-label fw-bold">Contraseña actual:</label>
+              <input type="password" class="form-control" id="password_actual" 
+                     placeholder="Requerida para cambiar contraseña" style="background-color: #fff !important; border: 1px solid #ced4da !important;">
+            </div>
+            
+            <div class="mb-3">
+              <label class="form-label fw-bold">Nueva contraseña:</label>
+              <input type="password" class="form-control" id="password_nueva" 
+                     placeholder="Mínimo 6 caracteres" style="background-color: #fff !important; border: 1px solid #ced4da !important;">
+            </div>
+          </form>
+        `,
+        width: '550px',
+        confirmButtonText: 'Guardar cambios',
+        showCancelButton: true,
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#28a745',
+        cancelButtonColor: '#6c757d',
+        preConfirm: () => {
+          const correo = document.getElementById('mi_correo').value.trim();
+          const passwordActual = document.getElementById('password_actual').value;
+          const passwordNueva = document.getElementById('password_nueva').value;
+
+          if (!correo) {
+            Swal.showValidationMessage('El correo es obligatorio');
+            return false;
+          }
+
+          if (passwordNueva) {
+            if (!passwordActual) {
+              Swal.showValidationMessage('Debes ingresar tu contraseña actual');
+              return false;
+            }
+            if (passwordNueva.length < 6) {
+              Swal.showValidationMessage('La nueva contraseña debe tener al menos 6 caracteres');
+              return false;
+            }
+          }
+
+          return {
+            correo,
+            password_actual: passwordActual,
+            password_nueva: passwordNueva
+          };
+        }
+      }).then(result => {
+        if (result.isConfirmed) {
+          Swal.fire({
+            title: 'Guardando cambios...',
+            allowOutsideClick: false,
+            didOpen: () => {
+              Swal.showLoading();
+            }
+          });
+
+          $.ajax({
+            url: 'controllers/editarMiPerfil.php',
+            type: 'POST',
+            data: result.value,
+            dataType: 'json',
+            success: function (response) {
+              if (response.success) {
+                Swal.fire({
+                  icon: 'success',
+                  title: 'Perfecto',
+                  text: response.message,
+                  timer: 2000,
+                  showConfirmButton: false
+                }).then(() => location.reload());
+              } else {
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Error',
+                  text: response.message
+                });
+              }
+            },
+            error: function () {
+              Swal.fire({
+                icon: 'error',
+                title: 'Error de conexión',
+                text: 'No se pudo conectar con el servidor'
+              });
+            }
+          });
+        }
+      });
+    }
+  </script>
 </body>
+
 </html>
