@@ -159,35 +159,35 @@ $stats = $resultadoStats->fetch_assoc();
             </div>
         </nav>
 
-        <aside class="app-sidebar verde shadow">
-            <div class="sidebar-brand">
-                <a href="../index.php" class="brand-link">
-                    <span class="title">senaEdu</span>
-                </a>
-            </div>
+<aside class="app-sidebar verde shadow">
+  <div class="sidebar-brand">
+    <a href="../index.php" class="brand-link">
+      <span class="title">senaEdu</span>
+    </a>
+  </div>
+  
+  <div class="sidebar-wrapper">
+    <nav class="mt-2">
+      <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="navigation">
+        <?php if ($rol == 'aprendiz'): ?>
+                    <li class="nav-item">
+                        <a href="./gestionTrabajos.php" class="nav-link">
+                            <i class="bi bi-calendar-check me-2"></i>
+                            <span>Trabajos</span>
+                        </a>
+                    </li>
 
-            <div class="sidebar-wrapper">
-                <nav class="mt-2">
-                    <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="navigation"
-            aria-label="Main navigation" data-accordion="false" id="navigation">
-                        <?php if ($rol == 'aprendiz'): ?>
-                            <li class="nav-item">
-                                <a href="./gestionTrabajos.php" class="nav-link">
-                                    <i class="bi bi-calendar-check me-2"></i>
-                                    <span>Trabajos</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="./misCalificaciones.php" class="nav-link active">
-                                    <i class="nav-icon bi bi-star me-2"></i>
-                                    <span>Mis Calificaciones</span>
-                                </a>
-                            </li>
-                        <?php endif; ?>
-                    </ul>
-                </nav>
-            </div>
-        </aside>
+                    <li class="nav-item">
+                        <a href="./misCalificaciones.php" class="nav-link active">
+                            <i class="bi bi-star me-2"></i>
+                            <span>Mis Calificaciones</span>
+                        </a>
+                    </li>
+                <?php endif; ?>
+            </ul>
+        </nav>
+    </div>
+</aside>
 
         <main class="app-main">
             <div class="app-content">

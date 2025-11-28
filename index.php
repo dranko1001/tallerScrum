@@ -137,214 +137,273 @@ if ($rol == 'admin') {
       </div>
     </nav>
 
-    <aside class="app-sidebar verde shadow">
-      <div class="sidebar-brand">
-        <a href="index.php" class="brand-link">
-          <span class="title">senaEdu</span>
-        </a>
-      </div>
+<aside class="app-sidebar verde shadow">
+  <div class="sidebar-brand">
+    <a href="index.php" class="brand-link">
+      <span class="title">senaEdu</span>
+    </a>
+  </div>
 
-      <div class="sidebar-wrapper">
-        <nav class="mt-2">
-          <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="navigation">
-            <li class="nav-item">
-              <a href="index.php" class="nav-link active">
-                <i class="nav-icon bi bi-speedometer me-2"></i>
-                <span>Dashboard</span>
-              </a>
-            </li>
+  <div class="sidebar-wrapper">
+    <nav class="mt-2">
+      <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="navigation">
+        
+        <?php if ($rol == 'admin'): ?>
+          <!-- Menú para Administrador -->
+          <li class="nav-item">
+            <a href="index.php" class="nav-link active">
+              <i class="bi bi-people-fill me-2"></i>
+              <span>Usuarios</span>
+            </a>
+          </li>
 
-            <?php if ($rol == 'instructor'): ?>
-              <li class="nav-item">
-                <a href="views/gestionTrabajosInstructor.php" class="nav-link">
-                  <i class="nav-icon bi bi-check2-square me-2"></i>
-                  <span>Calificar Trabajos</span>
-                </a>
-              </li>
-            <?php endif; ?>
+          <li class="nav-item">
+            <a href="views/agregarCurso.php" class="nav-link">
+              <i class="bi bi-clipboard-data me-2"></i>
+              <span>Cursos</span>
+            </a>
+          </li>
 
-            <?php if ($rol == 'aprendiz'): ?>
-              <li class="nav-item">
-                <a href="views/gestionTrabajos.php" class="nav-link">
-                  <i class="bi bi-calendar-check me-2"></i>
-                  <span>Trabajos</span>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="views/misCalificaciones.php" class="nav-link">
-                  <i class="bi bi-star me-2"></i>
-                  <span>Mis Calificaciones</span>
-                </a>
-              </li>
-            <?php endif; ?>
-          </ul>
-        </nav>
-      </div>
-    </aside>
+          <li class="nav-item">
+            <a href="views/agregarFicha.php" class="nav-link">
+              <i class="bi bi-card-list me-2"></i>
+              <span>Fichas</span>
+            </a>
+          </li>
+        <?php endif; ?>
 
-    <main class="app-main">
-      <div class="app-content">
-        <div class="container-fluid">
+        <?php if ($rol == 'instructor'): ?>
+          <!-- Menú para Instructor -->
+          <li class="nav-item">
+            <a href="views/gestionTrabajosInstructor.php" class="nav-link">
+              <i class="bi bi-check2-square me-2"></i>
+              <span>Calificar Trabajos</span>
+            </a>
+          </li>
+        <?php endif; ?>
 
-          <?php if ($rol == 'admin'): ?>
-            <div class="row mb-4">
-              <div class="col-12">
-                <h1 class="mt-4">Gestión de Usuarios</h1>
-                <button class="btn btn-success" onclick="agregarUsuario()">
-                  <i class="bi bi-person-plus"></i> Agregar Usuario
-                </button>
-              </div>
-            </div>
+        <?php if ($rol == 'aprendiz'): ?>
+          <!-- Menú para Aprendiz -->
+          <li class="nav-item">
+            <a href="views/gestionTrabajos.php" class="nav-link">
+              <i class="bi bi-calendar-check me-2"></i>
+              <span>Trabajos</span>
+            </a>
+          </li>
 
-            <div class="row">
-              <div class="col-12">
-                <div class="card shadow-sm">
-                  <div class="card-header bg-danger text-white">
-                    <h3 class="card-title mb-0">
-                      <i class="bi bi-shield-check me-2"></i>Administradores
-                    </h3>
-                  </div>
+          <li class="nav-item">
+            <a href="views/misCalificaciones.php" class="nav-link">
+              <i class="bi bi-star me-2"></i>
+              <span>Mis Calificaciones</span>
+            </a>
+          </li>
+        <?php endif; ?>
 
-                  <div class="card-body">
-                    <div class="table-responsive">
-                      <table id="tablaAdmins" class="table table-striped table-bordered" width="100%">
-                        <thead class="table-danger">
-                          <tr>
-                            <th>ID</th>
-                            <th>Correo</th>
-                            <th>Rol</th>
-                            <th>Acciones</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <?php while ($admin = $consultaAdmins->fetch_assoc()): ?>
-                            <tr>
-                              <td><?= $admin['id_admin'] ?></td>
-                              <td><?= $admin['correo_admin'] ?></td>
-                              <td><span class="badge bg-danger"><?= $admin['rol_usuario'] ?></span></td>
-                              <td class="justify-content-center d-flex gap-1">
-                                <a class="btn btn-warning btn-sm" title="Editar"
-                                  onclick='editarUsuario(<?= json_encode($admin) ?>, "admin")'>
-                                  <i class="bi bi-pencil-square"></i> 
-                                </a> |
-                                <a class="btn btn-danger btn-sm gap-1" title="Eliminar"
-                                  onclick='eliminarUsuario(<?= $admin["id_admin"] ?>, "admin")'>
-                                  <i class="bi bi-trash"></i>
-                                </a>
-                              </td>
-                            </tr>
-                          <?php endwhile; ?>
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+      </ul>
+    </nav>
+  </div>
+</aside>
 
-            <div class="row">
-              <div class="col-12">
-                <div class="card shadow-sm">
-                  <div class="card-header bg-warning text-dark">
-                    <h3 class="card-title mb-0">
-                      <i class="bi bi-person-badge me-2"></i>Instructores
-                    </h3>
-                  </div>
+<main class="app-main">
+  <div class="app-content">
+    <div class="container-fluid">
 
-                  <div class="card-body">
-                    <div class="table-responsive">
-                      <table id="tablaInstructores" class="table table-striped table-bordered" width="100%">
-                        <thead class="table-warning">
-                          <tr>
-                            <th>ID</th>
-                            <th>Correo</th>
-                            <th>Rol</th>
-                            <th>Acciones</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <?php while ($instructor = $consultaInstructores->fetch_assoc()): ?>
-                            <tr>
-                              <td><?= $instructor['id_instructor'] ?></td>
-                              <td><?= $instructor['correo_instructor'] ?></td>
-                              <td><span class="badge bg-warning text-dark"><?= $instructor['rol_usuario'] ?></span></td>
-                              <td class="justify-content-center d-flex gap-1">
-                                <button class="btn btn-warning btn-sm" title="Editar"
-                                  onclick='editarUsuario(<?= json_encode($instructor) ?>, "instructor")'>
-                                  <i class="bi bi-pencil-square"></i>
-                                </button> |
-                                <button class="btn btn-danger btn-sm" title="Eliminar"
-                                  onclick='eliminarUsuario(<?= $instructor["id_instructor"] ?>, "instructor")'>
-                                  <i class="bi bi-trash"></i>
-                                </button>
-                              </td>
-                            </tr>
-                          <?php endwhile; ?>
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col-12">
-                <div class="card shadow-sm">
-                  <div class="card-header bg-success text-white">
-                    <h3 class="card-title mb-0">
-                      <i class="bi bi-mortarboard me-2"></i>Aprendices
-                    </h3>
-                  </div>
-
-                  <div class="card-body">
-                    <div class="table-responsive">
-                      <table id="tablaAprendices" class="table table-striped table-bordered" width="100%">
-                        <thead class="table-success">
-                          <tr>
-                            <th>ID</th>
-                            <th>Correo</th>
-                            <th>Rol</th>
-                            <th>Acciones</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <?php while ($aprendiz = $consultaAprendices->fetch_assoc()): ?>
-                            <tr>
-                              <td><?= $aprendiz['id_aprendiz'] ?></td>
-                              <td><?= $aprendiz['correo_aprendiz'] ?></td>
-                              <td><span class="badge bg-success"><?= $aprendiz['rol_usuario'] ?></span></td>
-                              <td class="justify-content-center d-flex gap-1">
-                                <button class="btn btn-warning btn-sm" title="Editar"
-                                  onclick='editarUsuario(<?= json_encode($aprendiz) ?>, "aprendiz")'>
-                                  <i class="bi bi-pencil-square"></i>
-                                </button> |
-                                <button class="btn btn-danger btn-sm" title="Eliminar"
-                                  onclick='eliminarUsuario(<?= $aprendiz["id_aprendiz"] ?>, "aprendiz")'>
-                                  <i class="bi bi-trash"></i>
-                                </button>
-                              </td>
-                            </tr>
-                          <?php endwhile; ?>
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          <?php else: ?>
-            <div class="row">
-              <div class="col-12 text-center mt-5">
-                <h1>Bienvenido a senaEdu</h1>
-                <p class="text-muted">Utiliza el menú lateral para navegar</p>
-              </div>
-            </div>
-          <?php endif; ?>
-
+      <?php if ($rol == 'admin'): ?>
+        <!-- CONTENIDO PARA ADMINISTRADOR -->
+        <div class="row mb-4">
+          <div class="col-12">
+            <h1 class="mt-4">Gestión de Usuarios</h1>
+            <button class="btn btn-success" onclick="agregarUsuario()">
+              <i class="bi bi-person-plus"></i> Agregar Usuario
+            </button>
+          </div>
         </div>
-      </div>
-    </main>
+
+        <!-- Tabla de Administradores -->
+        <div class="row">
+          <div class="col-12">
+            <div class="card shadow-sm">
+              <div class="card-header bg-danger text-white">
+                <h3 class="card-title mb-0">
+                  <i class="bi bi-shield-check me-2"></i>Administradores
+                </h3>
+              </div>
+
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table id="tablaAdmins" class="table table-striped table-bordered" width="100%">
+                    <thead class="table-danger">
+                      <tr>
+                        <th>ID</th>
+                        <th>Correo</th>
+                        <th>Rol</th>
+                        <th>Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <?php while ($admin = $consultaAdmins->fetch_assoc()): ?>
+                        <tr>
+                          <td><?= $admin['id_admin'] ?></td>
+                          <td><?= $admin['correo_admin'] ?></td>
+                          <td><span class="badge bg-danger"><?= $admin['rol_usuario'] ?></span></td>
+                          <td class="justify-content-center d-flex gap-1">
+                            <a class="btn btn-warning btn-sm" title="Editar"
+                              onclick='editarUsuario(<?= json_encode($admin) ?>, "admin")'>
+                              <i class="bi bi-pencil-square"></i>
+                            </a> |
+                            <a class="btn btn-danger btn-sm gap-1" title="Eliminar"
+                              onclick='eliminarUsuario(<?= $admin["id_admin"] ?>, "admin")'>
+                              <i class="bi bi-trash"></i>
+                            </a>
+                          </td>
+                        </tr>
+                      <?php endwhile; ?>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabla de Instructores -->
+        <div class="row">
+          <div class="col-12">
+            <div class="card shadow-sm">
+              <div class="card-header bg-warning text-dark">
+                <h3 class="card-title mb-0">
+                  <i class="bi bi-person-badge me-2"></i>Instructores
+                </h3>
+              </div>
+
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table id="tablaInstructores" class="table table-striped table-bordered" width="100%">
+                    <thead class="table-warning">
+                      <tr>
+                        <th>ID</th>
+                        <th>Correo</th>
+                        <th>Rol</th>
+                        <th>Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <?php while ($instructor = $consultaInstructores->fetch_assoc()): ?>
+                        <tr>
+                          <td><?= $instructor['id_instructor'] ?></td>
+                          <td><?= $instructor['correo_instructor'] ?></td>
+                          <td><span class="badge bg-warning text-dark"><?= $instructor['rol_usuario'] ?></span></td>
+                          <td class="justify-content-center d-flex gap-1">
+                            <button class="btn btn-warning btn-sm" title="Editar"
+                              onclick='editarUsuario(<?= json_encode($instructor) ?>, "instructor")'>
+                              <i class="bi bi-pencil-square"></i>
+                            </button> |
+                            <button class="btn btn-danger btn-sm" title="Eliminar"
+                              onclick='eliminarUsuario(<?= $instructor["id_instructor"] ?>, "instructor")'>
+                              <i class="bi bi-trash"></i>
+                            </button>
+                          </td>
+                        </tr>
+                      <?php endwhile; ?>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabla de Aprendices -->
+        <div class="row">
+          <div class="col-12">
+            <div class="card shadow-sm">
+              <div class="card-header bg-success text-white">
+                <h3 class="card-title mb-0">
+                  <i class="bi bi-mortarboard me-2"></i>Aprendices
+                </h3>
+              </div>
+
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table id="tablaAprendices" class="table table-striped table-bordered" width="100%">
+                    <thead class="table-success">
+                      <tr>
+                        <th>ID</th>
+                        <th>Correo</th>
+                        <th>Rol</th>
+                        <th>Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <?php while ($aprendiz = $consultaAprendices->fetch_assoc()): ?>
+                        <tr>
+                          <td><?= $aprendiz['id_aprendiz'] ?></td>
+                          <td><?= $aprendiz['correo_aprendiz'] ?></td>
+                          <td><span class="badge bg-success"><?= $aprendiz['rol_usuario'] ?></span></td>
+                          <td class="justify-content-center d-flex gap-1">
+                            <button class="btn btn-warning btn-sm" title="Editar"
+                              onclick='editarUsuario(<?= json_encode($aprendiz) ?>, "aprendiz")'>
+                              <i class="bi bi-pencil-square"></i>
+                            </button> |
+                            <button class="btn btn-danger btn-sm" title="Eliminar"
+                              onclick='eliminarUsuario(<?= $aprendiz["id_aprendiz"] ?>, "aprendiz")'>
+                              <i class="bi bi-trash"></i>
+                            </button>
+                          </td>
+                        </tr>
+                      <?php endwhile; ?>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      <?php elseif ($rol == 'instructor'): ?>
+        <!-- CONTENIDO PARA INSTRUCTOR -->
+        <div class="row">
+          <div class="col-12 text-center mt-5">
+            <i class="bi bi-check2-square" style="font-size: 5rem; color: #ffc107;"></i>
+            <h1 class="mt-4">Bienvenido, Instructor</h1>
+            <p class="text-muted">Utiliza el menú lateral para calificar los trabajos de tus aprendices</p>
+            <a href="views/gestionTrabajosInstructor.php" class="btn btn-warning mt-3">
+              <i class="bi bi-check2-square me-2"></i>Ir a Calificar Trabajos
+            </a>
+          </div>
+        </div>
+
+      <?php elseif ($rol == 'aprendiz'): ?>
+        <!-- CONTENIDO PARA APRENDIZ -->
+        <div class="row">
+          <div class="col-12 text-center mt-5">
+            <i class="bi bi-mortarboard" style="font-size: 5rem; color: #28a745;"></i>
+            <h1 class="mt-4">Bienvenido, Aprendiz</h1>
+            <p class="text-muted">Utiliza el menú lateral para gestionar tus trabajos y ver tus calificaciones</p>
+            <div class="mt-4">
+              <a href="views/gestionTrabajos.php" class="btn btn-success me-2">
+                <i class="bi bi-calendar-check me-2"></i>Mis Trabajos
+              </a>
+              <a href="views/misCalificaciones.php" class="btn btn-primary">
+                <i class="bi bi-star me-2"></i>Mis Calificaciones
+              </a>
+            </div>
+          </div>
+        </div>
+
+      <?php else: ?>
+        <!-- CONTENIDO PARA ROLES NO DEFINIDOS -->
+        <div class="row">
+          <div class="col-12 text-center mt-5">
+            <h1>Bienvenido a senaEdu</h1>
+            <p class="text-muted">Utiliza el menú lateral para navegar</p>
+          </div>
+        </div>
+      <?php endif; ?>
+
+    </div>
+  </div>
+</main>
 
     <footer class="app-footer">
       <strong>
