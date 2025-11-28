@@ -412,7 +412,6 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
         <div class="sidebar-wrapper">
           <nav class="mt-2">
             <!--begin::Sidebar Menu-->
-<!-- REEMPLAZA EL SIDEBAR COMPLETO EN gestionTrabajos.php (línea ~180-220) -->
 
 <aside class="app-sidebar verde shadow">
   <div class="sidebar-brand">

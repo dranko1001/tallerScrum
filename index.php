@@ -174,7 +174,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM trabajos");
   justify-content: center;
   align-items: flex-start;
   flex-wrap: wrap;           
-  gap: 30px;                 /* espacio entre columnas */
+  gap: 30px;                 
   margin: 40px auto;
   max-width: 1400px;
   padding: 20px;
@@ -182,7 +182,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM trabajos");
 
 .card-documento {
   flex: 1 1 30%;             
-  min-width: 350px;          /* ancho mínimo para pantallas pequeñas */
+  min-width: 350px;          
   background-color: #ffffff;
   padding: 30px 35px;
   border-radius: 16px;
@@ -261,7 +261,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM trabajos");
   justify-content: center;
   gap: 8px;
   cursor: pointer;
-  align-self: flex-start; /* alinea a la izquierda */
+  align-self: flex-start; 
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
@@ -285,25 +285,25 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM trabajos");
 }
 /* ... dentro de <style> ... */
 
-/* Modificación a .btn-group para alinear los botones */
+
 .btn-group {
     display: flex;
-    gap: 15px; /* Aumenta el espacio entre botones */
+    gap: 15px; 
     align-items: center;
-    /* Nuevo: Añade esto para que los botones crezcan y se repartan el espacio */
+
     width: 100%; 
 }
 
-/* Ajustes al botón de Excel para que se vea igual que el de PDF */
+
 .btn-excel {
     background-color: #00a390ff;
     color: #fff;
-    font-weight: 600; /* Asegura el mismo peso de fuente */
+    font-weight: 600; 
     border: none;
-    border-radius: 8px; /* Usa el mismo radio que .btn-generar */
-    padding: 12px 18px; /* Usa el mismo padding que .btn-generar */
+    border-radius: 8px; 
+    padding: 12px 18px; 
     text-decoration: none;
-    display: inline-flex; /* Para alinear icono y texto */
+    display: inline-flex; 
     align-items: center;
     justify-content: center;
     gap: 8px;
@@ -319,11 +319,11 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM trabajos");
     color: #fff;
 }
 
-/* Asegura que el botón de PDF también crezca equitativamente en un grupo */
+
 .btn-group .btn-generar {
     flex-grow: 1; 
-    margin-top: 0; /* Anula cualquier margen que pueda tener */
-    align-self: unset; /* Anula align-self: flex-start; del estilo anterior */
+    margin-top: 0; 
+    align-self: unset; 
 }
 
 /* ... otras clases CSS ... */

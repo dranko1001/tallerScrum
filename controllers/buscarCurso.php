@@ -13,7 +13,7 @@ if (empty($query)) {
     exit;
 }
 
-// Limpiar el query de caracteres peligrosos
+// Limpiar la consulta de caracteres peligrosos, que no se rompa con una cimilla
 $query = str_replace(["'", '"', '\\'], '', $query);
 
 $sql = "

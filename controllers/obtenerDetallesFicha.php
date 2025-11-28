@@ -59,7 +59,7 @@ if ($resultadoAprendices) {
         $aprendices[] = $aprendiz;
     }
 }
-
+//el json que mandabmos a la DB
 echo json_encode([
     'success' => true,
     'ficha' => $ficha,
