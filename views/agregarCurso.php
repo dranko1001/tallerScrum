@@ -55,6 +55,7 @@ $resultado = $mysql->efectuarConsulta(" SELECT
     <!--begin::Accessibility Features-->
     <!-- Skip links will be dynamically added by accessibility.js -->
     <meta name="supported-color-schemes" content="light dark" />
+    <link rel="preload" href="../css/adminlte.css" as="style" />
    
     <!--end::Accessibility Features-->
 
@@ -83,6 +84,7 @@ $resultado = $mysql->efectuarConsulta(" SELECT
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
       crossorigin="anonymous"
     />
+
     <!--end::Third Party Plugin(Bootstrap Icons)-->
 
     <!--begin::Required Plugin(AdminLTE)-->
@@ -109,26 +111,47 @@ $resultado = $mysql->efectuarConsulta(" SELECT
     <!-- jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-<!-- DataTables + Bootstrap -->
+  <!-- DataTables núcleo -->
+  <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
 
-<!-- DataTables núcleo -->
-<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+  <!-- Integración Bootstrap 5 -->
+  <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
 
-<!-- Integración Bootstrap 5 -->
-<script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+  <!-- Extensión Responsive (versión compatible 2.5.0) -->
+  <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+  <script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css">
 
-<!-- Extensión Responsive (versión compatible 2.5.0) -->
-<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
-<script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
-<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css">
+  <!-- Extensión Column Control (si de verdad la usas) -->
+  <link href="https://cdn.datatables.net/columncontrol/1.1.0/css/columnControl.dataTables.min.css" rel="stylesheet">
+  <script src="https://cdn.datatables.net/columncontrol/1.1.0/js/dataTables.columnControl.min.js"></script>
 
-<!-- Extensión Column Control (si de verdad la usas) -->
-<link href="https://cdn.datatables.net/columncontrol/1.1.0/css/columnControl.dataTables.min.css" rel="stylesheet">
-<script src="https://cdn.datatables.net/columncontrol/1.1.0/js/dataTables.columnControl.min.js"></script>
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<!-- SweetAlert2 -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    .btn-info {
+      background: linear-gradient(135deg, #17a2b8, #5bc0de);
+      border: none;
+      transition: all 0.3s ease;
+      color: white;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+    }
+
+    .btn-info:hover {
+      transform: translateY(-5px) scale(1.05);
+      background: linear-gradient(135deg, #5bc0de, #17a2b8);
+      box-shadow: 0 8px 15px rgba(0, 123, 255, 0.3);
+    }
+
+    .btn-info:active {
+      transform: scale(0.98);
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+    }
+
+  </style>
 
 <!-- estilo para la tabla cuando muestre los detalles del curso., lo dejo comentado por si alguien quiere ver como quedaria con css, personalmente lo prefiero mas simple -->
 <!-- <style>
@@ -261,15 +284,15 @@ $resultado = $mysql->efectuarConsulta(" SELECT
           <!--begin::Container-->
           <div class="container-fluid">
             <!--begin::Row-->
- <div class="position-relative">
-  <h3 class="text-center">
-    <i class="bi bi-clipboard-data"></i> Cursos
-  </h3>
-  <ol class="breadcrumb position-absolute end-0 top-50 translate-middle-y">
-    <li class="breadcrumb-item"><a href="./agregarCurso.php">Cursos</a></li>
-    <li class="breadcrumb-item active" aria-current="page">Lista de cursos</li>
-  </ol>
-</div>
+            <div class="position-relative">
+              <h3 class="text-center">
+                <i class="bi bi-clipboard-data"></i> Cursos
+              </h3>
+              <ol class="breadcrumb position-absolute end-0 top-50 translate-middle-y">
+                <li class="breadcrumb-item"><a href="./agregarCurso.php">Cursos</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Lista de cursos</li>
+              </ol>
+            </div>
             <!--end::Row-->
           </div>
           <!--end::Container-->
@@ -280,13 +303,6 @@ $resultado = $mysql->efectuarConsulta(" SELECT
           <!--begin::Container-->
           <div class="container-fluid">
             <!--begin::Row-->
-            <div class="row mb-3 align-items-center">
-                <div class="col-md-6 d-flex gap-2">
-                <?php if ($rol == 'Administrador'): ?>
-                     
-                <?php endif; ?>
-                </div>
-            </div>
             <!-- inicio de boton agregar curso -->
   <div class="row mb-3">
   <div class="col-md-6">
@@ -296,7 +312,7 @@ $resultado = $mysql->efectuarConsulta(" SELECT
 <!-- fin del boton agregar curso -->
               <!--begin::Col-->
                 <div class="table-responsive">
-<table id="tablaCursos" class="table table-striped table-bordered">
+<table id="tablaCursos" class="table table-striped table-bordered " width="100%">
     <thead class="table-info">
         <tr>
             <th>ID</th>
@@ -313,7 +329,7 @@ $resultado = $mysql->efectuarConsulta(" SELECT
         <tr>
             <td><?= $c['id_curso'] ?></td>
             <td><?= $c['nombre_curso'] ?></td>
-            <td>
+            <td class="justify-content-center d-flex gap-1">
                 <button class="btn btn-info btn-sm" onclick="verDetallesCurso(<?= $c['id_curso'] ?>)">
     <i class="bi bi-eye"></i> 
 </button>
@@ -323,12 +339,6 @@ $resultado = $mysql->efectuarConsulta(" SELECT
         <?php endwhile; ?>
     </tbody>
 </table>
-
-
-
-
-
-
                 </div>
                 
               <!-- /.Start col -->
@@ -415,20 +425,19 @@ $resultado = $mysql->efectuarConsulta(" SELECT
       crossorigin="anonymous"
     ></script>
 <script>
-$(document).ready(function() {
-$('#tablaCursos').DataTable({
-    language: {
-        url: "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
-    },
-    pageLength: 5,
-    lengthMenu: [5, 10, 20, 50],
-    responsive: true,
-    autoWidth: true
-});
+    $(document).ready(function () {
+      $('#tablaCursos').DataTable({
+        language: {
+          url: "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
+        },
+        pageLength: 5,
+        lengthMenu: [5, 10, 20, 50],
+        responsive: true,
+        autoWidth: true
+      });
 
-
-});
-</script>
+    });
+  </script>
 
 <!-- inicio de la funcion que agrega los cursos  -->
 <script>
@@ -742,8 +751,6 @@ function eliminarAprendiz(id, elemento) {
 }
 </script>
 
-
-<!-- funcion que muestra los detalles del curso -->
 <!-- Función que muestra los detalles del curso -->
 <script>
 function verDetallesCurso(idCurso) {
@@ -805,12 +812,6 @@ function mostrarModalDetalles(data) {
     });
 }
 </script>
-
-
-
-
-
-
   </body>
   <!--end::Body-->
 </html>

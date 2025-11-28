@@ -139,8 +139,7 @@ $resultado = $mysql->efectuarConsulta("SELECT * FROM trabajos");
 
   </style>
 
-  <!-- script de los graficos -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 
 </head>
 <!--end::Head-->
