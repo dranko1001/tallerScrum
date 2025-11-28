@@ -24,6 +24,8 @@ if ($rol !== 'aprendiz') {
 
 //consulta para obtener los trabajos
 $resultado = $mysql->efectuarConsulta("SELECT * FROM trabajos");
+
+
 ?>
 
 <!doctype html>
@@ -290,18 +292,29 @@ $resultado = $mysql->efectuarConsulta("SELECT * FROM trabajos");
                       <td><?= $fila['nombre_trabajo'] ?></td>
                       <td><?= $fila['fecha_trabajo'] ?></td>
                       <td class="justify-content-center d-flex gap-1">
+                        <?php  
+                          $consultaCalificacion = $mysql->efectuarConsulta(
+                            "SELECT calificacion_nota FROM notas WHERE trabajos_id_trabajo='" . $fila['id_trabajo'] . "'"
+                          );
+                          $tieneCalificacion = ($consultaCalificacion && $consultaCalificacion->num_rows > 0);
+                        ?>
+                        
                         <a class="btn btn-info btn-sm" title="Ver trabajo"
-                          href="<?php echo '../' . $fila['ruta_trabajo']; ?>" target="_blank">
+                          href="<?= '../' . $fila['ruta_trabajo'] ?>" target="_blank">
                           <i class="bi bi-eye"></i>
-                        </a> |
-                        <a class="btn btn-warning btn-sm" title="editar"
-                          onclick="editarTrabajo(<?php echo $fila['id_trabajo']; ?>)">
-                          <i class="bi bi-pencil-square"></i>
-                        </a> |
-                        <a class="btn btn-danger btn-sm" href="javascript:void(0);"
-                          onclick="eliminarTrabajo(<?php echo $fila['id_trabajo']; ?>)" title="Eliminar">
-                          <i class="bi bi-trash"></i>
                         </a>
+                        
+                        <?php if (!$tieneCalificacion): ?>
+                          |
+                          <a class="btn btn-warning btn-sm" title="editar"
+                            onclick="editarTrabajo(<?= $fila['id_trabajo'] ?>)">
+                            <i class="bi bi-pencil-square"></i>
+                          </a> |
+                          <a class="btn btn-danger btn-sm" href="javascript:void(0);"
+                            onclick="eliminarTrabajo(<?= $fila['id_trabajo'] ?>)" title="Eliminar">
+                            <i class="bi bi-trash"></i>
+                          </a>
+                        <?php endif; ?>
                       </td>
                     </tr>
                   <?php endwhile; ?>
