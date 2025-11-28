@@ -154,15 +154,6 @@ if ($rol == 'admin') {
               </a>
             </li>
 
-            <?php if ($rol == 'admin'): ?>
-              <li class="nav-item">
-                <a href="views/usuarios.php" class="nav-link">
-                  <i class="bi bi-people me-2"></i>
-                  <span>Usuarios</span>
-                </a>
-              </li>
-            <?php endif; ?>
-
             <?php if ($rol == 'instructor'): ?>
               <li class="nav-item">
                 <a href="views/gestionTrabajosInstructor.php" class="nav-link">
@@ -231,15 +222,15 @@ if ($rol == 'admin') {
                               <td><?= $admin['id_admin'] ?></td>
                               <td><?= $admin['correo_admin'] ?></td>
                               <td><span class="badge bg-danger"><?= $admin['rol_usuario'] ?></span></td>
-                              <td>
-                                <button class="btn btn-warning btn-sm" title="Editar"
+                              <td class="justify-content-center d-flex gap-1">
+                                <a class="btn btn-warning btn-sm" title="Editar"
                                   onclick='editarUsuario(<?= json_encode($admin) ?>, "admin")'>
-                                  <i class="bi bi-pencil-square"></i>
-                                </button>
-                                <button class="btn btn-danger btn-sm" title="Eliminar"
+                                  <i class="bi bi-pencil-square"></i> 
+                                </a> |
+                                <a class="btn btn-danger btn-sm gap-1" title="Eliminar"
                                   onclick='eliminarUsuario(<?= $admin["id_admin"] ?>, "admin")'>
                                   <i class="bi bi-trash"></i>
-                                </button>
+                                </a>
                               </td>
                             </tr>
                           <?php endwhile; ?>
@@ -277,11 +268,11 @@ if ($rol == 'admin') {
                               <td><?= $instructor['id_instructor'] ?></td>
                               <td><?= $instructor['correo_instructor'] ?></td>
                               <td><span class="badge bg-warning text-dark"><?= $instructor['rol_usuario'] ?></span></td>
-                              <td>
+                              <td class="justify-content-center d-flex gap-1">
                                 <button class="btn btn-warning btn-sm" title="Editar"
                                   onclick='editarUsuario(<?= json_encode($instructor) ?>, "instructor")'>
                                   <i class="bi bi-pencil-square"></i>
-                                </button>
+                                </button> |
                                 <button class="btn btn-danger btn-sm" title="Eliminar"
                                   onclick='eliminarUsuario(<?= $instructor["id_instructor"] ?>, "instructor")'>
                                   <i class="bi bi-trash"></i>
@@ -323,11 +314,11 @@ if ($rol == 'admin') {
                               <td><?= $aprendiz['id_aprendiz'] ?></td>
                               <td><?= $aprendiz['correo_aprendiz'] ?></td>
                               <td><span class="badge bg-success"><?= $aprendiz['rol_usuario'] ?></span></td>
-                              <td>
+                              <td class="justify-content-center d-flex gap-1">
                                 <button class="btn btn-warning btn-sm" title="Editar"
                                   onclick='editarUsuario(<?= json_encode($aprendiz) ?>, "aprendiz")'>
                                   <i class="bi bi-pencil-square"></i>
-                                </button>
+                                </button> |
                                 <button class="btn btn-danger btn-sm" title="Eliminar"
                                   onclick='eliminarUsuario(<?= $aprendiz["id_aprendiz"] ?>, "aprendiz")'>
                                   <i class="bi bi-trash"></i>
@@ -389,7 +380,7 @@ if ($rol == 'admin') {
           <form id="formAgregarUsuario" class="text-start">
             <div class="mb-3">
               <label class="form-label fw-bold">Rol:</label>
-              <select class="form-select" id="rol" required style="background-color: #fff !important;">
+              <select class="form-select" id="rol"">
                 <option value="" disabled selected>Seleccione un rol</option>
                 <option value="admin">Administrador</option>
                 <option value="instructor">Instructor</option>
@@ -400,13 +391,12 @@ if ($rol == 'admin') {
             <div class="mb-3">
               <label class="form-label fw-bold">Correo electrónico:</label>
               <input type="email" class="form-control" id="correo" 
-                     placeholder="ejemplo@correo.com" required style="background-color: #fff !important;">
+                     placeholder="ejemplo@correo.com">
             </div>
             
             <div class="mb-3">
               <label class="form-label fw-bold">Contraseña:</label>
-              <input type="password" class="form-control" id="password" 
-                     placeholder="Mínimo 6 caracteres" required style="background-color: #fff !important;">
+              <input type="password" class="form-control" id="password" placeholder="Mínimo 6 caracteres">
             </div>
           </form>
         `,
@@ -483,7 +473,7 @@ if ($rol == 'admin') {
           <form id="formEditarUsuario" class="text-start">
             <div class="mb-3">
               <label class="form-label fw-bold">Rol:</label>
-              <select class="form-select" id="rol_edit" required style="background-color: #fff !important;">
+              <select class="form-select" id="rol_edit">
                 <option value="admin" ${usuario.rol_usuario === 'Administrador' ? 'selected' : ''}>Administrador</option>
                 <option value="instructor" ${usuario.rol_usuario === 'Instructor' ? 'selected' : ''}>Instructor</option>
                 <option value="aprendiz" ${usuario.rol_usuario === 'Aprendiz' ? 'selected' : ''}>Aprendiz</option>
@@ -493,7 +483,7 @@ if ($rol == 'admin') {
             <div class="mb-3">
               <label class="form-label fw-bold">Correo electrónico:</label>
               <input type="email" class="form-control" id="correo_edit" 
-                     value="${correoValue}" required style="background-color: #fff !important;">
+                     value="${correoValue}">
             </div>
           </form>
         `,
@@ -592,7 +582,7 @@ if ($rol == 'admin') {
             <div class="mb-3">
               <label class="form-label fw-bold">Correo electrónico:</label>
               <input type="email" class="form-control" id="mi_correo" 
-                     value="<?= $nombre ?>" required style="background-color: #fff !important; border: 1px solid #ced4da !important;">
+                     value="<?= $nombre ?>">
             </div>
             
             <hr class="my-4">
@@ -602,13 +592,13 @@ if ($rol == 'admin') {
             <div class="mb-3">
               <label class="form-label fw-bold">Contraseña actual:</label>
               <input type="password" class="form-control" id="password_actual" 
-                     placeholder="Requerida para cambiar contraseña" style="background-color: #fff !important; border: 1px solid #ced4da !important;">
+                     placeholder="Requerida para cambiar contraseña">
             </div>
             
             <div class="mb-3">
               <label class="form-label fw-bold">Nueva contraseña:</label>
               <input type="password" class="form-control" id="password_nueva" 
-                     placeholder="Mínimo 6 caracteres" style="background-color: #fff !important; border: 1px solid #ced4da !important;">
+                     placeholder="Mínimo 6 caracteres">
             </div>
           </form>
         `,
