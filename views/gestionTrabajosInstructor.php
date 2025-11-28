@@ -95,33 +95,29 @@ $resultadoTrabajos = $mysql->efectuarConsulta($sqlTrabajos);
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <style>
-        .btn-info {
-            background: linear-gradient(135deg, #17a2b8, #5bc0de);
-            border: none;
-            transition: all 0.3s ease;
-            color: white;
-            font-weight: 500;
-            letter-spacing: 0.3px;
-        }
+  <style>
+    .btn-info {
+      background: linear-gradient(135deg, #17a2b8, #5bc0de);
+      border: none;
+      transition: all 0.3s ease;
+      color: white;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+    }
 
-        .btn-info:hover {
-            transform: translateY(-5px) scale(1.05);
-            background: linear-gradient(135deg, #5bc0de, #17a2b8);
-            box-shadow: 0 8px 15px rgba(0, 123, 255, 0.3);
-        }
+    .btn-info:hover {
+      transform: translateY(-5px) scale(1.05);
+      background: linear-gradient(135deg, #5bc0de, #17a2b8);
+      box-shadow: 0 8px 15px rgba(0, 123, 255, 0.3);
+    }
 
-        .card {
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
+    .btn-info:active {
+      transform: scale(0.98);
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+    }
 
-        .badge-calificacion {
-            font-size: 1.1rem;
-            padding: 8px 15px;
-            font-weight: 600;
-        }
-    </style>
+  </style>
+
 </head>
 
 <body class="layout-fixed sidebar-expand-lg sidebar-open bg-body-tertiary">
@@ -177,13 +173,6 @@ $resultadoTrabajos = $mysql->efectuarConsulta($sqlTrabajos);
             <div class="sidebar-wrapper">
                 <nav class="mt-2">
                     <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="navigation">
-                        <li class="nav-item">
-                            <a href="../index.php" class="nav-link">
-                                <i class="nav-icon bi bi-speedometer me-2"></i>
-                                <span>Dashboard</span>
-                            </a>
-                        </li>
-
                         <?php if ($rol == 'instructor'): ?>
                             <li class="nav-item">
                                 <a href="./gestionTrabajosInstructor.php" class="nav-link active">
